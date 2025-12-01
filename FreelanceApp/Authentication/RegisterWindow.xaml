@@ -1,0 +1,75 @@
+﻿<Window
+    x:Class="FreelanceApp.Authentication.RegisterWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="{DynamicResource RegisterWindow_Title}"
+    Style="{DynamicResource RegWindowStyle}"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <Border Margin="20" Style="{DynamicResource BorderMainStyle}">
+                <StackPanel
+                    Width="300"
+                    HorizontalAlignment="Center"
+                    Orientation="Vertical">
+
+                    <TextBlock Style="{DynamicResource HeaderText}" Text="{DynamicResource RegisterWindow_Header}" />
+
+                    <TextBlock Style="{DynamicResource RegWindowTextBlock}" Text="Имя" />
+                    <TextBox Name="FirstNameBox" Style="{DynamicResource RoundedTextBox}" />
+
+                    <TextBlock Style="{DynamicResource RegWindowTextBlock}" Text="Фамилия" />
+                    <TextBox Name="LastNameBox" Style="{DynamicResource RoundedTextBox}" />
+
+                    <TextBlock Style="{DynamicResource RegWindowTextBlock}" Text="Email (логин)" />
+                    <TextBox Name="EmailBox" Style="{DynamicResource RoundedTextBox}" />
+
+                    <TextBlock Style="{DynamicResource RegWindowTextBlock}" Text="Пароль" />
+                    <PasswordBox Name="PasswordBox" Style="{DynamicResource RoundedPasswordBox}" />
+
+                    <TextBlock Style="{DynamicResource RegWindowTextBlock}" Text="Телефон" />
+                    <TextBox Name="PhoneBox" Style="{DynamicResource RoundedTextBox}" />
+
+                    <TextBlock Style="{DynamicResource RegWindowTextBlock}" Text="Пол (Male / Female / Other)" />
+                    <ComboBox
+                        Name="GenderBox"
+                        SelectedIndex="0"
+                        Style="{DynamicResource RoundedComboBox}">
+                        <ComboBoxItem Content="Male" />
+                        <ComboBoxItem Content="Female" />
+                        <ComboBoxItem Content="Other" />
+                    </ComboBox>
+
+                    <!--  доделать после дату рождения  -->
+                    <!--<TextBlock Style="{DynamicResource RegWindowTextBlock}" Text="Дата рождения" />
+                    <DatePicker
+                        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                        Name="BirthDatePicker"
+                        Width="200"
+                        DisplayDateEnd="{x:Static sys:DateTime.Today}"
+                        SelectedDateFormat="Long" />-->
+
+
+                    <StackPanel
+                        Margin="10"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal">
+                        <Button
+                            Width="140"
+                            Command="{Binding RegisterCommand}"
+                            Content="{DynamicResource RegisterWindow_Btn_Register}"
+                            Style="{DynamicResource AccentButton}" />
+                        <Button
+                            Command="{Binding GoBackCommand}"
+                            Content="{DynamicResource RegisterWindow_Btn_Back}"
+                            Style="{DynamicResource SecondaryButton}" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
+    </Grid>
+</Window>

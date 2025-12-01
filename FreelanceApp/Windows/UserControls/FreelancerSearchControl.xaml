@@ -1,0 +1,93 @@
+﻿<UserControl
+    x:Class="FreelanceApp.Windows.UserControls.FreelancerSearchControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:FreelanceApp.Windows.ViewModels"
+    xmlns:data="clr-namespace:DAL.Models.Views;assembly=DAL"
+    xmlns:models="clr-namespace:DAL.Models.Tables;assembly=DAL"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance Type=vm:FreelancerSearchViewModel}"
+    Width="Auto" Height="Auto">
+    
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+        <Style TargetType="ListViewItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Поиск -->
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
+            <TextBox Width="250" Margin="0,0,6,0"
+                     Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding SearchCommand}"/>
+                </TextBox.InputBindings>
+            </TextBox>
+            <Button Content="Найти" Command="{Binding SearchCommand}"/>
+        </StackPanel>
+
+        <!-- Найденные фрилансеры -->
+        <ListView Grid.Row="1"
+                  ItemsSource="{Binding Freelancers}"
+                  SelectedItem="{Binding SelectedFreelancer}"
+                  SelectionMode="Single">
+            <ListView.InputBindings>
+                <!-- Двойной клик открывает выбор проекта для текущего выбранного -->
+                <MouseBinding Gesture="LeftDoubleClick"
+                              Command="{Binding OpenProjectPickerCommand}"
+                              CommandParameter="{Binding SelectedFreelancer, RelativeSource={RelativeSource AncestorType=ListView}}"/>
+            </ListView.InputBindings>
+
+            <ListView.ItemTemplate>
+                <DataTemplate DataType="{x:Type data:FreelancerRow}">
+                    <Border Margin="3" Padding="6" BorderBrush="LightGray" BorderThickness="1">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" FontWeight="Bold" Text="{Binding FullName}"/>
+                            <TextBlock Grid.Row="1" FontSize="11" Foreground="Gray">
+                                <Run Text="Скиллы: "/>
+                                <Run Text="{Binding SkillsPreview}"/>
+                            </TextBlock>
+
+                            <Button Grid.Row="2" Width="140" Margin="0,4,0,0"
+                                    Content="Выберите проект"
+                                    Command="{Binding DataContext.OpenProjectPickerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="{Binding}"
+                                    IsEnabled="{Binding CanInvite}"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <!-- Выбор проекта и отправка приглашения -->
+        <Border Grid.Row="2" Padding="6" BorderBrush="#ccc" BorderThickness="1"
+                Visibility="{Binding IsProjectPickerVisible, Converter={StaticResource BoolToVisibility}}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock VerticalAlignment="Center" Text="Выберите проект: "/>
+                <ComboBox Width="280"
+                          ItemsSource="{Binding OpenProjects}"
+                          SelectedItem="{Binding SelectedProject}"
+                          DisplayMemberPath="Title"/>
+                <Button Margin="6,0,0,0"
+                        Content="Отправить"
+                        Command="{Binding SendInviteCommand}"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

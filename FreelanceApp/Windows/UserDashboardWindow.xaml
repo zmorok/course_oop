@@ -1,0 +1,62 @@
+﻿<Window
+    x:Class="FreelanceApp.Windows.UserDashboardWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:FreelanceApp.Windows.UserControls"
+    Width="1000"
+    Height="650"
+    WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!--  Верхняя панель с приветствием и выходом  -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                Grid.Column="0"
+                FontSize="18"
+                FontWeight="Bold"
+                Text="Добро пожаловать!" />
+            <Button
+                Grid.Column="1"
+                Width="100"
+                Margin="10"
+                HorizontalAlignment="Right"
+                Click="Logout_Click"
+                Content="Logout" />
+        </Grid>
+
+        <!--  Нижняя панель с табами  -->
+        <TabControl x:Name="TabControlMain" Grid.Row="1" SelectionChanged="TabControl_SelectionChanged">
+            <TabItem Header="Профиль">
+                <local:ProfileControl x:Name="ProfileControl" />
+            </TabItem>
+            <TabItem Header="Портфолио">
+                <local:PortfolioControl x:Name="PortfolioControl" />
+            </TabItem>
+            <TabItem Header="Мои заказы">
+                <local:OrdersControl x:Name="OrdersControl" />
+            </TabItem>
+            <TabItem Header="Проекты">
+                <local:ProjectsControl x:Name="ProjectsControl" />
+            </TabItem>
+            <TabItem Header="Отзывы">
+                <local:ReviewsControl x:Name="ReviewsControl" />
+            </TabItem>
+            <TabItem Header="Жалобы">
+                <local:ComplaintsControl x:Name="ComplaintsControl" />
+            </TabItem>
+            <TabItem Header="Поиск исполнителя">
+                <local:FreelancerSearchControl x:Name="FreelancerSearchControl" />
+            </TabItem>
+        </TabControl>
+
+    </Grid>
+</Window>

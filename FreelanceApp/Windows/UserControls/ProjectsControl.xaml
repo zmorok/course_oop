@@ -1,0 +1,127 @@
+﻿<UserControl
+    x:Class="FreelanceApp.Windows.UserControls.ProjectsControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="clr-namespace:FreelanceApp.Windows.ViewModels"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance Type=vm:ProjectsViewModel}">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </UserControl.Resources>
+
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Левая панель -->
+        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+            <Button Margin="0,0,0,5" Command="{Binding AddCommand}" Content="Добавить"/>
+            <Button Margin="0,0,0,5" Command="{Binding EditCommand}" Content="Обновить"/>
+            <Button Margin="0,0,0,5" Command="{Binding DeleteCommand}" Content="Удалить"/>
+            <Button Margin="0,10,0,5" Command="{Binding ToggleMineCommand}" Content="{Binding ToggleMineButtonText}"/>
+
+            <TextBlock Margin="0,10,0,0" Text="Фильтр по статусу:"/>
+            <ComboBox Margin="0,0,0,5"
+                      SelectedValue="{Binding StatusFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      SelectedValuePath="Tag">
+                <ComboBoxItem Content="Все"        Tag="" IsSelected="True"/>
+                <ComboBoxItem Content="Черновик"   Tag="draft"/>
+                <ComboBoxItem Content="Открыт"     Tag="open"/>
+                <ComboBoxItem Content="В прогрессе" Tag="in_progress"/>
+            </ComboBox>
+
+
+            <!-- Форма -->
+            <StackPanel Margin="0,10,0,0" Visibility="{Binding IsFormOpen, Converter={StaticResource BoolToVisibilityConverter}}">
+                <TextBlock Text="Название:"/>
+                <TextBox Margin="0,0,0,5" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Text="Описание:"/>
+                <TextBox Margin="0,0,0,5"
+                         MinHeight="60"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto"
+                         Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Text="Статус:"/>
+                <ComboBox Margin="0,0,0,5"
+                          SelectedValue="{Binding SelectedStatus}"
+                          SelectedValuePath="Tag">
+                    <ComboBoxItem Content="Черновик"    Tag="draft"/>
+                    <ComboBoxItem Content="Открыт"      Tag="open"/>
+                    <ComboBoxItem Content="В прогрессе" Tag="in_progress"/>
+                </ComboBox>
+
+                <TextBlock Text="Медиа (JSON):"/>
+                <TextBox Margin="0,0,0,5"
+                         MinHeight="40"
+                         AcceptsReturn="True"
+                         VerticalScrollBarVisibility="Auto"
+                         Text="{Binding MediaText, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                    <Button Width="100" Margin="0,5,5,0" Command="{Binding SaveCommand}" Content="Сохранить"/>
+                    <Button Width="100" Margin="0,5,0,0" Command="{Binding CancelCommand}" Content="Отмена"/>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Правая панель -->
+        <ScrollViewer Grid.Column="1">
+            <ItemsControl ItemsSource="{Binding Projects}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Width="250" Margin="5" Padding="10" BorderBrush="Gray" BorderThickness="1">
+                            <Border.InputBindings>
+                                <MouseBinding MouseAction="LeftClick"
+                                    Command="{Binding DataContext.SelectForEditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="{Binding}" />
+                            </Border.InputBindings>
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Background" Value="#EEE"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsMine}" Value="True">
+                                            <Setter Property="Background" Value="#DFFFD6"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <StackPanel>
+                                <TextBlock FontWeight="Bold" Text="{Binding Project.Title}"/>
+                                <TextBlock MaxHeight="100"
+                                           Text="{Binding Project.Description}"
+                                           TextWrapping="Wrap"
+                                           TextTrimming="CharacterEllipsis"/>
+                                <TextBlock FontSize="10" Foreground="Gray" Text="{Binding Status}"/>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                    <Button Margin="0,0,5,0"
+                                            Content="Откликнуться"
+                                            Visibility="{Binding ShowRespondButton, Converter={StaticResource BoolToVisibilityConverter}}"
+                                            Command="{Binding DataContext.RespondCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"/>
+                                    <Button Content="Редактировать"
+                                            Visibility="{Binding IsMine, Converter={StaticResource BoolToVisibilityConverter}}"
+                                            Command="{Binding DataContext.SelectForEditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

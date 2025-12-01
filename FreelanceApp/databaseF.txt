@@ -1,0 +1,8 @@
+1. dotnet tool install -g dotnet-ef
+
+2. cd ./solution/Project
+
+3. dotnet add package Microsoft.EntityFrameworkCore.Design
+
+4. 
+dotnet ef dbcontext scaffold "Host=localhost;Database=freelance_app;Username=postgres;Password=125634" Npgsql.EntityFrameworkCore.PostgreSQL  --output-dir ModelsF --context-dir DataF  --context FreelanceAppContextF  --schema core --use-database-names  --force

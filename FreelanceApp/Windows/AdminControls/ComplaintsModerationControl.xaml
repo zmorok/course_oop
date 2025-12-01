@@ -1,0 +1,147 @@
+﻿<UserControl x:Class="FreelanceApp.Windows.AdminControls.ComplaintsModerationControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:FreelanceApp.Windows.ViewModels"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="900"
+             d:DataContext="{d:DesignInstance Type=vm:ComplaintsModerationViewModel}">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="Bool2Vis"/>
+        <Style TargetType="ListViewItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="8"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Фильтры -->
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Orientation="Horizontal" VerticalAlignment="Center">
+            <TextBlock Text="Статус:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+            <ComboBox Width="170" Margin="0,0,8,0"
+                      ItemsSource="{Binding StatusFilters}"
+                      SelectedItem="{Binding SelectedStatusFilter}"
+                      DisplayMemberPath="Title"/>
+
+            <TextBox Width="240" Margin="8,0,0,0"
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding RefreshCommand}"/>
+                </TextBox.InputBindings>
+            </TextBox>
+            <Button Content="Найти" Margin="6,0,0,0" Command="{Binding RefreshCommand}"/>
+            <Button Content="Обновить" Margin="6,0,0,0" Command="{Binding RefreshCommand}"/>
+        </StackPanel>
+
+        <!-- Список жалоб -->
+        <GroupBox Grid.Row="1" Grid.Column="0" Header="Жалобы">
+            <ListView ItemsSource="{Binding Complaints}"
+                      SelectedItem="{Binding SelectedComplaint}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="4" Padding="8" BorderBrush="#DDD" BorderThickness="1">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock FontWeight="SemiBold">
+                                        <Run Text="От: "/><Run Text="{Binding FiledByName}"/>
+                                        <Run Text=" → На: "/><Run Text="{Binding UserComName}"/>
+                                    </TextBlock>
+                                    <TextBlock FontSize="11" Foreground="Gray">
+                                        <Run Text="Статус: "/><Run Text="{Binding Status}"/>
+                                        <Run Text="  •  №"/><Run Text="{Binding Id_Complaint}"/>
+                                        <Run Text="  •  Заказ: "/>
+                                        <Run Text="{Binding Id_Order, TargetNullValue=—}"/>
+                                        <Run Text=" / Архив: "/>
+                                        <Run Text="{Binding Id_Order_Arc, TargetNullValue=—}"/>
+                                    </TextBlock>
+                                    <TextBlock Margin="0,4,0,0"
+                                               Text="{Binding DescriptionPreview}"
+                                               TextWrapping="Wrap"/>
+                                </StackPanel>
+
+                                <!-- Убираем CreatedAt — его нет в вашей вьюхе -->
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </GroupBox>
+
+        <!-- Разделитель -->
+        <Grid Grid.Row="1" Grid.Column="1"/>
+
+        <!-- Детали + действия -->
+        <GroupBox Grid.Row="1" Grid.Column="2" Header="Детали">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="6">
+                    <TextBlock FontWeight="Bold"
+                               Text="{Binding SelectedComplaint.Id_Complaint, StringFormat=Жалоба №{0}}"/>
+                    <TextBlock Margin="0,4,0,0">
+                        <Run Text="От: "/><Run Text="{Binding SelectedComplaint.FiledByName, TargetNullValue=—}"/>
+                        <Run Text="  →  На: "/><Run Text="{Binding SelectedComplaint.UserComName, TargetNullValue=—}"/>
+                    </TextBlock>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                        <TextBlock VerticalAlignment="Center" Text="Статус:" Margin="0,0,6,0"/>
+                        <ComboBox Width="180"
+                                  ItemsSource="{Binding StatusEditOptions}"
+                                  SelectedItem="{Binding StatusEdit}"
+                                  IsEnabled="{Binding SelectedComplaint, Converter={StaticResource Bool2Vis}}"/>
+                        <Button Content="Сохранить статус" Margin="6,0,0,0"
+                                Command="{Binding SaveStatusCommand}"
+                                IsEnabled="{Binding SelectedComplaint, Converter={StaticResource Bool2Vis}}"/>
+                        <Button Content="Взять в работу" Margin="6,0,0,0"
+                                Command="{Binding TakeInWorkCommand}"
+                                IsEnabled="{Binding SelectedComplaint, Converter={StaticResource Bool2Vis}}"/>
+                    </StackPanel>
+
+                    <TextBlock Margin="0,8,0,2" Text="Текст жалобы:"/>
+                    <TextBox Height="90" TextWrapping="Wrap" IsReadOnly="True"
+                             Text="{Binding SelectedComplaint.Description}"/>
+
+                    <TextBlock Margin="0,8,0,2" Text="Медиа (JSON):"/>
+                    <TextBox Height="70" TextWrapping="Wrap" IsReadOnly="True"
+                             Text="{Binding SelectedMediaPretty}"/>
+
+                    <Separator Margin="0,10"/>
+
+                    <TextBlock FontWeight="Bold" Text="Предупреждение пользователю"/>
+                    <TextBox Height="60" TextWrapping="Wrap"
+                             Text="{Binding WarningText}"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,6,0,0">
+                        <Button Content="Выдать предупреждение"
+                                Command="{Binding IssueWarningCommand}"
+                                IsEnabled="{Binding SelectedComplaint, Converter={StaticResource Bool2Vis}}"/>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </GroupBox>
+
+        <!-- Нижняя панель: быстрые действия -->
+        <StackPanel Grid.Row="2" Grid.ColumnSpan="3"
+                    Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Отклонить" Margin="6,0,0,0"
+                    Command="{Binding DismissCommand}"
+                    IsEnabled="{Binding SelectedComplaint, Converter={StaticResource Bool2Vis}}"/>
+            <Button Content="Закрыть (решено)" Margin="6,0,0,0"
+                    Command="{Binding ResolveCommand}"
+                    IsEnabled="{Binding SelectedComplaint, Converter={StaticResource Bool2Vis}}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

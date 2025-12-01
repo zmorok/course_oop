@@ -1,0 +1,95 @@
+﻿<UserControl
+    x:Class="FreelanceApp.Windows.UserControls.PortfolioControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Width="Auto"
+    Height="Auto">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </UserControl.Resources>
+
+
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!--  Панель действий и форма  -->
+        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+            <Button
+                Width="200"
+                Margin="5"
+                Command="{Binding AddCommand}"
+                Content="Добавить" />
+            <Button
+                Width="200"
+                Margin="5"
+                Command="{Binding DeleteSelectedCommand}"
+                Content="Удалить" />
+
+            <StackPanel
+                x:Name="AddFormPanel"
+                Margin="0,10,0,0"
+                Visibility="{Binding IsFormOpen, Converter={StaticResource BoolToVisibilityConverter}}">
+                <TextBlock Text="Описание:" />
+                <TextBox Margin="0,0,0,5"  Text="{Binding FormDescription, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Text="Медиа (JSON):" />
+                <TextBox Margin="0,0,0,5" Text="{Binding FormMediaJson, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Text="Навыки (через запятую):" />
+                <TextBox Margin="0,0,0,5" Text="{Binding FormSkills, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Text="Опыт:" />
+                <TextBox Margin="0,0,0,10" Text="{Binding FormExperience, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                    <Button
+                        Width="100"
+                        Margin="0,0,10,0"
+                        Command="{Binding SaveCommand}"
+                        Content="Сохранить" />
+                    <Button
+                        Width="100"
+                        Command="{Binding CancelCommand}"
+                        Content="Отмена" />
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+
+        <!--  Список  -->
+        <ScrollViewer Grid.Column="1">
+            <ItemsControl ItemsSource="{Binding Portfolios}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Width="220" Margin="5" Padding="10" Background="#EEE" BorderBrush="Gray" BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock FontWeight="Bold" Text="{Binding Description}"/>
+                                <TextBlock Text="{Binding Experience}" TextWrapping="Wrap"/>
+                                <TextBlock FontSize="10" Foreground="Gray" Text="{Binding Media}"/>
+                                <TextBlock FontSize="10" Text="{Binding Skills}"/>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                    <Button Margin="0,0,10,0"
+                                    Content="Редактировать"
+                                    Command="{Binding DataContext.SelectForEditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="{Binding}"/>
+                                    <Button Content="Удалить"
+                                    Command="{Binding DataContext.DeleteItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="{Binding}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
