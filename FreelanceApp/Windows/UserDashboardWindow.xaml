@@ -68,31 +68,32 @@
         <Border Grid.Row="1" Style="{DynamicResource MainContentBorderStyle}">
             <TabControl
                 x:Name="TabControlMain"
-                
                 Style="{DynamicResource DashboardTabControlStyle}"
                 TabStripPlacement="Top"
                 SelectionChanged="TabControl_SelectionChanged">
                 <TabItem Header="Профиль" Style="{DynamicResource DashboardTabItemStyle}">
-                    <local:ProfileControl x:Name="ProfileControl" />
-                </TabItem>
-                <TabItem Header="Портфолио" Style="{DynamicResource DashboardTabItemStyle}">
-                    <local:PortfolioControl x:Name="PortfolioControl" />
-                </TabItem>
-                <TabItem Header="Мои заказы" Style="{DynamicResource DashboardTabItemStyle}">
-                    <local:OrdersControl x:Name="OrdersControl" />
-                </TabItem>
-                <TabItem Header="Проекты" Style="{DynamicResource DashboardTabItemStyle}">
-                    <local:ProjectsControl x:Name="ProjectsControl" />
-                </TabItem>
-                <TabItem Header="Отзывы" Style="{DynamicResource DashboardTabItemStyle}">
-                    <local:ReviewsControl x:Name="ReviewsControl" />
-                </TabItem>
-                <TabItem Header="Жалобы" Style="{DynamicResource DashboardTabItemStyle}">
-                    <local:ComplaintsControl x:Name="ComplaintsControl" />
-                </TabItem>
-                <TabItem Header="Поиск исполнителя" Style="{DynamicResource DashboardTabItemStyle}">
-                    <local:FreelancerSearchControl x:Name="FreelancerSearchControl" />
-                </TabItem>
+                        <local:ProfileControl x:Name="ProfileControl" />
+                    </TabItem>
+                    <TabItem Header="Портфолио" Style="{DynamicResource DashboardTabItemStyle}">
+                        <local:PortfolioControl x:Name="PortfolioControl" />
+                    </TabItem>
+                    <TabItem Header="Мои заказы" Style="{DynamicResource DashboardTabItemStyle}">
+                        <local:OrdersControl x:Name="OrdersControl" />
+                    </TabItem>
+                    <TabItem Header="Проекты" Style="{DynamicResource DashboardTabItemStyle}">
+                        <local:ProjectsControl x:Name="ProjectsControl" />
+                    </TabItem>
+                    <TabItem Header="Отзывы" Style="{DynamicResource DashboardTabItemStyle}">
+                        <local:ReviewsControl x:Name="ReviewsControl" />
+                    </TabItem>
+                    <TabItem Header="Жалобы" Style="{DynamicResource DashboardTabItemStyle}">
+                        <local:ComplaintsControl x:Name="ComplaintsControl" />
+                    </TabItem>
+                    <TabItem Header="Поиск исполнителя" Style="{DynamicResource DashboardTabItemStyle}">
+                        <local:FreelancerSearchControl x:Name="FreelancerSearchControl" />
+                    </TabItem>
+
+                
             </TabControl>
         </Border>
 
