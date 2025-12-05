@@ -1,89 +1,173 @@
-﻿<UserControl
+<UserControl
     x:Class="FreelanceApp.Windows.UserControls.PortfolioControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Width="Auto"
-    Height="Auto">
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:FreelanceApp.Windows.ViewModels"
+    d:DesignHeight="600"
+    d:DesignWidth="900"
+    d:DataContext="{d:DesignInstance Type=vm:PortfolioViewModel}"
+    mc:Ignorable="d">
 
     <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </UserControl.Resources>
-
 
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250" />
+            <ColumnDefinition Width="320" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <!--  Панель действий и форма  -->
-        <StackPanel Grid.Column="0" Margin="0,0,10,0">
-            <Button
-                Width="200"
-                Margin="5"
-                Command="{Binding AddCommand}"
-                Content="Добавить" />
-            <Button
-                Width="200"
-                Margin="5"
-                Command="{Binding DeleteSelectedCommand}"
-                Content="Удалить" />
+        <!-- Левая панель: действия и форма -->
+        <StackPanel Grid.Column="0" Margin="0,0,14,0">
+            <Border Style="{DynamicResource PortfolioSectionBorderStyle}">
+                <StackPanel>
+                    <TextBlock Style="{DynamicResource PortfolioHeaderTextStyle}" Text="Управление портфолио" />
 
-            <StackPanel
-                x:Name="AddFormPanel"
-                Margin="0,10,0,0"
-                Visibility="{Binding IsFormOpen, Converter={StaticResource BoolToVisibilityConverter}}">
-                <TextBlock Text="Описание:" />
-                <TextBox Margin="0,0,0,5"  Text="{Binding FormDescription, UpdateSourceTrigger=PropertyChanged}"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                        <Button
+                            Width="120"
+                            Margin="0,0,10,0"
+                            Command="{Binding AddCommand}"
+                            Content="Добавить" />
+                        <Button
+                            Width="120"
+                            Command="{Binding DeleteSelectedCommand}"
+                            Content="Удалить" />
+                    </StackPanel>
 
-                <TextBlock Text="Медиа (JSON):" />
-                <TextBox Margin="0,0,0,5" Text="{Binding FormMediaJson, UpdateSourceTrigger=PropertyChanged}"/>
+                    <StackPanel
+                        x:Name="AddFormPanel"
+                        Visibility="{Binding IsFormOpen, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock Style="{DynamicResource PortfolioLabelStyle}" Text="Описание" />
+                        <TextBox Text="{Binding FormDescription, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBlock Text="Навыки (через запятую):" />
-                <TextBox Margin="0,0,0,5" Text="{Binding FormSkills, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Style="{DynamicResource PortfolioLabelStyle}" Text="Опыт" />
+                        <TextBox Text="{Binding FormExperience, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBlock Text="Опыт:" />
-                <TextBox Margin="0,0,0,10" Text="{Binding FormExperience, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Style="{DynamicResource PortfolioLabelStyle}" Text="Навыки (через запятую)" />
+                        <TextBox Text="{Binding FormSkills, UpdateSourceTrigger=PropertyChanged}" />
 
-                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                    <Button
-                        Width="100"
-                        Margin="0,0,10,0"
-                        Command="{Binding SaveCommand}"
-                        Content="Сохранить" />
-                    <Button
-                        Width="100"
-                        Command="{Binding CancelCommand}"
-                        Content="Отмена" />
+                        <TextBlock Style="{DynamicResource PortfolioLabelStyle}" Text="Изображение" />
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <Button
+                                Width="140"
+                                Command="{Binding SelectImageCommand}"
+                                Content="Выбрать файл..." />
+                            <TextBlock
+                                Margin="8,6,0,0"
+                                Foreground="{DynamicResource MutedTextBrush}"
+                                Text="{Binding FormImageName}" />
+                        </StackPanel>
+
+                        <Image>
+                            <Image.Style>
+                                <Style TargetType="Image" BasedOn="{StaticResource PortfolioMediaImageStyle}">
+                                    <Setter Property="Source" Value="{Binding FormImagePreview}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding FormImagePreview}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <Button
+                                Width="140"
+                                Command="{Binding ClearImageCommand}"
+                                Content="Убрать изображение" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,10,0,0">
+                            <Button
+                                Width="120"
+                                Margin="0,0,10,0"
+                                Command="{Binding SaveCommand}"
+                                Content="Сохранить" />
+                            <Button
+                                Width="120"
+                                Command="{Binding CancelCommand}"
+                                Content="Отмена" />
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
+            </Border>
         </StackPanel>
 
-        <!--  Список  -->
-        <ScrollViewer Grid.Column="1">
+        <!-- Правая колонка: карточки портфолио -->
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Portfolios}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal"/>
+                        <WrapPanel Orientation="Horizontal" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Width="220" Margin="5" Padding="10" Background="#EEE" BorderBrush="Gray" BorderThickness="1">
+                        <Border Style="{DynamicResource PortfolioCardStyle}">
                             <StackPanel>
-                                <TextBlock FontWeight="Bold" Text="{Binding Description}"/>
-                                <TextBlock Text="{Binding Experience}" TextWrapping="Wrap"/>
-                                <TextBlock FontSize="10" Foreground="Gray" Text="{Binding Media}"/>
-                                <TextBlock FontSize="10" Text="{Binding Skills}"/>
+                                <TextBlock
+                                    FontWeight="Bold"
+                                    FontSize="15"
+                                    Foreground="{DynamicResource TextBrush}"
+                                    Text="{Binding Description}" />
+                                <TextBlock
+                                    Margin="0,4,0,8"
+                                    Text="{Binding Experience}"
+                                    TextWrapping="Wrap"
+                                    Foreground="{DynamicResource MutedTextBrush}" />
 
-                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                                    <Button Margin="0,0,10,0"
-                                    Content="Редактировать"
-                                    Command="{Binding DataContext.SelectForEditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                    CommandParameter="{Binding}"/>
-                                    <Button Content="Удалить"
-                                    Command="{Binding DataContext.DeleteItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                    CommandParameter="{Binding}"/>
+                                <Image
+                                    Style="{DynamicResource PortfolioMediaImageStyle}"
+                                    Visibility="{Binding HasImage, Converter={StaticResource BoolToVisibilityConverter}}"
+                                    Source="{Binding ImageSource}" />
+                                <TextBlock
+                                    Text="Медиа отсутствует"
+                                    Foreground="{DynamicResource MutedTextBrush}"
+                                    Margin="0,0,0,8">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HasImage}" Value="False">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+
+                                <WrapPanel Style="{DynamicResource PortfolioChipsPanelStyle}">
+                                    <ItemsControl ItemsSource="{Binding SkillsList}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Style="{DynamicResource PortfolioTagStyle}">
+                                                    <TextBlock Text="{Binding}" />
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                    </ItemsControl>
+                                </WrapPanel>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                    <Button
+                                        Margin="0,0,10,0"
+                                        Content="Редактировать"
+                                        Command="{Binding DataContext.SelectForEditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" />
+                                    <Button
+                                        Content="Удалить"
+                                        Command="{Binding DataContext.DeleteItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" />
                                 </StackPanel>
                             </StackPanel>
                         </Border>

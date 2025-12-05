@@ -9,5 +9,6 @@
         <ResourceDictionary Source="/Styles/DialogWindowsStyles.xaml" />
         <ResourceDictionary Source="/Styles/AuthenticationStyles.xaml" />
         <ResourceDictionary Source="/Styles/ProfileStyles.xaml" />
+        <ResourceDictionary Source="/Styles/PortfolioStyles.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
