@@ -16,14 +16,15 @@ namespace FreelanceApp.Windows
 
         public UserDashboardWindow(User user)
         {
-            InitializeComponent();
             _currentUser = user;
             Title = "Панель пользователя: " + user.FirstName + " " + user.LastName;
             Loaded += (_, __) =>
             {
                 if (TabControlMain.SelectedItem is TabItem t) InitTab(t);
+                UpdateThemeButtons();
             };
             Closing += async (_, _) => await UpdateLastOnlineAsync();
+            InitializeComponent();
         }
 
         private readonly HashSet<string> _initializedTabs = [];
@@ -75,6 +76,24 @@ namespace FreelanceApp.Windows
             App.ResetConnection();
             new StartupWindow().Show();
             Close();
+        }
+
+        private void LightThemeButton_Click(object sender, RoutedEventArgs e) => ApplyTheme(AppTheme.Light);
+
+        private void DarkThemeButton_Click(object sender, RoutedEventArgs e) => ApplyTheme(AppTheme.Dark);
+
+        private void ApplyTheme(AppTheme theme)
+        {
+            ThemeManager.Apply(theme);
+            UpdateThemeButtons();
+        }
+
+        private void UpdateThemeButtons()
+        {
+            if (LightThemeButton == null || DarkThemeButton == null) return;
+
+            LightThemeButton.IsEnabled = ThemeManager.CurrentTheme != AppTheme.Light;
+            DarkThemeButton.IsEnabled = ThemeManager.CurrentTheme != AppTheme.Dark;
         }
 
         private void TabItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) { }

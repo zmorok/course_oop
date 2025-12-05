@@ -1,62 +1,100 @@
-﻿<Window
+<Window
     x:Class="FreelanceApp.Windows.UserDashboardWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:FreelanceApp.Windows.UserControls"
+    Title="Панель пользователя"
     Width="1000"
     Height="650"
     WindowStartupLocation="CenterScreen">
 
-    <Grid Margin="10">
+    <Grid Background="{DynamicResource BackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!--  Верхняя панель с приветствием и выходом  -->
-        <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <TextBlock
-                Grid.Column="0"
-                FontSize="18"
-                FontWeight="Bold"
-                Text="Добро пожаловать!" />
-            <Button
-                Grid.Column="1"
-                Width="100"
-                Margin="10"
-                HorizontalAlignment="Right"
-                Click="Logout_Click"
-                Content="Logout" />
-        </Grid>
+        <!--  Верхняя панель  -->
+        <Border Grid.Row="0" Style="{DynamicResource TopPanelStyle}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-        <!--  Нижняя панель с табами  -->
-        <TabControl x:Name="TabControlMain" Grid.Row="1" SelectionChanged="TabControl_SelectionChanged">
-            <TabItem Header="Профиль">
-                <local:ProfileControl x:Name="ProfileControl" />
-            </TabItem>
-            <TabItem Header="Портфолио">
-                <local:PortfolioControl x:Name="PortfolioControl" />
-            </TabItem>
-            <TabItem Header="Мои заказы">
-                <local:OrdersControl x:Name="OrdersControl" />
-            </TabItem>
-            <TabItem Header="Проекты">
-                <local:ProjectsControl x:Name="ProjectsControl" />
-            </TabItem>
-            <TabItem Header="Отзывы">
-                <local:ReviewsControl x:Name="ReviewsControl" />
-            </TabItem>
-            <TabItem Header="Жалобы">
-                <local:ComplaintsControl x:Name="ComplaintsControl" />
-            </TabItem>
-            <TabItem Header="Поиск исполнителя">
-                <local:FreelancerSearchControl x:Name="FreelancerSearchControl" />
-            </TabItem>
-        </TabControl>
+                <StackPanel Orientation="Vertical">
+                    <TextBlock
+                        HorizontalAlignment="Left"
+                        Style="{DynamicResource WelcomeTextStyle}"
+                        Text="Добро пожаловать!" />
+                    <TextBlock
+                        Margin="2,2,0,0"
+                        Foreground="{DynamicResource SecondaryBrush}"
+                        FontSize="13"
+                        Text="Панель пользователя фрилансера" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock
+                        Margin="0,0,6,0"
+                        VerticalAlignment="Center"
+                        FontSize="18"
+                        Foreground="{DynamicResource SecondaryBrush}"
+                        Text="{DynamicResource CurrentTheme}" />
+                    <Button
+                        x:Name="LightThemeButton"
+                        Style="{DynamicResource ThemeToggleButtonStyle}"
+                        Click="LightThemeButton_Click"
+                        Content="☀"
+                        ToolTip="Светлая тема" />
+                    <Button
+                        x:Name="DarkThemeButton"
+                        Style="{DynamicResource ThemeToggleButtonStyle}"
+                        Click="DarkThemeButton_Click"
+                        Content="🌙"
+                        Margin="0"
+                        ToolTip="Тёмная тема" />
+                    <Button
+                        Width="130"
+                        Margin="10,0,0,0"
+                        Click="Logout_Click"
+                        Content="Выйти"
+                        Style="{DynamicResource LogoutButtonStyle}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!--  Содержимое вкладок  -->
+        <Border Grid.Row="1" Style="{DynamicResource MainContentBorderStyle}">
+            <TabControl
+                x:Name="TabControlMain"
+                
+                Style="{DynamicResource DashboardTabControlStyle}"
+                TabStripPlacement="Top"
+                SelectionChanged="TabControl_SelectionChanged">
+                <TabItem Header="Профиль" Style="{DynamicResource DashboardTabItemStyle}">
+                    <local:ProfileControl x:Name="ProfileControl" />
+                </TabItem>
+                <TabItem Header="Портфолио" Style="{DynamicResource DashboardTabItemStyle}">
+                    <local:PortfolioControl x:Name="PortfolioControl" />
+                </TabItem>
+                <TabItem Header="Мои заказы" Style="{DynamicResource DashboardTabItemStyle}">
+                    <local:OrdersControl x:Name="OrdersControl" />
+                </TabItem>
+                <TabItem Header="Проекты" Style="{DynamicResource DashboardTabItemStyle}">
+                    <local:ProjectsControl x:Name="ProjectsControl" />
+                </TabItem>
+                <TabItem Header="Отзывы" Style="{DynamicResource DashboardTabItemStyle}">
+                    <local:ReviewsControl x:Name="ReviewsControl" />
+                </TabItem>
+                <TabItem Header="Жалобы" Style="{DynamicResource DashboardTabItemStyle}">
+                    <local:ComplaintsControl x:Name="ComplaintsControl" />
+                </TabItem>
+                <TabItem Header="Поиск исполнителя" Style="{DynamicResource DashboardTabItemStyle}">
+                    <local:FreelancerSearchControl x:Name="FreelancerSearchControl" />
+                </TabItem>
+            </TabControl>
+        </Border>
 
     </Grid>
 </Window>

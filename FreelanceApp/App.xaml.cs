@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using Microsoft.Extensions.Configuration;
+using FreelanceApp.Services;
 
 namespace FreelanceApp
 {
@@ -24,6 +25,9 @@ namespace FreelanceApp
 
             // по умолчанию — подключение svc_app
             ConnectionString = DefaultConnection;
+
+            // сразу подхватываем активную тему (светлая/тёмная) при старте
+            ThemeManager.Apply(ThemeManager.CurrentTheme);
         }
 
         public static string GetConnectionForRole(string pgRole)

@@ -19,7 +19,11 @@ namespace FreelanceApp.Windows
             _currentUser = currentUser;
 
             // вызывать асинхронную навигацию после загрузки окна
-            Loaded += async (_, __) => await ShowUsers();
+            Loaded += async (_, __) =>
+            {
+                UpdateThemeButtons();
+                await ShowUsers();
+            };
 
             Closing += async (_, __) => await UpdateLastOnlineAsync();
         }
@@ -72,6 +76,24 @@ namespace FreelanceApp.Windows
             App.ResetConnection();
             new StartupWindow().Show();
             Close();
+        }
+
+        private void LightThemeButton_Click(object sender, RoutedEventArgs e) => ApplyTheme(AppTheme.Light);
+
+        private void DarkThemeButton_Click(object sender, RoutedEventArgs e) => ApplyTheme(AppTheme.Dark);
+
+        private void ApplyTheme(AppTheme theme)
+        {
+            ThemeManager.Apply(theme);
+            UpdateThemeButtons();
+        }
+
+        private void UpdateThemeButtons()
+        {
+            if (AdminLightThemeButton == null || AdminDarkThemeButton == null) return;
+
+            AdminLightThemeButton.IsEnabled = ThemeManager.CurrentTheme != AppTheme.Light;
+            AdminDarkThemeButton.IsEnabled = ThemeManager.CurrentTheme != AppTheme.Dark;
         }
     }
 }

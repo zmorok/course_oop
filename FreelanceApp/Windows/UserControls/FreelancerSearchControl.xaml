@@ -28,12 +28,15 @@
         <!-- Поиск -->
         <StackPanel Orientation="Horizontal" Grid.Row="0">
             <TextBox Width="250" Margin="0,0,6,0"
+                     Style="{DynamicResource PanelTextBoxStyle}"
                      Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}">
                 <TextBox.InputBindings>
                     <KeyBinding Key="Enter" Command="{Binding SearchCommand}"/>
                 </TextBox.InputBindings>
             </TextBox>
-            <Button Content="Найти" Command="{Binding SearchCommand}"/>
+            <Button Content="Найти"
+                    Style="{DynamicResource PanelButtonStyle}"
+                    Command="{Binding SearchCommand}"/>
         </StackPanel>
 
         <!-- Найденные фрилансеры -->
@@ -45,12 +48,16 @@
                 <!-- Двойной клик открывает выбор проекта для текущего выбранного -->
                 <MouseBinding Gesture="LeftDoubleClick"
                               Command="{Binding OpenProjectPickerCommand}"
-                              CommandParameter="{Binding SelectedFreelancer, RelativeSource={RelativeSource AncestorType=ListView}}"/>
+                              CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=ListView}}"/>
             </ListView.InputBindings>
 
             <ListView.ItemTemplate>
                 <DataTemplate DataType="{x:Type data:FreelancerRow}">
-                    <Border Margin="3" Padding="6" BorderBrush="LightGray" BorderThickness="1">
+                    <Border Margin="3" Padding="10"
+                            Background="{DynamicResource CardBrush}"
+                            BorderBrush="{DynamicResource CardBorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="12">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -58,8 +65,9 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0" FontWeight="Bold" Text="{Binding FullName}"/>
-                            <TextBlock Grid.Row="1" FontSize="11" Foreground="Gray">
+                            <TextBlock Grid.Row="0" FontWeight="Bold" Foreground="{DynamicResource TextBrush}"
+                                       Text="{Binding FullName}"/>
+                            <TextBlock Grid.Row="1" FontSize="11" Foreground="{DynamicResource MutedTextBrush}">
                                 <Run Text="Скиллы: "/>
                                 <Run Text="{Binding SkillsPreview}"/>
                             </TextBlock>
@@ -68,7 +76,8 @@
                                     Content="Выберите проект"
                                     Command="{Binding DataContext.OpenProjectPickerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                     CommandParameter="{Binding}"
-                                    IsEnabled="{Binding CanInvite}"/>
+                                    IsEnabled="{Binding CanInvite}"
+                                    Style="{DynamicResource PanelButtonStyle}"/>
                         </Grid>
                     </Border>
                 </DataTemplate>
@@ -76,16 +85,22 @@
         </ListView>
 
         <!-- Выбор проекта и отправка приглашения -->
-        <Border Grid.Row="2" Padding="6" BorderBrush="#ccc" BorderThickness="1"
+        <Border Grid.Row="2" Padding="10" Margin="0,8,0,0"
+                Background="{DynamicResource CardBrush}"
+                BorderBrush="{DynamicResource CardBorderBrush}"
+                BorderThickness="1" CornerRadius="10"
                 Visibility="{Binding IsProjectPickerVisible, Converter={StaticResource BoolToVisibility}}">
             <StackPanel Orientation="Horizontal">
-                <TextBlock VerticalAlignment="Center" Text="Выберите проект: "/>
+                <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextBrush}"
+                           Text="Выберите проект: "/>
                 <ComboBox Width="280"
                           ItemsSource="{Binding OpenProjects}"
                           SelectedItem="{Binding SelectedProject}"
-                          DisplayMemberPath="Title"/>
+                          DisplayMemberPath="Title"
+                          Style="{DynamicResource PanelComboBoxStyle}"/>
                 <Button Margin="6,0,0,0"
                         Content="Отправить"
+                        Style="{DynamicResource PanelButtonStyle}"
                         Command="{Binding SendInviteCommand}"/>
             </StackPanel>
         </Border>

@@ -25,6 +25,8 @@ namespace FreelanceApp.Authentication
                 string password = PasswordBox.Password;
                 string hash = HashPassword(password);
 
+                MessageBox.Show($"email: {email}\npassword: {password}\nhash: {hash}");
+
                 using var ctx = new FreelanceAppContext(App.GetConnectionForRole("svc_app"));
 
                 User? user = await ctx
@@ -41,6 +43,8 @@ namespace FreelanceApp.Authentication
                     );
                     return;
                 }
+
+                MessageBox.Show($"email: {user.Email}\npassword: {user.Password}\n");
 
                 Window nextWindow = user.Role.Name switch
                 {
