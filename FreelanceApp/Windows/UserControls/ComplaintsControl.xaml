@@ -13,34 +13,53 @@
     d:DesignHeight="600">
 
     <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="Bool2Vis"/>
-        <conv:NullToFalseConverter x:Key="NullToFalse"/>
-        <Style TargetType="ListViewItem">
-            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-        </Style>
+        <BooleanToVisibilityConverter x:Key="Bool2Vis" />
+        <conv:NullToFalseConverter x:Key="NullToFalse" />
+        
     </UserControl.Resources>
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <!-- ===== Переключение режимов ===== -->
         <DockPanel Grid.Row="0" Margin="0,0,0,8">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
-                <TextBlock Text="Режим: " VerticalAlignment="Center" Margin="0,0,8,0"/>
-                <RadioButton Content="Подача жалобы" Margin="0,0,10,0"
-                             IsChecked="{Binding IsCreateMode}"/>
-                <RadioButton Content="Мои жалобы"
-                             IsChecked="{Binding IsMyComplaintsMode}"/>
+                <TextBlock
+                    Text="Режим:"
+                    VerticalAlignment="Center"
+                    Margin="0,0,8,0"
+                    Foreground="{DynamicResource MutedTextBrush}" />
+                <RadioButton
+                    Content="Подача жалобы"
+                    Margin="0,0,10,0"
+                    Foreground="{DynamicResource TextBrush}"
+                    IsChecked="{Binding IsCreateMode}" />
+                <RadioButton
+                    Content="Мои жалобы"
+                    Foreground="{DynamicResource TextBrush}"
+                    IsChecked="{Binding IsMyComplaintsMode}" />
             </StackPanel>
         </DockPanel>
 
         <!-- ===== Режим: Подача жалобы ===== -->
-        <Grid Grid.Row="1"
-              Visibility="{Binding IsCreateMode, Converter={StaticResource Bool2Vis}}">
+        <Grid Grid.Row="1">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <!-- показываем, когда включён режим создания и редактор закрыт -->
+                        <DataTrigger Binding="{Binding IsCreateMode}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsEditOpen}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="12"/>
@@ -49,15 +68,20 @@
 
             <!-- Контрагенты -->
             <GroupBox Header="Контрагенты">
-                <ListView ItemsSource="{Binding Counterparts}"
-                          SelectedItem="{Binding SelectedCounterpart}">
+                <ListView
+                    ItemsSource="{Binding Counterparts}"
+                    SelectedItem="{Binding SelectedCounterpart}"
+                    Background="Transparent"
+                    HorizontalContentAlignment="Stretch">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Border Margin="4" Padding="6" BorderBrush="#DDD" BorderThickness="1">
-                                <TextBlock VerticalAlignment="Center"
-                                           FontWeight="SemiBold"
-                                           Text="{Binding FullName}"
-                                           TextWrapping="Wrap"/>
+                            <Border Style="{DynamicResource ComplaintListItemCardStyle}">
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontWeight="SemiBold"
+                                    Foreground="{DynamicResource TextBrush}"
+                                    Text="{Binding FullName}"
+                                    TextWrapping="Wrap" />
                             </Border>
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -70,25 +94,18 @@
             <GroupBox Grid.Column="2" Header="Заказы с выбранным контрагентом">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-
-                    <!-- ВАЖНО: без внешнего ScrollViewer – иначе ломается DoubleClick -->
-                    <ListView Grid.Row="0"
-                              ItemsSource="{Binding CounterpartOrders}"
-                              SelectedItem="{Binding SelectedOrder}">
+                    <ListView
+                        Grid.Row="0"
+                        ItemsSource="{Binding CounterpartOrders}"
+                        SelectedItem="{Binding SelectedOrder}"
+                        Background="Transparent"
+                        HorizontalContentAlignment="Stretch">
                         <ListView.ItemTemplate>
                             <DataTemplate DataType="{x:Type data:LocalOrderDisplay}">
-                                <Border Margin="4" Padding="8" BorderBrush="#DDD" BorderThickness="1">
-                                    <!-- Двойной клик по карточке заказа -->
-                                    <Border.InputBindings>
-                                        <MouseBinding Gesture="LeftDoubleClick"
-                                                      Command="{Binding DataContext.OpenCreatePanelCommand,
-                                                                        RelativeSource={RelativeSource AncestorType=ListView}}"
-                                                      CommandParameter="{Binding}"/>
-                                    </Border.InputBindings>
-
+                                <Border Style="{DynamicResource ComplaintListItemCardStyle}">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
@@ -100,8 +117,12 @@
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
 
-                                        <TextBlock Grid.Row="0" Grid.Column="0"
-                                                   FontWeight="Bold" TextTrimming="CharacterEllipsis">
+                                        <TextBlock
+                                            Grid.Row="0"
+                                            Grid.Column="0"
+                                            FontWeight="Bold"
+                                            Foreground="{DynamicResource TextBrush}"
+                                            TextTrimming="CharacterEllipsis">
                                             <Run Text="Проект: "/>
                                             <Run Text="{Binding ProjectTitle, FallbackValue='[нет данных]'}"/>
                                             <Run Text=" (Заказ №"/>
@@ -109,27 +130,34 @@
                                             <Run Text=")"/>
                                         </TextBlock>
 
-                                        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
-                                            <TextBlock Margin="0,0,10,0" Text="{Binding OrderStatus}"/>
-                                            <TextBlock>
+                                          <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                                              <TextBlock
+                                                  Margin="0,0,10,0"
+                                                  Foreground="{DynamicResource MutedTextBrush}"
+                                                  Text="{Binding OrderStatus}" />
+                                              <TextBlock Foreground="{DynamicResource MutedTextBrush}">
                                                 <Run Text="Дедлайн: "/>
                                                 <Run Text="{Binding OrderDeadline, StringFormat='dd.MM.yyyy', TargetNullValue='—'}"/>
                                             </TextBlock>
                                         </StackPanel>
 
-                                        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
-                                            <TextBlock>
+                                          <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                                              <TextBlock Foreground="{DynamicResource TextBrush}">
                                                 <Run Text="Заказчик: "/>
                                                 <Run Text="{Binding CustomerFullName, TargetNullValue='?'}"/>
                                             </TextBlock>
-                                            <TextBlock>
+                                              <TextBlock Foreground="{DynamicResource TextBrush}">
                                                 <Run Text="Исполнитель: "/>
                                                 <Run Text="{Binding FreelancerFullName, TargetNullValue='?'}"/>
                                             </TextBlock>
                                         </StackPanel>
 
-                                        <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
-                                                   FontSize="11" Foreground="Gray">
+                                          <TextBlock
+                                              Grid.Row="2"
+                                              Grid.Column="0"
+                                              Grid.ColumnSpan="2"
+                                              FontSize="11"
+                                              Foreground="{DynamicResource MutedTextBrush}">
                                             <Run Text="Создан: "/>
                                             <Run Text="{Binding OrderCreationDate, StringFormat='dd.MM.yyyy HH:mm'}"/>
                                         </TextBlock>
@@ -150,13 +178,29 @@
         </Grid>
 
         <!-- ===== Режим: Мои жалобы ===== -->
-        <GroupBox Grid.Row="1" Header="Мои жалобы"
-                  Visibility="{Binding IsMyComplaintsMode, Converter={StaticResource Bool2Vis}}">
-            <ListView ItemsSource="{Binding MyComplaints}"
-                      SelectedItem="{Binding SelectedMyComplaint}">
+        <GroupBox Grid.Row="1" Header="Мои жалобы" Foreground="{DynamicResource TextBrush}">
+            <GroupBox.Style>
+                <Style TargetType="GroupBox">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <!-- показываем, когда включён режим "Мои жалобы" и редактор закрыт -->
+                        <DataTrigger Binding="{Binding IsMyComplaintsMode}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsEditOpen}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </GroupBox.Style>
+            <ListView
+                ItemsSource="{Binding MyComplaints}"
+                SelectedItem="{Binding SelectedMyComplaint}"
+                Background="Transparent"
+                HorizontalContentAlignment="Stretch">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="4" Padding="6" BorderBrush="#DDD" BorderThickness="1">
+                        <Border Style="{DynamicResource ComplaintMyCardStyle}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -165,16 +209,40 @@
 
                                 <StackPanel Grid.Column="0">
                                     <TextBlock>
-                                        <Run Text="Адресат: "/>
-                                        <Run Text="{Binding TargetName}"/>
-                                        <Run Text="| Жалобу можно изменить"/>
-                                        <Run Text="{Binding RemainingChanges, Mode=OneWay}" />
-                                        <Run Text="раз."/>
+                                        <Run Text="Адресат: " Foreground="{DynamicResource TextBrush}" />
+                                        <Run Text="{Binding TargetName}" Foreground="{DynamicResource TextBrush}" />
+                                        <Run Text="| Жалобу можно изменить" Foreground="{DynamicResource TextBrush}" />
+                                        <Run Text="{Binding RemainingChanges, Mode=OneWay}" Foreground="{DynamicResource TextBrush}" />
+                                        <Run Text="раз." Foreground="{DynamicResource TextBrush}" />
                                     </TextBlock>
-                                    <TextBlock FontSize="11" Foreground="Gray" Text="{Binding Status}"/>
-                                    <TextBlock Margin="0,4,0,0"
-                                               Text="{Binding DescriptionPreview}"
-                                               TextWrapping="Wrap"/>
+                                    <TextBlock
+                                        FontSize="11"
+                                        Foreground="{DynamicResource MutedTextBrush}"
+                                        Text="{Binding Status}" />
+                                    <TextBlock
+                                        Margin="0,4,0,0"
+                                        Foreground="{DynamicResource TextBrush}"
+                                        Text="{Binding DescriptionPreview}"
+                                        TextWrapping="Wrap" />
+                                    <Image
+                                        Style="{DynamicResource ComplaintThumbnailImageStyle}"
+                                        Visibility="{Binding HasImage, Converter={StaticResource Bool2Vis}}"
+                                        Source="{Binding ImageSource}" />
+                                    <TextBlock
+                                        Margin="0,2,0,0"
+                                        Foreground="{DynamicResource MutedTextBrush}"
+                                        Text="Медиа отсутствует">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding HasImage}" Value="False">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
@@ -196,20 +264,69 @@
             </ListView>
         </GroupBox>
 
-        <!-- ===== Панель создания/редактирования ===== -->
-        <Border Grid.Row="2" Margin="0,10,0,0" Padding="12"
-                Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="1"
-                Visibility="{Binding IsEditOpen, Converter={StaticResource Bool2Vis}}">
-            <StackPanel>
-                <TextBlock FontSize="15" FontWeight="Bold" Text="{Binding PanelTitle}"/>
-                <TextBlock Margin="0,8,0,0" Text="Текст жалобы:"/>
-                <TextBox Height="80" TextWrapping="Wrap"
-                         Text="{Binding ComplaintText, UpdateSourceTrigger=PropertyChanged}"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-                    <Button Width="110" Margin="0,0,6,0" Content="Сохранить" Command="{Binding SaveCommand}"/>
-                    <Button Width="80" Content="Отмена" Command="{Binding CancelCommand}"/>
+        <!-- ===== Панель создания/редактирования (вместо списков) ===== -->
+        <ScrollViewer
+            Grid.Row="1"
+            VerticalScrollBarVisibility="Auto"
+            HorizontalScrollBarVisibility="Disabled"
+            Visibility="{Binding IsEditOpen, Converter={StaticResource Bool2Vis}}">
+            <Border Style="{DynamicResource ComplaintsEditBorderStyle}">
+                <StackPanel>
+                    <TextBlock
+                        Style="{DynamicResource ComplaintsHeaderTextStyle}"
+                        Text="{Binding PanelTitle}" />
+
+                    <TextBlock
+                        Style="{DynamicResource ComplaintsLabelTextStyle}"
+                        Text="Текст жалобы:" />
+                    <TextBox
+                        Height="80"
+                        TextWrapping="Wrap"
+                        Text="{Binding ComplaintText, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock
+                        Style="{DynamicResource ComplaintsLabelTextStyle}"
+                        Text="Изображение:" />
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                        <Button
+                            Width="140"
+                            Margin="0,0,8,0"
+                            Content="Выбрать файл..."
+                            Command="{Binding SelectImageCommand}" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Foreground="{DynamicResource MutedTextBrush}"
+                            Text="{Binding EditImageName}" />
+                    </StackPanel>
+
+                    <Image
+                        Style="{DynamicResource ComplaintsEditImageStyle}"
+                        Source="{Binding EditImagePreview}"
+                        Visibility="{Binding HasEditImage, Converter={StaticResource Bool2Vis}}" />
+
+                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                        <Button
+                            Width="140"
+                            Content="Убрать изображение"
+                            Command="{Binding ClearImageCommand}" />
+                    </StackPanel>
+
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Margin="0,10,0,0">
+                        <Button
+                            Width="110"
+                            Content="Сохранить"
+                            Command="{Binding SaveCommand}" />
+                        <Button
+                            Width="80"
+                            Content="Отмена"
+                            Command="{Binding CancelCommand}" />
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
-        </Border>
+            </Border>
+        </ScrollViewer>
     </Grid>
 </UserControl>

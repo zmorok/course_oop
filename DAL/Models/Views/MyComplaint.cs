@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 
 namespace DAL.Models.Views
 {
@@ -16,6 +17,12 @@ namespace DAL.Models.Views
 
         [Column("ChangeCounter", TypeName = "smallint")]
         public short ChangeCounter { get; set; }
+
+        public int? ProcessedAdminId { get; set; }
+
+        [Column("Media", TypeName = "jsonb")]
+        public JsonDocument? Media { get; set; }
+
 
         [NotMapped]
         public string DescriptionPreview => Description.Length <= 50 ? Description : Description[..50] + "…";

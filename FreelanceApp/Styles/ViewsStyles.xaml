@@ -183,13 +183,11 @@
         <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
 
-    <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
-        <Style.Triggers>
-            <Trigger Property="IsVisible" Value="True">
-                <Setter Property="HorizontalContentAlignment" Value="{Binding Path=HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
-                <Setter Property="VerticalContentAlignment" Value="{Binding Path=VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
-            </Trigger>
-        </Style.Triggers>
+    <Style TargetType="{x:Type ListBoxItem}">
+        <!-- Фиксированные выравнивания без сложной привязки к ItemsControl,
+             чтобы избежать ошибок привязки для ListViewItem -->
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
     </Style>
 
     <!--  Профиль/редактирование  -->
