@@ -14,110 +14,150 @@
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <!-- Переключатель режима: я заказчик / я исполнитель -->
         <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <TextBlock Text="Показать заказы, где я:" VerticalAlignment="Center" Margin="0,0,10,0"/>
-            <RadioButton Content="Заказчик"
-                         Margin="0,0,15,0"
-                         IsChecked="{Binding AsCustomer, Mode=TwoWay}"/>
-            <RadioButton Content="Исполнитель"
-                         IsChecked="{Binding AsFreelancer, Mode=TwoWay}"/>
+            <TextBlock
+                Text="Показать заказы, где я:"
+                VerticalAlignment="Center"
+                Margin="0,0,10,0"
+                Foreground="{DynamicResource MutedTextBrush}" />
+            <RadioButton
+                Content="Заказчик"
+                Style="{DynamicResource ReviewsModeRadioButtonStyle}"
+                IsChecked="{Binding AsCustomer, Mode=TwoWay}" />
+            <RadioButton
+                Content="Исполнитель"
+                Style="{DynamicResource ReviewsModeRadioButtonStyle}"
+                IsChecked="{Binding AsFreelancer, Mode=TwoWay}" />
         </StackPanel>
 
-        <!-- Список архивных заказов + мои/их отзывы -->
+        <!-- Список архивных заказов + мои/их отзывы (виден только когда форма редактирования закрыта) -->
         <ListView x:Name="ArchiveList"
                   Grid.Row="1"
                   ItemsSource="{Binding Rows}"
                   SelectedItem="{Binding SelectedRow, Mode=TwoWay}"
-                  SelectionMode="Single">
+                  SelectionMode="Single"
+                  Background="Transparent"
+                  BorderThickness="0"
+                  MinHeight="300">
+            <ListView.Style>
+                <Style TargetType="ListView">
+                    <Setter Property="Visibility" Value="Visible" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsEditOpen}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.Style>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 </Style>
             </ListView.ItemContainerStyle>
 
-            <!-- Двойной клик = открыть форму редактирования для выбранной строки -->
-            <ListView.InputBindings>
-                <MouseBinding Gesture="LeftDoubleClick"
-                              Command="{Binding OpenEditForCommand}"
-                              CommandParameter="{Binding DataContext.SelectedRow, ElementName=ArchiveList}"/>
-            </ListView.InputBindings>
-
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Border Margin="4" Padding="8" BorderBrush="LightGray" BorderThickness="1" CornerRadius="5">
+                    <Border Style="{DynamicResource ReviewCardBorderStyle}">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
                             <!-- Левая колонка -->
                             <StackPanel Grid.Column="0" Grid.IsSharedSizeScope="True">
                                 <!-- Название проекта -->
-                                <TextBlock FontWeight="Bold"
-                                           Text="{Binding ProjectTitle, Mode=OneWay}"/>
+                                <TextBlock
+                                    FontWeight="Bold"
+                                    Foreground="{DynamicResource TextBrush}"
+                                    Text="{Binding ProjectTitle, Mode=OneWay}" />
 
                                 <!-- Имя другого участника -->
-                                <TextBlock FontSize="12" Foreground="Gray">
-                                    <Run Text="Другой участник: "/>
-                                    <Run Text="{Binding OtherSideName, Mode=OneWay}"/>
+                                <TextBlock FontSize="12" Foreground="{DynamicResource MutedTextBrush}">
+                                    <Run Text="Другой участник: " />
+                                    <Run Text="{Binding OtherSideName, Mode=OneWay}" />
                                 </TextBlock>
 
                                 <!-- Мой отзыв -->
                                 <Grid Margin="0,4,0,0">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" SharedSizeGroup="ReviewLabel"/>
-                                        <ColumnDefinition Width="8"/>
-                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto" SharedSizeGroup="ReviewLabel" />
+                                        <ColumnDefinition Width="8" />
+                                        <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
 
-                                    <TextBlock Grid.Column="0" FontWeight="SemiBold" Text="Ваш отзыв:"/>
-                                    <StackPanel Grid.Column="2" Orientation="Horizontal">
-                                        <TextBlock Foreground="DarkGoldenrod"
-                                                   Text="{Binding MyRating, Mode=OneWay, StringFormat='({0}/5)', TargetNullValue=''}"/>
-                                        <TextBlock Margin="6,0,0,0"
-                                                   Text="{Binding MyCommentPreview, Mode=OneWay}"
-                                                   TextWrapping="Wrap"/>
+                                    <TextBlock
+                                        Grid.Column="0"
+                                        Style="{DynamicResource ReviewsInlineLabelStyle}"
+                                        Text="Ваш отзыв:" />
+                                    <StackPanel Grid.Column="2" HorizontalAlignment="Left">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock
+                                                Foreground="DarkGoldenrod"
+                                                Text="{Binding MyRating, Mode=OneWay, StringFormat='({0}/5)', TargetNullValue=''}" />
+                                            <TextBlock
+                                                Margin="6,0,0,0"
+                                                Style="{DynamicResource ReviewsInlineLabelStyle}"
+                                                Text="{Binding MyCommentPreview, Mode=OneWay}"
+                                                TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <Image
+                                            Style="{DynamicResource ReviewThumbnailImageStyle}"
+                                            Visibility="{Binding HasMyImage, Converter={StaticResource BoolToVis}}"
+                                            Source="{Binding MyImageSource}" />
                                     </StackPanel>
-                                    
                                 </Grid>
 
                                 <!-- Отзыв оппонента -->
                                 <Grid Margin="0,4,0,0">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" SharedSizeGroup="ReviewLabel"/>
-                                        <ColumnDefinition Width="8"/>
-                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto" SharedSizeGroup="ReviewLabel" />
+                                        <ColumnDefinition Width="8" />
+                                        <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
 
-                                    <TextBlock Grid.Column="0" FontWeight="SemiBold" Text="Отзыв оппонента:"/>
-                                    <StackPanel Grid.Column="2" Orientation="Horizontal">
-                                        <TextBlock Foreground="DarkGoldenrod"
-                                                   Text="{Binding OppRating, Mode=OneWay, StringFormat='({0}/5)', TargetNullValue=''}"/>
-                                        <TextBlock Margin="6,0,0,0"
-                                                   Text="{Binding OppCommentPreview, Mode=OneWay}"
-                                                   TextWrapping="Wrap"/>
+                                    <TextBlock
+                                        Grid.Column="0"
+                                        Style="{DynamicResource ReviewsInlineLabelStyle}"
+                                        Text="Отзыв оппонента:" />
+                                    <StackPanel Grid.Column="2" HorizontalAlignment="Left">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock
+                                                Foreground="DarkGoldenrod"
+                                                Text="{Binding OppRating, Mode=OneWay, StringFormat='({0}/5)', TargetNullValue=''}" />
+                                            <TextBlock
+                                                Margin="6,0,0,0"
+                                                Style="{DynamicResource ReviewsInlineLabelStyle}"
+                                                Text="{Binding OppCommentPreview, Mode=OneWay}"
+                                                TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <Image
+                                            Style="{DynamicResource ReviewThumbnailImageStyle}"
+                                            Visibility="{Binding HasOppImage, Converter={StaticResource BoolToVis}}"
+                                            Source="{Binding OppImageSource}" />
                                     </StackPanel>
                                 </Grid>
                             </StackPanel>
 
                             <!-- Правая колонка: кнопки -->
                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <Button Width="90" Margin="0,0,0,4"
-                                        Content="{Binding EditButtonText, Mode=OneWay}"
-                                        Command="{Binding DataContext.OpenEditForCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
-                                        CommandParameter="{Binding}"/>
-                                <Button Width="90"
-                                        Content="Удалить"
-                                        Visibility="{Binding CanDelete, Converter={StaticResource BoolToVis}}"
-                                        Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
-                                        CommandParameter="{Binding}"/>
+                                <Button
+                                    Width="90"
+                                    Margin="0,0,0,4"
+                                    Content="{Binding EditButtonText, Mode=OneWay}"
+                                    Command="{Binding DataContext.OpenEditForCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                    CommandParameter="{Binding}" />
+                                <Button
+                                    Width="90"
+                                    Content="Удалить"
+                                    Visibility="{Binding CanDelete, Converter={StaticResource BoolToVis}}"
+                                    Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                    CommandParameter="{Binding}" />
                             </StackPanel>
                         </Grid>
                     </Border>
@@ -125,44 +165,83 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <!-- Панель добавления/редактирования отзыва -->
-        <Border Grid.Row="2"
-                Padding="12"
-                Margin="0,10,0,0"
-                Background="WhiteSmoke"
-                BorderBrush="Gray"
-                BorderThickness="1"
-                Visibility="{Binding IsEditOpen, Converter={StaticResource BoolToVis}}">
-            <StackPanel>
-                <TextBlock FontSize="15" FontWeight="Bold" Margin="0,0,0,10"
-                           Text="{Binding PanelTitle, Mode=OneWay}"/>
+        <!-- Панель добавления/редактирования отзыва (показывается вместо списка) -->
+        <ScrollViewer
+            Grid.Row="1"
+            VerticalScrollBarVisibility="Auto"
+            HorizontalScrollBarVisibility="Disabled"
+            Visibility="{Binding IsEditOpen, Converter={StaticResource BoolToVis}}">
+            <Border
+                Style="{DynamicResource ReviewsEditBorderStyle}">
+                <StackPanel>
+                    <TextBlock
+                        Style="{DynamicResource ReviewsHeaderTextStyle}"
+                        Text="{Binding PanelTitle, Mode=OneWay}" />
 
-                <TextBlock Text="Оценка:"/>
-                <ComboBox Width="80"
-                          Margin="0,2,0,6"
-                          SelectedValuePath="Content"
-                          SelectedValue="{Binding EditRating, Mode=TwoWay}">
-                    <ComboBoxItem Content="1"/>
-                    <ComboBoxItem Content="2"/>
-                    <ComboBoxItem Content="3"/>
-                    <ComboBoxItem Content="4"/>
-                    <ComboBoxItem Content="5"/>
-                </ComboBox>
+                    <TextBlock Style="{DynamicResource ReviewsLabelTextStyle}" Text="Оценка:" />
+                    <StackPanel Orientation="Horizontal" Margin="0,2,0,6">
+                        <ComboBox
+                            Style="{DynamicResource ReviewsRatingComboBoxStyle}"
+                            SelectedValuePath="Content"
+                            SelectedValue="{Binding EditRating, Mode=TwoWay}">
+                            <ComboBoxItem Content="1" />
+                            <ComboBoxItem Content="2" />
+                            <ComboBoxItem Content="3" />
+                            <ComboBoxItem Content="4" />
+                            <ComboBoxItem Content="5" />
+                        </ComboBox>
+                        <TextBlock
+                            Margin="8,0,0,0"
+                            VerticalAlignment="Center"
+                            Foreground="DarkGoldenrod"
+                            Text="★" />
+                    </StackPanel>
 
-                <TextBlock Text="Комментарий:"/>
-                <TextBox Height="60"
-                         TextWrapping="Wrap"
-                         Text="{Binding EditComment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Style="{DynamicResource ReviewsLabelTextStyle}" Text="Комментарий:" />
+                    <TextBox
+                        Height="60"
+                        TextWrapping="Wrap"
+                        Text="{Binding EditComment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-                    <Button Width="100" Margin="0,0,6,0"
+                    <TextBlock Style="{DynamicResource ReviewsLabelTextStyle}" Text="Изображение:" />
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                        <Button
+                            Width="140"
+                            Margin="0,0,8,0"
+                            Content="Выбрать файл..."
+                            Command="{Binding SelectImageCommand}" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Foreground="{DynamicResource MutedTextBrush}"
+                            Text="{Binding EditImageName}" />
+                    </StackPanel>
+
+                    <Image
+                        Style="{DynamicResource ReviewEditorImageStyle}"
+                        Source="{Binding EditImagePreview}"
+                        Visibility="{Binding HasEditImage, Converter={StaticResource BoolToVis}}" />
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button
+                            Width="140"
+                            Content="Убрать изображение"
+                            Command="{Binding ClearImageCommand}" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" 
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top">
+                        <Button
+                            Width="100"
                             Content="Сохранить"
-                            Command="{Binding SaveCommand}"/>
-                    <Button Width="80"
+                            Command="{Binding SaveCommand}" />
+                        <Button
+                            Width="80"
                             Content="Отмена"
-                            Command="{Binding CancelCommand}"/>
+                            Command="{Binding CancelCommand}" />
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
-        </Border>
+            </Border>
+        </ScrollViewer>
     </Grid>
 </UserControl>

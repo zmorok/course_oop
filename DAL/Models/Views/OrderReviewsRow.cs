@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 
 namespace DAL.Models.Views
 {
@@ -31,6 +32,9 @@ namespace DAL.Models.Views
         [Column("customer_rating")]
         public int? Customer_Rating { get; set; }
 
+        [Column("customer_media", TypeName = "jsonb")]
+        public JsonDocument? Customer_Media { get; set; }
+
         [Column("id_freelancer")]
         public int? Id_Freelancer { get; set; }
 
@@ -45,5 +49,8 @@ namespace DAL.Models.Views
 
         [Column("freelancer_rating")]
         public int? Freelancer_Rating { get; set; }
+
+        [Column("freelancer_media", TypeName = "jsonb")]
+        public JsonDocument? Freelancer_Media { get; set; }
     }
 }

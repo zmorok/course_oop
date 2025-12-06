@@ -12,5 +12,6 @@
         <ResourceDictionary Source="/Styles/PortfolioStyles.xaml" />
         <ResourceDictionary Source="/Styles/OrdersStyles.xaml" />
         <ResourceDictionary Source="/Styles/ProjectsStyles.xaml" />
+        <ResourceDictionary Source="/Styles/ReviewsStyles.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
