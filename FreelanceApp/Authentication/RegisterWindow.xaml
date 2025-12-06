@@ -7,6 +7,8 @@
     Title="{DynamicResource RegisterWindow_Title}"
     Style="{DynamicResource RegWindowStyle}"
     WindowStartupLocation="CenterScreen"
+    MinWidth="600"
+    MinHeight="450"
     mc:Ignorable="d">
 
     <Grid>

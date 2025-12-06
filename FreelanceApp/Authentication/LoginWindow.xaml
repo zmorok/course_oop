@@ -8,6 +8,8 @@
     Title="{DynamicResource LoginWindow_Title}"
     Style="{DynamicResource LoginWindowStyle}"
     WindowStartupLocation="CenterScreen"
+    MinWidth="600"
+    MinHeight="400"
     mc:Ignorable="d">
 
     <Grid>

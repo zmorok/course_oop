@@ -6,6 +6,8 @@
     Title="Панель пользователя"
     Width="1000"
     Height="650"
+    MinWidth="900"
+    MinHeight="600"
     WindowStartupLocation="CenterScreen">
 
     <Grid Background="{DynamicResource BackgroundBrush}">

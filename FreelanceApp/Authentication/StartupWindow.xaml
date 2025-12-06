@@ -9,6 +9,8 @@
     Style="{DynamicResource StartupWindowStyle}"
     WindowStartupLocation="CenterScreen"
     WindowStyle="SingleBorderWindow"
+    MinWidth="600"
+    MinHeight="400"
     mc:Ignorable="d">
     <Grid>
         <Border Style="{DynamicResource StartupBorderStyle}">
