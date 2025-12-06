@@ -163,12 +163,12 @@ namespace FreelanceApp.Windows.ViewModels
             }
 
             var status = string.IsNullOrWhiteSpace(EditStatus) ? SelectedRow.OrderStatus : EditStatus!;
-            var deadline = EditDeadline;
+            DateTime? sDeadline = EditDeadline is null ? null : DateTime.SpecifyKind(EditDeadline.Value, DateTimeKind.Utc);
 
             await using var uow = new UnitOfWork(DbContextFactory.CreateDbContext(_currentUser));
             try
             {
-                await uow.Orders.UpdateOrderAsync(_currentUser.Id, SelectedRow.OrderId, status, deadline);
+                await uow.Orders.UpdateOrderAsync(_currentUser.Id, SelectedRow.OrderId, status, sDeadline);
                 CancelEdit();
                 await LoadAsync();
             }

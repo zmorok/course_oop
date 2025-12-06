@@ -78,7 +78,7 @@ namespace DAL.Repository.UserRepositories
                     {actorId},
                     {orderId},
                     {status},
-                    {deadline}
+                    CAST({deadline} as DATE)
                 )");
         }
 

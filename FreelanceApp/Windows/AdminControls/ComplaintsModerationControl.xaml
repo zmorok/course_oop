@@ -71,7 +71,7 @@
                                         <Run Text="{Binding Id_Order_Arc, TargetNullValue=—}"/>
                                     </TextBlock>
                                     <TextBlock Margin="0,4,0,0"
-                                               Text="{Binding DescriptionPreview}"
+                                               Text="{Binding Description}"
                                                TextWrapping="Wrap"/>
                                 </StackPanel>
 

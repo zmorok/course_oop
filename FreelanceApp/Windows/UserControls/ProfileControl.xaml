@@ -139,8 +139,8 @@
                                         <TextBlock Foreground="{DynamicResource TextBrush}">
                                             <Run Text="Предупреждение №" />
                                             <Run FontWeight="Bold" Text="{Binding WarningId}" />
-                                            <Run Text=", модератор: " />
-                                            <Run FontWeight="Bold" Text="{Binding ModeratorName}" />
+                                            <Run Text=", разобрал: " />
+                                            <Run FontWeight="Bold" Text="{Binding AdminName}" />
                                         </TextBlock>
 
                                         <TextBlock

@@ -156,8 +156,10 @@
 
     <!-- Элементы редактирования -->
     <Style x:Key="OrderEditComboBoxStyle" TargetType="ComboBox">
-        <Setter Property="MinWidth" Value="180" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="Width" Value="135" />
         <Setter Property="Padding" Value="8,6" />
+        <Setter Property="Height" Value="30" />
         <Setter Property="ItemContainerStyle" Value="{DynamicResource DialogComboBoxItemStyle}" />
         <Setter Property="Template">
             <Setter.Value>
@@ -215,6 +217,7 @@
                         <Popup
                             x:Name="Popup"
                             Placement="Bottom"
+                            Width="135"
                             IsOpen="{TemplateBinding IsDropDownOpen}"
                             AllowsTransparency="True"
                             Focusable="False"
@@ -244,78 +247,37 @@
         </Setter>
     </Style>
 
-    <Style x:Key="OrderEditDatePickerStyle" TargetType="DatePicker">
+    <!-- Кастомное оформление текстовой части DatePicker при сохранении стандартного шаблона -->
+    <Style TargetType="DatePickerTextBox">
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
         <Setter Property="Background" Value="{DynamicResource CardBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Height" Value="32" />
-        <Setter Property="Padding" Value="6,4" />
+        <Setter Property="Padding" Value="0,8,0,0" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="DatePicker">
-                    <Grid>
-                        <DatePickerTextBox
-                            x:Name="PART_TextBox"
-                            Background="{TemplateBinding Background}"
-                            Foreground="{TemplateBinding Foreground}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            Padding="{TemplateBinding Padding}"
-                            HorizontalContentAlignment="Stretch">
-                            <DatePickerTextBox.Resources>
-                                <Style TargetType="DatePickerTextBox">
-                                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
-                                    <Setter Property="Background" Value="{DynamicResource CardBrush}" />
-                                    <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
-                                    <Setter Property="BorderThickness" Value="1" />
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="DatePickerTextBox">
-                                                <Border
-                                                    x:Name="Bd"
-                                                    Background="{TemplateBinding Background}"
-                                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                                    CornerRadius="10">
-                                                    <ScrollViewer x:Name="PART_ContentHost" Margin="4,0,30,0" />
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </DatePickerTextBox.Resources>
-                        </DatePickerTextBox>
-                        <Button
-                            x:Name="PART_Button"
-                            Width="28"
-                            HorizontalAlignment="Right"
-                            Margin="0,0,2,0"
-                            Focusable="False"
-                            Background="Transparent"
-                            BorderBrush="{x:Null}"
-                            BorderThickness="0"
-                            Cursor="Hand">
-                            <Path
-                                Width="12"
-                                Height="12"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Fill="{DynamicResource TextBrush}"
-                                Data="M3,2 L5,2 L5,3 L6,3 L6,2 L8,2 L8,3 L9,3 L9,2 L11,2 L11,4 L3,4 z M2,5 L12,5 L12,12 L2,12 z" />
-                        </Button>
-                    </Grid>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Opacity" Value="0.6" />
-                        </Trigger>
-                        <Trigger SourceName="PART_Button" Property="IsMouseOver" Value="True">
-                            <Setter TargetName="PART_Button" Property="Background" Value="#12000000" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
+                <ControlTemplate TargetType="DatePickerTextBox">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="10">
+                        <ScrollViewer x:Name="PART_ContentHost" Margin="4,0,30,0" />
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style x:Key="OrderEditDatePickerStyle" TargetType="DatePicker">
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+        <Setter Property="Background" Value="{DynamicResource CardBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="Width" Value="150" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Height" Value="40" />
+        <Setter Property="Padding" Value="6,4" />
     </Style>
 
 </ResourceDictionary>

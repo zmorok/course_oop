@@ -177,7 +177,7 @@
                     <ComboBox
                         Grid.Row="0"
                         Grid.Column="1"
-                        Margin="0,0,0,5"
+                        Margin="6,0,0,5"
                         SelectedValuePath="Tag"
                         SelectedValue="{Binding EditStatus}"
                         Style="{DynamicResource OrderEditComboBoxStyle}">
@@ -196,7 +196,7 @@
                     <DatePicker
                         Grid.Row="1"
                         Grid.Column="1"
-                        Margin="0,0,0,5"
+                        Margin="0,0,0,10"
                         SelectedDate="{Binding EditDeadline}"
                         Style="{DynamicResource OrderEditDatePickerStyle}" />
                 </Grid>

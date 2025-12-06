@@ -23,7 +23,9 @@
         <!-- Левая панель: действия и форма -->
         <StackPanel Grid.Column="0" Margin="0,0,14,0">
             <Border Style="{DynamicResource PortfolioSectionBorderStyle}">
-                <StackPanel>
+                <ListView 
+                    ScrollViewer.VerticalScrollBarVisibility="Visible"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <TextBlock Style="{DynamicResource PortfolioHeaderTextStyle}" Text="Управление портфолио" />
 
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
@@ -94,7 +96,7 @@
                                 Content="Отмена" />
                         </StackPanel>
                     </StackPanel>
-                </StackPanel>
+                </ListView>
             </Border>
         </StackPanel>
 

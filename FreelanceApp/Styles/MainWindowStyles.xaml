@@ -13,7 +13,7 @@
     <Style x:Key="TopPanelStyle" TargetType="Border">
         <Setter Property="Background" Value="{DynamicResource AccentGradientBrush}" />
         <Setter Property="Padding" Value="14" />
-        <Setter Property="CornerRadius" Value="16,16,12,12" />
+        <Setter Property="CornerRadius" Value="0,0,12,12" />
         <Setter Property="Effect">
             <Setter.Value>
                 <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="16" ShadowDepth="2" />
