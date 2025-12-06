@@ -7,6 +7,10 @@ using System.Collections.ObjectModel;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.Win32;
+using System.IO;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace FreelanceApp.Windows.ViewModels
 {
@@ -28,7 +32,10 @@ namespace FreelanceApp.Windows.ViewModels
         [ObservableProperty] private string? title;
         [ObservableProperty] private string? description;
         [ObservableProperty] private string? selectedStatus; // "draft" | "open" | "in_progress"
-        [ObservableProperty] private string? mediaText;      // JSON-строка
+        [ObservableProperty] private string? mediaText;      // JSON-строка (для совместимости, не редактируется пользователем)
+        [ObservableProperty] private string? formImageName;
+        [ObservableProperty] private string? formImageBase64;
+        [ObservableProperty] private ImageSource? formImagePreview;
 
         public ProjectsViewModel(User currentUser)
         {
@@ -155,7 +162,7 @@ namespace FreelanceApp.Windows.ViewModels
             }
 
             var confirm = MessageBox.Show(
-                $"Удалить проект №{SelectedProject.Project.Id}?",
+                $"Удалить проект №{SelectedProject.Project.Title}?",
                 "Подтверждение",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
@@ -187,18 +194,22 @@ namespace FreelanceApp.Windows.ViewModels
             var title = (Title ?? "").Trim();
             var description = (Description ?? "").Trim();
             var status = string.IsNullOrWhiteSpace(SelectedStatus) ? "draft" : SelectedStatus!;
-            var mediaJson = (MediaText ?? "").Trim();
+            var imageBase64 = (FormImageBase64 ?? "").Trim();
 
-            // если JSON указан — проверим валидность, чтобы не падать на БД слое
-            if (!string.IsNullOrWhiteSpace(mediaJson))
+            // строим JSON для медиа, если выбрали файл
+            string mediaJson = "[]";
+            if (!string.IsNullOrWhiteSpace(imageBase64))
             {
-                try { _ = JsonDocument.Parse(mediaJson); }
-                catch
+                var media = new[]
                 {
-                    MessageBox.Show("Поле «Медиа (JSON)» содержит некорректный JSON.",
-                        "Проверьте данные", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
+                    new
+                    {
+                        type = "image",
+                        name = FormImageName ?? "image",
+                        content = imageBase64
+                    }
+                };
+                mediaJson = JsonSerializer.Serialize(media);
             }
 
             try
@@ -276,9 +287,21 @@ namespace FreelanceApp.Windows.ViewModels
         [RelayCommand]
         private void SelectForEdit(ProjectItemViewModel? item)
         {
-            if (item is null) return;
+            if (item is null)
+            {
+                CloseForm();
+                return;
+            }
+
             SelectedProject = item;
-            if (item.IsMine) OpenFormFor(item.Project);
+            if (item.IsMine)
+            {
+                OpenFormFor(item.Project);
+            }
+            else
+            {
+                CloseForm();
+            }
         }
 
         [RelayCommand]
@@ -298,6 +321,9 @@ namespace FreelanceApp.Windows.ViewModels
                 Description = "";
                 MediaText = "";
                 SelectedStatus = "draft";
+                FormImageName = "";
+                FormImageBase64 = "";
+                FormImagePreview = null;
             }
             else
             {
@@ -305,6 +331,10 @@ namespace FreelanceApp.Windows.ViewModels
                 Description = p.Description;
                 MediaText = p.Media is null ? "" : p.Media.RootElement.GetRawText();
                 SelectedStatus = p.Status ?? "draft";
+
+                // извлекаем первую картинку, если есть
+                (FormImageName, FormImageBase64) = ProjectItemViewModel.ExtractFirstImage(p.Media);
+                FormImagePreview = ProjectItemViewModel.CreateImageSource(FormImageBase64);
             }
             IsFormOpen = true;
         }
@@ -314,6 +344,49 @@ namespace FreelanceApp.Windows.ViewModels
             IsFormOpen = false;
             SelectedProject = null;
         }
+
+        [RelayCommand]
+        private void ClearSelection()
+        {
+            CloseForm();
+        }
+
+        [RelayCommand]
+        private void SelectImage()
+        {
+            var dialog = new OpenFileDialog
+            {
+                Filter = "Изображения|*.png;*.jpg;*.jpeg;*.bmp;*.gif",
+                Title = "Выберите изображение проекта"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                try
+                {
+                    var bytes = File.ReadAllBytes(dialog.FileName);
+                    FormImageBase64 = Convert.ToBase64String(bytes);
+                    FormImageName = Path.GetFileName(dialog.FileName);
+                    FormImagePreview = ProjectItemViewModel.CreateImageSource(FormImageBase64);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        $"Не удалось прочитать файл: {ex.Message}",
+                        "Ошибка",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                }
+            }
+        }
+
+        [RelayCommand]
+        private void ClearImage()
+        {
+            FormImageBase64 = "";
+            FormImageName = "";
+            FormImagePreview = null;
+        }
     }
 
     public sealed class ProjectItemViewModel
@@ -322,6 +395,18 @@ namespace FreelanceApp.Windows.ViewModels
         public string Status { get; }
         public bool IsMine { get; }
         public bool ShowRespondButton { get; }
+        public bool HasImage => ImageSource is not null;
+        public ImageSource? ImageSource { get; }
+
+        public string StatusDisplay =>
+            Status switch
+            {
+                "draft" => "Черновик",
+                "open" => "Открыт",
+                "in_progress" => "В прогрессе",
+                "completed" => "Завершён",
+                _ => Status
+            };
 
         public ProjectItemViewModel(Project project, string status, bool isMine, bool showRespondButton)
         {
@@ -329,6 +414,7 @@ namespace FreelanceApp.Windows.ViewModels
             Status = status;
             IsMine = isMine;
             ShowRespondButton = showRespondButton;
+            ImageSource = CreateImage(project.Media);
         }
 
         // конструктор «проекции» для v_projects (ProjectWithoutStatus)
@@ -348,6 +434,66 @@ namespace FreelanceApp.Windows.ViewModels
                 Status = status
             };
             return new ProjectItemViewModel(p, status, isMine, showRespondButton);
+        }
+
+        internal static ImageSource? CreateImage(JsonDocument? doc)
+        {
+            if (doc is null) return null;
+            try
+            {
+                var (name, content) = ExtractFirstImage(doc);
+                if (string.IsNullOrWhiteSpace(content)) return null;
+
+                return CreateImageSource(content);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        internal static ImageSource? CreateImageSource(string? base64)
+        {
+            if (string.IsNullOrWhiteSpace(base64)) return null;
+            try
+            {
+                var bytes = Convert.FromBase64String(base64);
+                var bitmap = new BitmapImage();
+                using var ms = new MemoryStream(bytes);
+                bitmap.BeginInit();
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.StreamSource = ms;
+                bitmap.EndInit();
+                bitmap.Freeze();
+                return bitmap;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public static (string? name, string? base64) ExtractFirstImage(JsonDocument? doc)
+        {
+            if (doc is null) return (null, null);
+            try
+            {
+                foreach (var el in doc.RootElement.EnumerateArray())
+                {
+                    if (el.TryGetProperty("type", out var typeProp)
+                        && string.Equals(typeProp.GetString(), "image", StringComparison.OrdinalIgnoreCase)
+                        && el.TryGetProperty("content", out var contentProp))
+                    {
+                        var name = el.TryGetProperty("name", out var nameProp) ? nameProp.GetString() : null;
+                        return (name, contentProp.GetString());
+                    }
+                }
+            }
+            catch
+            {
+            }
+
+            return (null, null);
         }
     }
 }
