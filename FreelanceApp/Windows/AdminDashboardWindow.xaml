@@ -75,7 +75,7 @@
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0" Style="{DynamicResource SideMenuStyle}">
-                <StackPanel>
+                <StackPanel Cursor="">
                     <TextBlock
                         Margin="12,16,12,8"
                         FontSize="14"
@@ -86,11 +86,6 @@
                         Margin="0,2"
                         Click="ShowUsers_Click"
                         Content="Пользователи"
-                        Style="{DynamicResource MenuButtonStyle}" />
-                    <Button
-                        Margin="0,2"
-                        Click="ShowRoles_Click"
-                        Content="Роли"
                         Style="{DynamicResource MenuButtonStyle}" />
                     <Button
                         Margin="0,2"

@@ -54,13 +54,6 @@ namespace FreelanceApp.Windows
             MainContent.Content = vm;
         }
 
-        private async void ShowRoles_Click(object sender, RoutedEventArgs e)
-        {
-            var vm = new RolesManagementControl();
-            await vm.InitializeAsync(_currentUser);
-            MainContent.Content = vm;
-        }
-
         private void ShowAudit_Click(object sender, RoutedEventArgs e) =>
             MainContent.Content = new AuditLogsControl(_currentUser);
 
