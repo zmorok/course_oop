@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
+using FreelanceApp.Helpers;
 
 namespace FreelanceApp.Windows.ViewModels
 {
@@ -96,8 +97,8 @@ namespace FreelanceApp.Windows.ViewModels
                     var myMediaDoc = iAmCustomer ? r.Customer_Media : r.Freelancer_Media;
                     var oppMediaDoc = iAmCustomer ? r.Freelancer_Media : r.Customer_Media;
 
-                    var (myImageName, myImageBase64) = MediaFromJson(myMediaDoc);
-                    var (oppImageName, _) = MediaFromJson(oppMediaDoc);
+                    var (myImageName, myImageBase64) = MediaJsonHelper.ExtractFirstImage(myMediaDoc);
+                    var (oppImageName, _) = MediaJsonHelper.ExtractFirstImage(oppMediaDoc);
 
                     Rows.Add(new ReviewRow(
                         orderId: r.Order_Id,
@@ -139,7 +140,7 @@ namespace FreelanceApp.Windows.ViewModels
             EditRating = (row.MyRating is >= 1 and <= 5) ? row.MyRating.Value : 5;
             EditImageName = row.MyImageName;
             EditImageBase64 = row.MyImageBase64;
-            EditImagePreview = CreateImageSource(EditImageBase64);
+            EditImagePreview = MediaJsonHelper.CreateImageSource(EditImageBase64);
 
             IsEditOpen = true;
         }
@@ -296,7 +297,7 @@ namespace FreelanceApp.Windows.ViewModels
                     var bytes = File.ReadAllBytes(dialog.FileName);
                     EditImageBase64 = Convert.ToBase64String(bytes);
                     EditImageName = Path.GetFileName(dialog.FileName);
-                    EditImagePreview = CreateImageSource(EditImageBase64);
+                    EditImagePreview = MediaJsonHelper.CreateImageSource(EditImageBase64);
                 }
                 catch (Exception ex)
                 {
@@ -317,50 +318,7 @@ namespace FreelanceApp.Windows.ViewModels
             EditImagePreview = null;
         }
 
-        // ===== Вспомогательные для медиа =====
-        private static (string? name, string? base64) MediaFromJson(System.Text.Json.JsonDocument? doc)
-        {
-            if (doc is null) return (null, null);
-            try
-            {
-                foreach (var el in doc.RootElement.EnumerateArray())
-                {
-                    if (el.TryGetProperty("type", out var typeProp)
-                        && string.Equals(typeProp.GetString(), "image", StringComparison.OrdinalIgnoreCase)
-                        && el.TryGetProperty("content", out var contentProp))
-                    {
-                        var name = el.TryGetProperty("name", out var nameProp) ? nameProp.GetString() : null;
-                        return (name, contentProp.GetString());
-                    }
-                }
-            }
-            catch
-            {
-            }
-
-            return (null, null);
-        }
-
-        private static ImageSource? CreateImageSource(string? base64)
-        {
-            if (string.IsNullOrWhiteSpace(base64)) return null;
-            try
-            {
-                var bytes = Convert.FromBase64String(base64);
-                var bitmap = new BitmapImage();
-                using var ms = new MemoryStream(bytes);
-                bitmap.BeginInit();
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.StreamSource = ms;
-                bitmap.EndInit();
-                bitmap.Freeze();
-                return bitmap;
-            }
-            catch
-            {
-                return null;
-            }
-        }
+        // Вспомогательные методы для медиа вынесены в Helpers.MediaJsonHelper.
     }
 
     // ===== Row-VM для DataTemplate

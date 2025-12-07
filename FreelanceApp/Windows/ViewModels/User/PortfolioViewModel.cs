@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using DAL;
 using DAL.Models.Tables;
 using FreelanceApp.Services;
+using FreelanceApp.Helpers;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text.Json;
@@ -260,9 +261,9 @@ namespace FreelanceApp.Windows.ViewModels
                 FormSkills = p.Skills is null ? "" : string.Join(", ", p.Skills);
                 FormExperience = p.Experience ?? "";
 
-                // извлечём первую картинку, если есть
-                (FormImageName, FormImageBase64) = PortfolioItemViewModel.ExtractFirstImage(p.Media);
-                FormImagePreview = PortfolioItemViewModel.CreateImageSource(FormImageBase64);
+                // извлекаем первую картинку, если есть
+                (FormImageName, FormImageBase64) = MediaJsonHelper.ExtractFirstImage(p.Media);
+                FormImagePreview = MediaJsonHelper.CreateImageSource(FormImageBase64);
             }
             IsFormOpen = true;
         }
@@ -289,7 +290,7 @@ namespace FreelanceApp.Windows.ViewModels
                     var bytes = File.ReadAllBytes(dialog.FileName);
                     FormImageBase64 = Convert.ToBase64String(bytes);
                     FormImageName = Path.GetFileName(dialog.FileName);
-                    FormImagePreview = PortfolioItemViewModel.CreateImageSource(FormImageBase64);
+                    FormImagePreview = MediaJsonHelper.CreateImageSource(FormImageBase64);
                 }
                 catch (Exception ex)
                 {
@@ -317,71 +318,10 @@ namespace FreelanceApp.Windows.ViewModels
         public string Experience => Model.Experience ?? "";
         public string Skills => Model.Skills is null ? "" : string.Join(", ", Model.Skills);
         public IReadOnlyList<string> SkillsList => Model.Skills?.ToList() ?? [];
-        public bool HasImage => ImageSource is not null;
-        public ImageSource? ImageSource { get; }
 
         public PortfolioItemViewModel(Portfolio model)
         {
             Model = model;
-            ImageSource = CreateImage(model.Media);
-        }
-
-        internal static ImageSource? CreateImage(JsonDocument? doc)
-        {
-            if (doc is null) return null;
-            try
-            {
-                var (name, content) = ExtractFirstImage(doc);
-                if (string.IsNullOrWhiteSpace(content)) return null;
-
-                return CreateImageSource(content);
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        internal static ImageSource? CreateImageSource(string? base64)
-        {
-            if (string.IsNullOrWhiteSpace(base64)) return null;
-            try
-            {
-                var bytes = Convert.FromBase64String(base64);
-                var bitmap = new BitmapImage();
-                using var ms = new MemoryStream(bytes);
-                bitmap.BeginInit();
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.StreamSource = ms;
-                bitmap.EndInit();
-                bitmap.Freeze();
-                return bitmap;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        public static (string? name, string? base64) ExtractFirstImage(JsonDocument? doc)
-        {
-            if (doc is null) return (null, null);
-            try
-            {
-                foreach (var el in doc.RootElement.EnumerateArray())
-                {
-                    if (el.TryGetProperty("type", out var typeProp)
-                        && string.Equals(typeProp.GetString(), "image", StringComparison.OrdinalIgnoreCase)
-                        && el.TryGetProperty("content", out var contentProp))
-                    {
-                        var name = el.TryGetProperty("name", out var nameProp) ? nameProp.GetString() : null;
-                        return (name, contentProp.GetString());
-                    }
-                }
-            }
-            catch { }
-
-            return (null, null);
         }
     }
 }

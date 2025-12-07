@@ -12,6 +12,7 @@ using System.Text.Json;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
+using FreelanceApp.Helpers;
 
 namespace FreelanceApp.Windows.ViewModels
 {
@@ -83,8 +84,8 @@ namespace FreelanceApp.Windows.ViewModels
 
                     if (c.Media is not null)
                     {
-                        (imageName, imageBase64) = MediaFromJson(c.Media);
-                        imageSource = CreateImageSource(imageBase64);
+                        (imageName, imageBase64) = MediaJsonHelper.ExtractFirstImage(c.Media);
+                        imageSource = MediaJsonHelper.CreateImageSource(imageBase64);
                     }
 
                     MyComplaints.Add(new MyComplaintRow(c, imageName, imageBase64, imageSource));
@@ -322,7 +323,7 @@ namespace FreelanceApp.Windows.ViewModels
                     var bytes = File.ReadAllBytes(dialog.FileName);
                     EditImageBase64 = Convert.ToBase64String(bytes);
                     EditImageName = Path.GetFileName(dialog.FileName);
-                    EditImagePreview = CreateImageSource(EditImageBase64);
+                    EditImagePreview = MediaJsonHelper.CreateImageSource(EditImageBase64);
                 }
                 catch (Exception ex)
                 {
@@ -341,68 +342,6 @@ namespace FreelanceApp.Windows.ViewModels
             EditImageBase64 = "";
             EditImageName = "";
             EditImagePreview = null;
-        }
-
-        // ===== Работа с медиа (jsonb) =====
-        private static (string? name, string? base64) MediaFromJson(JsonDocument doc)
-        {
-            try
-            {
-                var root = doc.RootElement;
-
-                // Основной вариант – массив, как в портфолио/проектах
-                if (root.ValueKind == JsonValueKind.Array)
-                {
-                    foreach (var el in root.EnumerateArray())
-                    {
-                        if (el.TryGetProperty("type", out var typeProp)
-                            && string.Equals(typeProp.GetString(), "image", StringComparison.OrdinalIgnoreCase)
-                            && el.TryGetProperty("content", out var contentProp))
-                        {
-                            var name = el.TryGetProperty("name", out var nameProp) ? nameProp.GetString() : null;
-                            return (name, contentProp.GetString());
-                        }
-                    }
-                }
-                // На всякий случай поддержим и объект в корне (если в БД медиа лежит как один объект)
-                else if (root.ValueKind == JsonValueKind.Object)
-                {
-                    var el = root;
-                    if (el.TryGetProperty("type", out var typeProp)
-                        && string.Equals(typeProp.GetString(), "image", StringComparison.OrdinalIgnoreCase)
-                        && el.TryGetProperty("content", out var contentProp))
-                    {
-                        var name = el.TryGetProperty("name", out var nameProp) ? nameProp.GetString() : null;
-                        return (name, contentProp.GetString());
-                    }
-                }
-            }
-            catch
-            {
-            }
-
-            return (null, null);
-        }
-
-        private static ImageSource? CreateImageSource(string? base64)
-        {
-            if (string.IsNullOrWhiteSpace(base64)) return null;
-            try
-            {
-                var bytes = Convert.FromBase64String(base64);
-                var bitmap = new BitmapImage();
-                using var ms = new MemoryStream(bytes);
-                bitmap.BeginInit();
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.StreamSource = ms;
-                bitmap.EndInit();
-                bitmap.Freeze();
-                return bitmap;
-            }
-            catch
-            {
-                return null;
-            }
         }
     }
 
@@ -430,7 +369,6 @@ namespace FreelanceApp.Windows.ViewModels
         public string? ImageName { get; }
         public string? ImageBase64 { get; }
         public ImageSource? ImageSource { get; }
-        public bool HasImage => ImageSource is not null;
         public JsonDocument? Media => _base.Media;
 
         public MyComplaintRow(MyComplaint @base, string? imageName, string? imageBase64, ImageSource? imageSource)
