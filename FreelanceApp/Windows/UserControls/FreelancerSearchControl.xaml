@@ -7,14 +7,16 @@
     xmlns:vm="clr-namespace:FreelanceApp.Windows.ViewModels"
     xmlns:data="clr-namespace:DAL.Models.Views;assembly=DAL"
     xmlns:models="clr-namespace:DAL.Models.Tables;assembly=DAL"
+    xmlns:conv="clr-namespace:FreelanceApp.Converters"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=vm:FreelancerSearchViewModel}"
     Width="Auto" Height="Auto">
     
     <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        <conv:MediaJsonToImageSourceConverter x:Key="MediaToImageConverter" />
         <Style TargetType="ListViewItem">
-            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         </Style>
     </UserControl.Resources>
 
@@ -43,41 +45,71 @@
         <ListView Grid.Row="1"
                   ItemsSource="{Binding Freelancers}"
                   SelectedItem="{Binding SelectedFreelancer}"
-                  SelectionMode="Single">
-            <ListView.InputBindings>
-                <!-- Двойной клик открывает выбор проекта для текущего выбранного -->
-                <MouseBinding Gesture="LeftDoubleClick"
-                              Command="{Binding OpenProjectPickerCommand}"
-                              CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=ListView}}"/>
-            </ListView.InputBindings>
-
+                  SelectionMode="Single"
+                  Background="Transparent">
             <ListView.ItemTemplate>
                 <DataTemplate DataType="{x:Type data:FreelancerRow}">
-                    <Border Margin="3" Padding="10"
-                            Background="{DynamicResource CardBrush}"
-                            BorderBrush="{DynamicResource CardBorderBrush}"
-                            BorderThickness="1"
-                            CornerRadius="12">
+                    <Border
+                        Margin="3"
+                        Padding="10"
+                        Background="{DynamicResource CardBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="12">
                         <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0" FontWeight="Bold" Foreground="{DynamicResource TextBrush}"
-                                       Text="{Binding FullName}"/>
-                            <TextBlock Grid.Row="1" FontSize="11" Foreground="{DynamicResource MutedTextBrush}">
-                                <Run Text="Скиллы: "/>
-                                <Run Text="{Binding SkillsPreview}"/>
+                            <!-- Фото фрилансера -->
+                            <Image Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Margin="0,0,10,0">
+                                <Image.Style>
+                                    <Style TargetType="Image">
+                                        <Setter Property="Width" Value="72" />
+                                        <Setter Property="Height" Value="72" />
+                                        <Setter Property="Stretch" Value="UniformToFill" />
+                                        <Setter Property="Source" Value="{Binding Media, Converter={StaticResource MediaToImageConverter}}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Media, Converter={StaticResource MediaToImageConverter}}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+
+                            <!-- Текстовая часть -->
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                FontWeight="Bold"
+                                Foreground="{DynamicResource TextBrush}"
+                                Text="{Binding FullName}" />
+                            <TextBlock
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                FontSize="11"
+                                Foreground="{DynamicResource MutedTextBrush}">
+                                <Run Text="Скиллы: " />
+                                <Run Text="{Binding SkillsPreview}" />
                             </TextBlock>
 
-                            <Button Grid.Row="2" Width="140" Margin="0,4,0,0"
-                                    Content="Выберите проект"
-                                    Command="{Binding DataContext.OpenProjectPickerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                    CommandParameter="{Binding}"
-                                    IsEnabled="{Binding CanInvite}"
-                                    Style="{DynamicResource PanelButtonStyle}"/>
+                            <Button
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Width="140"
+                                Margin="0,4,0,0"
+                                Content="Выберите проект"
+                                Command="{Binding DataContext.OpenProjectPickerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                CommandParameter="{Binding}"
+                                IsEnabled="{Binding CanInvite}"
+                                Style="{DynamicResource PanelButtonStyle}" />
                         </Grid>
                     </Border>
                 </DataTemplate>
@@ -102,6 +134,10 @@
                         Content="Отправить"
                         Style="{DynamicResource PanelButtonStyle}"
                         Command="{Binding SendInviteCommand}"/>
+                <Button Margin="6,0,0,0"
+                        Content="Отмена"
+                        Style="{DynamicResource PanelButtonStyle}"
+                        Command="{Binding DataContext.CloseProjectPickerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
             </StackPanel>
         </Border>
     </Grid>

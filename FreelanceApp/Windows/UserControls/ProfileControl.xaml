@@ -99,7 +99,7 @@
                                             <TextBlock
                                                 FontSize="11"
                                                 Foreground="{DynamicResource MutedTextBrush}"
-                                                Text="{Binding Created_At}" />
+                                                Text="{Binding Created_At, StringFormat='dd.MM.yyyy HH:mm'}" />
 
                                             <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
                                                 <Button

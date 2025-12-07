@@ -113,5 +113,23 @@ namespace FreelanceApp.Windows.ViewModels
                     "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        [RelayCommand]
+        private async Task CloseProjectPickerAsync()
+        {
+            try
+            {
+                IsProjectPickerVisible = false;
+                OpenProjects.Clear();
+                SelectedProject = null;
+                InviteeId = 0;
+                await SearchAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка закрытия окна: {ex.InnerException?.Message ?? ex.Message}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
     }
 }
