@@ -16,36 +16,72 @@
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid Margin="6">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="260"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <!-- Левая панель: фильтр и действия -->
-        <StackPanel Grid.Column="0" Margin="0,0,10,0">
-            <TextBlock Margin="0,0,0,10" FontWeight="Bold" Text="Фильтр по дате"/>
+        <Border Grid.Column="0">
+            <StackPanel>
+                <TextBlock
+                    Margin="0,0,0,10"
+                    Style="{DynamicResource PanelHeaderStyle}"
+                    Text="Фильтр по дате" />
 
-            <TextBlock Text="С (since):"/>
-            <DatePicker SelectedDate="{Binding Since, Mode=TwoWay}"/>
+                <TextBlock
+                    Margin="10,0,10,2"
+                    Foreground="{DynamicResource MutedTextBrush}"
+                    Text="С (since):" />
+                <DatePicker
+                    Margin="10,0,10,6"
+                    SelectedDate="{Binding Since, Mode=TwoWay}"
+                    Background="{DynamicResource CardBrush}"
+                    BorderThickness="0"
+                    Foreground="{DynamicResource TextBrush}" />
+                   
 
-            <TextBlock Margin="0,5,0,0" Text="По (until):"/>
-            <DatePicker SelectedDate="{Binding Until, Mode=TwoWay}"/>
+                <TextBlock
+                    Margin="10,6,10,2"
+                    Foreground="{DynamicResource MutedTextBrush}"
+                    Text="По (until):" />
+                <DatePicker
+                    Margin="10,0,10,6"
+                    SelectedDate="{Binding Until, Mode=TwoWay}"
+                    Background="{DynamicResource CardBrush}"
+                    BorderThickness="0"
+                    Foreground="{DynamicResource TextBrush}" />
 
-            <Button Margin="0,10,0,0" Content="Загрузить" Command="{Binding LoadCommand}"/>
+                <Button
+                    Margin="10,10,10,0"
+                    Content="Загрузить"
+                    Command="{Binding LoadCommand}" />
 
-            <Separator Margin="0,20"/>
+                <Separator Margin="10,20,10,10" />
 
-            <TextBlock Margin="0,0,0,10" FontWeight="Bold" Text="Экспорт/Импорт"/>
-            <Button Margin="0,0,5,5" Content="Экспорт в JSON" Command="{Binding ExportCommand}"/>
-            <Button Content="Импорт из JSON" Command="{Binding ImportCommand}"/>
+                <TextBlock
+                    Margin="10,0,10,6"
+                    FontWeight="Bold"
+                    Foreground="{DynamicResource TextBrush}"
+                    Text="Экспорт/Импорт" />
+                <Button
+                    Margin="10,0,10,5"
+                    Content="Экспорт в JSON"
+                    Command="{Binding ExportCommand}" />
+                <Button
+                    Margin="10,0,10,0"
+                    Content="Импорт из JSON"
+                    Command="{Binding ImportCommand}" />
 
-            <!-- индикатор -->
-            <TextBlock Margin="0,12,0,0"
-                       Foreground="Gray"
-                       Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"
-                       Text="Загрузка..."/>
-        </StackPanel>
+                <!-- индикатор -->
+                <TextBlock
+                    Margin="10,12,10,0"
+                    Foreground="{DynamicResource MutedTextBrush}"
+                    Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"
+                    Text="Загрузка..." />
+            </StackPanel>
+        </Border>
 
         <!-- Правая часть: таблица логов -->
         <DataGrid Grid.Column="1"
@@ -53,9 +89,30 @@
                   Margin="0"
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
-                  IsReadOnly="True">
+                  IsReadOnly="True"
+                  Background="{DynamicResource CardBrush}"
+                  BorderBrush="{DynamicResource CardBorderBrush}"
+                  Foreground="{DynamicResource TextBrush}"
+                  RowBackground="{DynamicResource CardBrush}"
+                  AlternatingRowBackground="#05000000"
+                  GridLinesVisibility="Horizontal"
+                  HorizontalGridLinesBrush="{DynamicResource CardBorderBrush}"
+                  HeadersVisibility="Column">
+            <DataGrid.Resources>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="{DynamicResource CardBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}" />
+                    <Setter Property="FontWeight" Value="SemiBold" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
+                </Style>
+            </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTextColumn Width="50"  Binding="{Binding Id}"         Header="Id"/>
+                <DataGridTextColumn Width="50"
+                                    Binding="{Binding Id}"
+                                    Header="Id"
+                                    SortMemberPath="Id">
+                    <DataGridTextColumn.SortDirection>Ascending</DataGridTextColumn.SortDirection>
+                </DataGridTextColumn>
                 <DataGridTextColumn Width="150" Binding="{Binding ProcName}"   Header="Procedure"/>
                 <DataGridTextColumn Width="80"  Binding="{Binding UserId}"     Header="UserId"/>
                 <DataGridTextColumn Width="100" Binding="{Binding Action}"     Header="Action"/>

@@ -53,7 +53,7 @@ namespace FreelanceApp.Windows.ViewModels
                 await using var uow = new UnitOfWork(DbContextFactory.CreateDbContext(_currentUser));
                 var list = await uow.AdminAudit.GetLogs(sUtc, uUtc, DefaultLimit);
 
-                foreach (var row in list)
+                foreach (var row in list.OrderBy(l => l.Id))
                     Logs.Add(row);
             }
             catch (Exception ex)
@@ -149,7 +149,7 @@ namespace FreelanceApp.Windows.ViewModels
                 }
 
                 await using var uow = new UnitOfWork(DbContextFactory.CreateDbContext(_currentUser));
-                uow.AdminAudit.ImportLogs(dlg.FileName);
+                await uow.AdminAudit.ImportLogs(dlg.FileName);
 
                 MessageBox.Show("Импорт завершён.", "Успех",
                     MessageBoxButton.OK, MessageBoxImage.Information);
