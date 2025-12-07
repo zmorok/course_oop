@@ -18,13 +18,18 @@ namespace FreelanceApp.Windows.ViewModels
         private bool _isReady;
 
         // ===== Фильтр статусов (для верхнего комбобокса)
-        public sealed record StatusFilter(string Title, string Mode, string? ExactStatus);
+        public sealed record StatusFilter(string Title, string Mode, string? ExactStatus)
+        {
+            public override string ToString() => Title;
+        }
         public ObservableCollection<StatusFilter> StatusFilters { get; } =
         [
             new("Новые",        "unsolved", "new"),
             new("В работе",     "unsolved", "in_progress"),
             new("Решённые",     "resolved", "resolved"),
-            new("Отклонённые",  "unsolved", "dismissed"),
+            // Для отклонённых берём все из БД и фильтруем по точному статусу,
+            // иначе репозиторий в режиме "unsolved" их не вернёт.
+            new("Отклонённые",  "all",      "dismissed"),
             new("Все",          "all",       null),
         ];
 
@@ -42,12 +47,21 @@ namespace FreelanceApp.Windows.ViewModels
         [ObservableProperty] private AdminComplaint? selectedComplaint;
 
         // ===== Правый блок (редактирование статуса)
-        public string[] StatusEditOptions { get; } = ["new", "in_progress", "resolved", "dismissed"];
+        public sealed record StatusEditOption(string Code, string Title)
+        {
+            public override string ToString() => Title;
+        }
+        public IReadOnlyList<StatusEditOption> StatusEditOptions { get; } =
+        [
+            new("new",         "Новая"),
+            new("in_progress", "В работе"),
+            new("resolved",    "Решена"),
+            new("dismissed",   "Отклонена")
+        ];
         [ObservableProperty] private string? statusEdit;
 
         // ===== Прочее
         [ObservableProperty] private string warningText = "";
-        [ObservableProperty] private string selectedMediaPretty = "";
         [ObservableProperty] private bool isBusy;
 
         public ComplaintsModerationViewModel() : this(new User { Id = 0, RoleId = 1, FirstName = "Design" }) { }
@@ -64,7 +78,6 @@ namespace FreelanceApp.Windows.ViewModels
         {
             StatusEdit = value?.Status;
             WarningText = "";
-            SelectedMediaPretty = Pretty(value?.Media);
         }
 
         // ===== Команды
@@ -218,16 +231,6 @@ namespace FreelanceApp.Windows.ViewModels
             }
         }
 
-        // ===== Utils
-        private static string Pretty(string? json)
-        {
-            if (string.IsNullOrWhiteSpace(json)) return "";
-            try
-            {
-                using var doc = JsonDocument.Parse(json);
-                return JsonSerializer.Serialize(doc, new JsonSerializerOptions { WriteIndented = true });
-            }
-            catch { return json; }
-        }
+        
     }
 }

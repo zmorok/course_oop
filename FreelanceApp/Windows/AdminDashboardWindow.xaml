@@ -80,7 +80,7 @@
                         Margin="12,16,12,8"
                         FontSize="14"
                         FontWeight="SemiBold"
-                        Foreground="{DynamicResource SecondaryBrush}"
+                        Foreground="{DynamicResource TextBrush}"
                         Text="Навигация" />
                     <Button
                         Margin="0,2"

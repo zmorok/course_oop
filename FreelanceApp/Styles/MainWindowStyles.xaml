@@ -34,7 +34,9 @@
     <!--  Боковое меню  -->
     <Style x:Key="SideMenuStyle" TargetType="Grid">
         <Setter Property="Width" Value="240" />
-        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+        <!-- Используем MainContentBorder_BgColor_Brush, который меняется с темой,
+             чтобы боковая панель выглядела светлой в светлой теме и темной в темной -->
+        <Setter Property="Background" Value="{DynamicResource MainContentBorder_BgColor_Brush}" />
         <Setter Property="Margin" Value="0,10,12,10" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Effect">
@@ -49,7 +51,8 @@
         <Setter Property="Margin" Value="12,8" />
         <Setter Property="Height" Value="44" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{DynamicResource SecondaryBrush}" />
+        <!-- Текст кнопок меню должен читаться на любом фоне сайдбара -->
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
         <Setter Property="FontSize" Value="15" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="Cursor" Value="Hand" />
@@ -73,7 +76,7 @@
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="AccentBar" Property="Fill" Value="{DynamicResource AccentBrush}" />
                             <Setter Property="Background" Value="#1AFFFFFF" />
-                            <Setter Property="Foreground" Value="{DynamicResource SecondaryBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="AccentBar" Property="Fill" Value="{DynamicResource ButtonPressedBrush}" />

@@ -12,11 +12,31 @@ namespace FreelanceApp.Converters
     {
         public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is not JsonDocument doc)
+            if (value is null)
                 return null;
+
+            JsonDocument? doc = null;
+            var ownsDoc = false;
 
             try
             {
+                if (value is JsonDocument existingDoc)
+                {
+                    doc = existingDoc;
+                }
+                else if (value is string json)
+                {
+                    if (string.IsNullOrWhiteSpace(json))
+                        return null;
+
+                    doc = JsonDocument.Parse(json);
+                    ownsDoc = true;
+                }
+                else
+                {
+                    return null;
+                }
+
                 var root = doc.RootElement;
 
                 // Основной вариант — массив объектов медиа
@@ -38,6 +58,11 @@ namespace FreelanceApp.Converters
             catch
             {
                 // игнорируем, просто не показываем картинку
+            }
+            finally
+            {
+                if (ownsDoc)
+                    doc?.Dispose();
             }
 
             return null;
