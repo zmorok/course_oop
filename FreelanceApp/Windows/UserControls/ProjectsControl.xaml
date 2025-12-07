@@ -190,10 +190,20 @@
                                     </TextBlock>
                                 </Border>
 
-                                <Image
-                                    Style="{DynamicResource ProjectMediaImageStyle}"
-                                    Visibility="{Binding HasImage, Converter={StaticResource BoolToVisibilityConverter}}"
-                                    Source="{Binding ImageSource}" />
+                                <Image>
+                                    <Image.Style>
+                                        <Style TargetType="Image" BasedOn="{StaticResource ProjectMediaImageStyle}">
+                                            <Setter Property="Source"
+                                                    Value="{Binding Project.Media, Converter={StaticResource MediaToImageConverter}}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Project.Media, Converter={StaticResource MediaToImageConverter}}"
+                                                             Value="{x:Null}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
 
                                 <TextBlock
                                     Margin="0,4,0,2"

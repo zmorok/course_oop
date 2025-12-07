@@ -131,10 +131,20 @@
                                     TextWrapping="Wrap"
                                     Foreground="{DynamicResource MutedTextBrush}" />
 
-                                <Image
-                                    Style="{DynamicResource PortfolioMediaImageStyle}"
-                                    Visibility="{Binding HasImage, Converter={StaticResource BoolToVisibilityConverter}}"
-                                    Source="{Binding ImageSource}" />
+                                <Image>
+                                    <Image.Style>
+                                        <Style TargetType="Image" BasedOn="{StaticResource PortfolioMediaImageStyle}">
+                                            <Setter Property="Source"
+                                                    Value="{Binding Model.Media, Converter={StaticResource MediaToImageConverter}}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Model.Media, Converter={StaticResource MediaToImageConverter}}"
+                                                             Value="{x:Null}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
                                 <TextBlock
                                     Text="Медиа отсутствует"
                                     Foreground="{DynamicResource MutedTextBrush}"
@@ -143,7 +153,8 @@
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Visibility" Value="Collapsed" />
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding HasImage}" Value="False">
+                                                <DataTrigger Binding="{Binding Model.Media, Converter={StaticResource MediaToImageConverter}}"
+                                                             Value="{x:Null}">
                                                     <Setter Property="Visibility" Value="Visible" />
                                                 </DataTrigger>
                                             </Style.Triggers>

@@ -97,10 +97,7 @@ namespace FreelanceApp.Windows.ViewModels
                     var oppMediaDoc = iAmCustomer ? r.Freelancer_Media : r.Customer_Media;
 
                     var (myImageName, myImageBase64) = MediaFromJson(myMediaDoc);
-                    var myImageSource = CreateImageSource(myImageBase64);
-
-                    var (oppImageName, oppBase64) = MediaFromJson(oppMediaDoc);
-                    var oppImageSource = CreateImageSource(oppBase64);
+                    var (oppImageName, _) = MediaFromJson(oppMediaDoc);
 
                     Rows.Add(new ReviewRow(
                         orderId: r.Order_Id,
@@ -113,9 +110,9 @@ namespace FreelanceApp.Windows.ViewModels
                         oppRating: oppRating,
                         myImageName: myImageName,
                         myImageBase64: myImageBase64,
-                        myImageSource: myImageSource,
+                        myMedia: myMediaDoc,
                         oppImageName: oppImageName,
-                        oppImageSource: oppImageSource
+                        oppMedia: oppMediaDoc
                     ));
                 }
 
@@ -142,7 +139,7 @@ namespace FreelanceApp.Windows.ViewModels
             EditRating = (row.MyRating is >= 1 and <= 5) ? row.MyRating.Value : 5;
             EditImageName = row.MyImageName;
             EditImageBase64 = row.MyImageBase64;
-            EditImagePreview = row.MyImageSource;
+            EditImagePreview = CreateImageSource(EditImageBase64);
 
             IsEditOpen = true;
         }
@@ -388,13 +385,11 @@ namespace FreelanceApp.Windows.ViewModels
         // медиа моего отзыва
         public string? MyImageName { get; }
         public string? MyImageBase64 { get; }
-        public ImageSource? MyImageSource { get; }
-        public bool HasMyImage => MyImageSource is not null;
+        public JsonDocument? MyMedia { get; }
 
         // медиа оппонента (маленькое превью в списке)
         public string? OppImageName { get; }
-        public ImageSource? OppImageSource { get; }
-        public bool HasOppImage => OppImageSource is not null;
+        public JsonDocument? OppMedia { get; }
 
         public ReviewRow(
             int orderId,
@@ -407,9 +402,9 @@ namespace FreelanceApp.Windows.ViewModels
             int? oppRating,
             string? myImageName,
             string? myImageBase64,
-            ImageSource? myImageSource,
+            JsonDocument? myMedia,
             string? oppImageName,
-            ImageSource? oppImageSource)
+            JsonDocument? oppMedia)
         {
             OrderId = orderId;
             ProjectTitle = projectTitle;
@@ -421,9 +416,9 @@ namespace FreelanceApp.Windows.ViewModels
             OppRating = oppRating;
             MyImageName = myImageName;
             MyImageBase64 = myImageBase64;
-            MyImageSource = myImageSource;
             OppImageName = oppImageName;
-            OppImageSource = oppImageSource;
+            MyMedia = myMedia;
+            OppMedia = oppMedia;
         }
     }
 }

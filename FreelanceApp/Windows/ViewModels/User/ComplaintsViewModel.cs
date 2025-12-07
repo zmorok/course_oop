@@ -431,6 +431,7 @@ namespace FreelanceApp.Windows.ViewModels
         public string? ImageBase64 { get; }
         public ImageSource? ImageSource { get; }
         public bool HasImage => ImageSource is not null;
+        public JsonDocument? Media => _base.Media;
 
         public MyComplaintRow(MyComplaint @base, string? imageName, string? imageBase64, ImageSource? imageSource)
         {

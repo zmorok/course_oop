@@ -106,10 +106,20 @@
                                                 Text="{Binding MyCommentPreview, Mode=OneWay}"
                                                 TextWrapping="Wrap" />
                                         </StackPanel>
-                                        <Image
-                                            Style="{DynamicResource ReviewThumbnailImageStyle}"
-                                            Visibility="{Binding HasMyImage, Converter={StaticResource BoolToVis}}"
-                                            Source="{Binding MyImageSource}" />
+                                        <Image>
+                                            <Image.Style>
+                                                <Style TargetType="Image" BasedOn="{StaticResource ReviewThumbnailImageStyle}">
+                                                    <Setter Property="Source"
+                                                            Value="{Binding MyMedia, Converter={StaticResource MediaToImageConverter}}" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding MyMedia, Converter={StaticResource MediaToImageConverter}}"
+                                                                     Value="{x:Null}">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Image.Style>
+                                        </Image>
                                     </StackPanel>
                                 </Grid>
 
@@ -136,10 +146,20 @@
                                                 Text="{Binding OppCommentPreview, Mode=OneWay}"
                                                 TextWrapping="Wrap" />
                                         </StackPanel>
-                                        <Image
-                                            Style="{DynamicResource ReviewThumbnailImageStyle}"
-                                            Visibility="{Binding HasOppImage, Converter={StaticResource BoolToVis}}"
-                                            Source="{Binding OppImageSource}" />
+                                        <Image>
+                                            <Image.Style>
+                                                <Style TargetType="Image" BasedOn="{StaticResource ReviewThumbnailImageStyle}">
+                                                    <Setter Property="Source"
+                                                            Value="{Binding OppMedia, Converter={StaticResource MediaToImageConverter}}" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding OppMedia, Converter={StaticResource MediaToImageConverter}}"
+                                                                     Value="{x:Null}">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Image.Style>
+                                        </Image>
                                     </StackPanel>
                                 </Grid>
                             </StackPanel>
