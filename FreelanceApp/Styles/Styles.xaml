@@ -18,6 +18,7 @@
         <ResourceDictionary Source="/Styles/ComplaintsStyles.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <!-- Глобальный конвертер для медиа jsonb -> ImageSource -->
+    <!-- Глобальные конвертеры для медиа -->
     <conv:MediaJsonToImageSourceConverter x:Key="MediaToImageConverter" />
+    <conv:ByteArrayToImageSourceConverter x:Key="BytesToImageConverter" />
 </ResourceDictionary>

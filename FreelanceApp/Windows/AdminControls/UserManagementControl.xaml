@@ -23,17 +23,21 @@
         <Binding />
     </UserControl.DataContext>
 
-    <Grid>
+    <Grid Margin="6">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="320" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <!-- Левая колонка -->
-        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+        <!-- Левая колонка: управление и форма (с прокруткой) -->
+        <Grid Grid.Column="0" Margin="0,0,14,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
             <!-- Кнопки действий -->
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
                 <StackPanel.Style>
                     <Style TargetType="StackPanel">
                         <Setter Property="Visibility" Value="Visible"/>
@@ -54,10 +58,10 @@
                         IsEnabled="{Binding SelectedUser, Converter={StaticResource NullToFalse}}"/>
             </StackPanel>
 
-            <!-- Форма -->
-            <Border Padding="10" Background="#F9F9F9">
+            <!-- Форма редактирования / создания пользователя -->
+            <Border Grid.Row="1">
                 <Border.Style>
-                    <Style TargetType="Border">
+                    <Style TargetType="Border" BasedOn="{StaticResource BorderStyle}">
                         <Setter Property="Visibility" Value="Collapsed"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsFormOpen}" Value="True">
@@ -67,7 +71,10 @@
                     </Style>
                 </Border.Style>
 
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <!-- Прокрутка только по вертикали для формы -->
+                <ScrollViewer
+                    VerticalScrollBarVisibility="Auto"
+                    HorizontalScrollBarVisibility="Disabled">
                     <StackPanel>
 
                         <!-- ID (только при удалении/редактировании показываем; при добавлении скрыт) -->
@@ -86,7 +93,7 @@
                                 </Style>
                             </StackPanel.Style>
 
-                            <TextBlock Text="ID пользователя"/>
+                            <TextBlock Margin="10,0,10,2" Text="ID пользователя" Foreground="{DynamicResource TextBrush}"/>
                             <TextBox Text="{Binding FormId}" IsReadOnly="True"/>
                         </StackPanel>
 
@@ -103,43 +110,47 @@
                                 </Style>
                             </StackPanel.Style>
 
-                            <TextBlock Margin="0,5,0,0" Text="Last Name"/>
-                            <TextBox Text="{Binding LastName}"/>
+                            <TextBlock Margin="10,5,10,0" Text="Last Name" Foreground="{DynamicResource TextBrush}"/>
+                            <TextBox Text="{Binding LastName}" />
 
-                            <TextBlock Margin="0,5,0,0" Text="First Name"/>
+                            <TextBlock Margin="10,5,10,0" Text="First Name" Foreground="{DynamicResource TextBrush}"/>
                             <TextBox Text="{Binding FirstName}"/>
 
-                            <TextBlock Margin="0,5,0,0" Text="Middle Name"/>
+                            <TextBlock Margin="10,5,10,0" Text="Middle Name" Foreground="{DynamicResource TextBrush}"/>
                             <TextBox Text="{Binding MiddleName}"/>
 
-                            <TextBlock Margin="0,5,0,0" Text="Gender"/>
-                            <ComboBox SelectedValuePath="Content"
-                                      SelectedValue="{Binding Gender, Mode=TwoWay}">
+                            <TextBlock Margin="10,5,10,0" Text="Gender" Foreground="{DynamicResource TextBrush}"/>
+                            <ComboBox
+                                Style="{DynamicResource ProfileComboBoxStyle}"
+                                SelectedValuePath="Content"
+                                SelectedValue="{Binding Gender, Mode=TwoWay}">
                                 <ComboBoxItem Content="Male"/>
                                 <ComboBoxItem Content="Female"/>
                                 <ComboBoxItem Content="Other"/>
                             </ComboBox>
 
-                            <TextBlock Margin="0,5,0,0" Text="Phone Number"/>
+                            <TextBlock Margin="10,5,10,0" Text="Phone Number" Foreground="{DynamicResource TextBrush}"/>
                             <TextBox Text="{Binding PhoneNumber}"/>
 
-                            <TextBlock Margin="0,5,0,0" Text="Email"/>
+                            <TextBlock Margin="10,5,10,0" Text="Email" Foreground="{DynamicResource TextBrush}"/>
                             <TextBox Text="{Binding Email}"/>
 
-                            <TextBlock Margin="0,5,0,0" Text="Пароль"/>
+                            <TextBlock Margin="10,5,10,0" Text="Пароль" Foreground="{DynamicResource TextBrush}"/>
                             <!-- Привязка Password через поведение -->
                             <PasswordBox
+                                Style="{DynamicResource ProfilePasswordBoxStyle}"
                                 service:PasswordBoxHelper.BindPassword="True"
                                 service:PasswordBoxHelper.BoundPassword="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-                            <TextBlock Margin="0,5,0,0" Text="Role"/>
+                            <TextBlock Margin="10,5,10,0" Text="Role" Foreground="{DynamicResource TextBrush}"/>
                             <ComboBox
+                                Style="{DynamicResource ProfileComboBoxStyle}"
                                 ItemsSource="{Binding Roles}"
                                 DisplayMemberPath="Name"
                                 SelectedValuePath="Id"
                                 SelectedValue="{Binding SelectedRoleId}"/>
 
-                            <TextBlock Margin="0,5,0,0" Text="Rating"/>
+                            <TextBlock Margin="10,5,10,0" Text="Rating" Foreground="{DynamicResource TextBrush}"/>
                             <TextBox Text="{Binding Rating}"/>
                         </StackPanel>
 
@@ -151,34 +162,160 @@
                     </StackPanel>
                 </ScrollViewer>
             </Border>
-        </StackPanel>
+        </Grid>
 
-        <!-- Правая колонка: таблица -->
-        <DataGrid Grid.Column="1"
-                  ItemsSource="{Binding Users}"
-                  SelectedItem="{Binding SelectedUser}"
-                  AutoGenerateColumns="False"
-                  CanUserAddRows="False"
-                  IsReadOnly="True"
-                  SelectionMode="Single">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Id}" Header="ID" SortMemberPath="Id">
-                    <DataGridTextColumn.SortDirection>Ascending</DataGridTextColumn.SortDirection>
-                </DataGridTextColumn>
+        <!-- Правая колонка: кастомный список пользователей -->
+        <ScrollViewer
+            Grid.Column="1"
+            VerticalScrollBarVisibility="Auto"
+            HorizontalScrollBarVisibility="Disabled">
+            <ListView
+                ItemsSource="{Binding Users}"
+                SelectedItem="{Binding SelectedUser, Mode=TwoWay}"
+                Background="Transparent"
+                BorderThickness="0">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Margin" Value="0,0,0,8" />
+                        <Setter Property="Padding" Value="0" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <Border x:Name="Bd" Background="Transparent">
+                                        <ContentPresenter />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="#08000000" />
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="#12000000" />
+                                        </Trigger>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter TargetName="Bd" Property="Opacity" Value="0.6" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
 
-                <DataGridTextColumn Binding="{Binding RoleId}" Header="Role ID"/>
-                <DataGridTextColumn Binding="{Binding Role.Name}" Header="Role"/>
-                <DataGridTextColumn Binding="{Binding FirstName}" Header="First Name"/>
-                <DataGridTextColumn Binding="{Binding LastName}" Header="Last Name"/>
-                <DataGridTextColumn Binding="{Binding MiddleName}" Header="Middle Name"/>
-                <DataGridTextColumn Binding="{Binding Email}" Header="Email"/>
-                <!-- По желанию скрыть пароль из таблицы -->
-                <!--<DataGridTextColumn Binding="{Binding Password}" Header="Password"/>-->
-                <DataGridTextColumn Binding="{Binding Gender}" Header="Gender"/>
-                <DataGridTextColumn Binding="{Binding PhoneNumber}" Header="Phone Number"/>
-                <DataGridTextColumn Binding="{Binding RegistrationDate}" Header="Registration Date"/>
-                <DataGridTextColumn Binding="{Binding LastOnlineTime}" Header="Last Online"/>
-            </DataGrid.Columns>
-        </DataGrid>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Border
+                            Background="{DynamicResource CardBrush}"
+                            BorderBrush="{DynamicResource CardBorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="12"
+                            Padding="10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!-- Фото пользователя -->
+                                <Image Grid.Row="0" Grid.RowSpan="4" Grid.Column="0" Margin="0,0,10,0">
+                                    <Image.Style>
+                                        <Style TargetType="Image">
+                                            <Setter Property="Width" Value="64" />
+                                            <Setter Property="Height" Value="64" />
+                                            <Setter Property="Stretch" Value="UniformToFill" />
+                                            <Setter Property="Source"
+                                                    Value="{Binding Photo, Converter={StaticResource BytesToImageConverter}}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Photo}" Value="{x:Null}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+
+                                <!-- Основная информация -->
+                                <StackPanel Grid.Row="0" Grid.Column="1">
+                                    <TextBlock
+                                        FontWeight="Bold"
+                                        FontSize="14"
+                                        Foreground="{DynamicResource TextBrush}">
+                                        <Run Text="{Binding LastName}" />
+                                        <Run Text=" " />
+                                        <Run Text="{Binding FirstName}" />
+                                        <Run Text=" " />
+                                        <Run Text="{Binding MiddleName}" />
+                                    </TextBlock>
+                                    <TextBlock
+                                        Margin="0,2,0,0"
+                                        FontSize="12"
+                                        Foreground="{DynamicResource MutedTextBrush}">
+                                        <Run Text="Email: " />
+                                        <Run Text="{Binding Email}" />
+                                    </TextBlock>
+                                </StackPanel>
+
+                                <!-- Роль и рейтинг -->
+                                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,4,0,0">
+                                    <Border
+                                        Background="{DynamicResource AccentBrush}"
+                                        CornerRadius="8"
+                                        Padding="6,2"
+                                        Margin="0,0,6,0">
+                                        <TextBlock
+                                            FontSize="11"
+                                            FontWeight="SemiBold"
+                                            Foreground="{DynamicResource SecondaryBrush}"
+                                            Text="{Binding Role.Name}" />
+                                    </Border>
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        FontSize="12"
+                                        Foreground="{DynamicResource TextBrush}">
+                                        <Run Text="Рейтинг: " />
+                                        <Run Text="{Binding Rating}" />
+                                    </TextBlock>
+                                </StackPanel>
+
+                                <!-- Дополнительные данные -->
+                                <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,4,0,0">
+                                    <TextBlock FontSize="12" Foreground="{DynamicResource MutedTextBrush}">
+                                        <Run Text="Пол: " />
+                                        <Run Text="{Binding Gender}" />
+                                    </TextBlock>
+                                    <TextBlock
+                                        Margin="16,0,0,0"
+                                        FontSize="12"
+                                        Foreground="{DynamicResource MutedTextBrush}">
+                                        <Run Text="Телефон: " />
+                                        <Run Text="{Binding PhoneNumber}" />
+                                    </TextBlock>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Margin="0,4,0,0">
+                                    <TextBlock FontSize="11" Foreground="{DynamicResource MutedTextBrush}">
+                                        <Run Text="Зарегистрирован: " />
+                                        <Run Text="{Binding RegistrationDate, StringFormat='dd.MM.yyyy'}" />
+                                    </TextBlock>
+                                    <TextBlock
+                                        Margin="16,0,0,0"
+                                        FontSize="11"
+                                        Foreground="{DynamicResource MutedTextBrush}">
+                                        <Run Text="Последний онлайн: " />
+                                        <Run Text="{Binding LastOnlineTime, StringFormat='dd.MM.yyyy HH:mm', TargetNullValue='—'}" />
+                                    </TextBlock>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </ScrollViewer>
     </Grid>
 </UserControl>

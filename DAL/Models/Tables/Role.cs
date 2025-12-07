@@ -20,5 +20,7 @@ namespace DAL.Models.Tables
         public JsonDocument Privileges { get; set; } = null!;
 
         public ICollection<User> Users { get; set; } = [];
+
+        public override string ToString() => Name;
     }
 }
