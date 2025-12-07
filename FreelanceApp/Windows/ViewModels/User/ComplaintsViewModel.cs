@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using FreelanceApp.Helpers;
 
@@ -80,15 +79,13 @@ namespace FreelanceApp.Windows.ViewModels
                 {
                     string? imageName = null;
                     string? imageBase64 = null;
-                    ImageSource? imageSource = null;
 
                     if (c.Media is not null)
                     {
                         (imageName, imageBase64) = MediaJsonHelper.ExtractFirstImage(c.Media);
-                        imageSource = MediaJsonHelper.CreateImageSource(imageBase64);
                     }
 
-                    MyComplaints.Add(new MyComplaintRow(c, imageName, imageBase64, imageSource));
+                    MyComplaints.Add(new MyComplaintRow(c, imageName, imageBase64));
                 }
 
                 CounterpartOrders.Clear();
@@ -99,8 +96,12 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки данных: {ex.InnerException?.Message ?? ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("ComplaintsVM_Error_Load") as string
+                           ?? "Ошибка загрузки данных:") + " " +
+                          (ex.InnerException?.Message ?? ex.Message);
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -126,8 +127,12 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки заказов контрагента: {ex.InnerException?.Message ?? ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("ComplaintsVM_Error_LoadOrders") as string
+                           ?? "Ошибка загрузки заказов контрагента:") + " " +
+                          (ex.InnerException?.Message ?? ex.Message);
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -137,20 +142,26 @@ namespace FreelanceApp.Windows.ViewModels
         {
             if (row is null)
             {
-                MessageBox.Show("Выберите заказ.", "Внимание",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                var text = Application.Current.TryFindResource("ComplaintsVM_Warn_SelectOrder") as string
+                           ?? "Выберите заказ.";
+                var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
             if (SelectedCounterpart is null)
             {
-                MessageBox.Show("Выберите контрагента.", "Внимание",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                var text = Application.Current.TryFindResource("ComplaintsVM_Warn_SelectCounterpart") as string
+                           ?? "Выберите контрагента.";
+                var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
             SelectedOrder = row;        // фиксируем выбор
             EditingComplaint = null;    // создаём новую
-            PanelTitle = $"Жалоба на: {SelectedCounterpart.FullName}, заказ №{row.OrderId}";
+            var titleTemplate = Application.Current.TryFindResource("ComplaintsVM_Create_Title") as string
+                                ?? "Жалоба на: {0}, заказ №{1}";
+            PanelTitle = string.Format(titleTemplate, SelectedCounterpart.FullName, row.OrderId);
             ComplaintText = "";
             EditImageName = "";
             EditImageBase64 = "";
@@ -164,8 +175,10 @@ namespace FreelanceApp.Windows.ViewModels
             var text = (ComplaintText ?? "").Trim();
             if (string.IsNullOrWhiteSpace(text))
             {
-                MessageBox.Show("Текст жалобы не может быть пустым.",
-                    "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
+                var warnText = Application.Current.TryFindResource("ComplaintsVM_Warn_TextRequired") as string
+                               ?? "Текст жалобы не может быть пустым.";
+                var warnCaption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                MessageBox.Show(warnText, warnCaption, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -207,8 +220,10 @@ namespace FreelanceApp.Windows.ViewModels
                 {
                     if (SelectedCounterpart is null || SelectedOrder is null)
                     {
-                        MessageBox.Show("Выберите контрагента и заказ.", "Внимание",
-                            MessageBoxButton.OK, MessageBoxImage.Warning);
+                        var warnText = Application.Current.TryFindResource("ComplaintsVM_Warn_SelectBoth") as string
+                                       ?? "Выберите контрагента и заказ.";
+                        var warnCaption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                        MessageBox.Show(warnText, warnCaption, MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
 
@@ -241,8 +256,12 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка сохранения жалобы: {ex.InnerException?.Message ?? ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("ComplaintsVM_Error_Save") as string
+                           ?? "Ошибка сохранения жалобы:") + " " +
+                          (ex.InnerException?.Message ?? ex.Message);
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -267,17 +286,20 @@ namespace FreelanceApp.Windows.ViewModels
             if (c is null) return;
             if (!c.IsEditable)
             {
-                MessageBox.Show("Редактировать можно только новые жалобы.",
-                    "Внимание", MessageBoxButton.OK, MessageBoxImage.Information);
+                var text = Application.Current.TryFindResource("ComplaintsVM_Info_EditOnlyNew") as string
+                           ?? "Редактировать можно только новые жалобы.";
+                var caption = Application.Current.TryFindResource("Common_Info") as string ?? "Информация";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
             EditingComplaint = c;
-            PanelTitle = "Изменить жалобу";
+            PanelTitle = Application.Current.TryFindResource("ComplaintsVM_Edit_Title") as string
+                         ?? "Изменить жалобу";
             ComplaintText = c.Description ?? "";
             EditImageName = c.ImageName;
             EditImageBase64 = c.ImageBase64;
-            EditImagePreview = c.ImageSource;
+            EditImagePreview = MediaJsonHelper.CreateImageSource(c.ImageBase64);
             IsEditOpen = true;
         }
 
@@ -287,7 +309,12 @@ namespace FreelanceApp.Windows.ViewModels
             var target = c ?? SelectedMyComplaint;
             if (target is null) return;
 
-            if (MessageBox.Show("Удалить жалобу?", "Подтверждение",
+            var confirmText = Application.Current.TryFindResource("ComplaintsVM_Confirm_Delete") as string
+                              ?? "Удалить жалобу?";
+            var confirmCaption = Application.Current.TryFindResource("ComplaintsVM_Confirm_Caption") as string
+                                 ?? "Подтверждение";
+
+            if (MessageBox.Show(confirmText, confirmCaption,
                     MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 return;
 
@@ -302,8 +329,12 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка удаления жалобы: {ex.InnerException?.Message ?? ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("ComplaintsVM_Error_Delete") as string
+                           ?? "Ошибка удаления жалобы:") + " " +
+                          (ex.InnerException?.Message ?? ex.Message);
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -327,11 +358,11 @@ namespace FreelanceApp.Windows.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(
-                        $"Не удалось прочитать файл: {ex.Message}",
-                        "Ошибка",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error);
+                    var msg = (Application.Current.TryFindResource("ComplaintsVM_Error_ReadFile") as string
+                               ?? "Не удалось прочитать файл:") + " " + ex.Message;
+                    var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                                  ?? "Ошибка";
+                    MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -345,7 +376,7 @@ namespace FreelanceApp.Windows.ViewModels
         }
     }
 
-    // Row-VM для "Мои жалобы" с картинкой
+    // Row-VM для "Мои жалобы"
     public sealed class MyComplaintRow
     {
         private readonly MyComplaint _base;
@@ -368,15 +399,13 @@ namespace FreelanceApp.Windows.ViewModels
 
         public string? ImageName { get; }
         public string? ImageBase64 { get; }
-        public ImageSource? ImageSource { get; }
         public JsonDocument? Media => _base.Media;
 
-        public MyComplaintRow(MyComplaint @base, string? imageName, string? imageBase64, ImageSource? imageSource)
+        public MyComplaintRow(MyComplaint @base, string? imageName, string? imageBase64)
         {
             _base = @base;
             ImageName = imageName;
             ImageBase64 = imageBase64;
-            ImageSource = imageSource;
         }
     }
 }

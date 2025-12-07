@@ -28,17 +28,17 @@
 
                 <!-- Переключение: заказчик / исполнитель / архив -->
                 <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Style="{DynamicResource OrdersFilterLabelStyle}" Text="Показать:" />
+                    <TextBlock Style="{DynamicResource OrdersFilterLabelStyle}" Text="{DynamicResource Orders_Filter_Show}" />
                     <RadioButton
-                        Content="Мои заказы (я заказчик)"
+                        Content="{DynamicResource Orders_Filter_Customer}"
                         IsChecked="{Binding IsCustomerView}"
                         Style="{DynamicResource OrdersFilterRadioStyle}" />
                     <RadioButton
-                        Content="Мои заказы (я исполнитель)"
+                        Content="{DynamicResource Orders_Filter_Freelancer}"
                         IsChecked="{Binding IsFreelancerView}"
                         Style="{DynamicResource OrdersFilterRadioStyle}" />
                     <RadioButton
-                        Content="Архив"
+                        Content="{DynamicResource Orders_Filter_Archive}"
                         IsChecked="{Binding IsArchiveView}"
                         Style="{DynamicResource OrdersFilterRadioStyle}" />
                 </StackPanel>
@@ -48,7 +48,7 @@
                     <Button
                         Width="180"
                         Margin="5"
-                        Content="Изменить статус/дедлайн"
+                        Content="{DynamicResource Orders_Action_Edit}"
                         Style="{DynamicResource PanelButtonStyle}"
                         Command="{Binding EditSelectedCommand}"
                         Visibility="{Binding ShowEditActions, Converter={StaticResource BoolToVisibilityConverter}}"
@@ -56,7 +56,7 @@
                     <Button
                         Width="140"
                         Margin="5"
-                        Content="Отменить/Удалить"
+                        Content="{DynamicResource Orders_Action_Delete}"
                         Style="{DynamicResource PanelButtonStyle}"
                         Command="{Binding DeleteSelectedCommand}"
                         Visibility="{Binding ShowEditActions, Converter={StaticResource BoolToVisibilityConverter}}"
@@ -94,9 +94,9 @@
                                 Margin="0,0,10,6"
                                 Style="{DynamicResource OrderTitleTextStyle}"
                                 TextTrimming="CharacterEllipsis">
-                                <Run Text="Проект: " />
+                                <Run Text="{DynamicResource Orders_Card_ProjectPrefix}" />
                                 <Run Text="{Binding ProjectTitle, FallbackValue='[Загрузка...]', TargetNullValue='[Проект не найден]'}" />
-                                <Run Text=" (Заказ №" />
+                                <Run Text="{DynamicResource Orders_Card_OrderPrefix}" />
                                 <Run Text="{Binding OrderId}" />
                                 <Run Text=")" />
                             </TextBlock>
@@ -107,10 +107,39 @@
                                     <TextBlock FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Text="{Binding OrderStatus}" />
                                 </Border>
                                 <Border Style="{DynamicResource OrderDeadlineChipStyle}">
-                                    <TextBlock Foreground="{DynamicResource TextBrush}">
-                                        <Run Text="Дедлайн: " />
-                                        <Run Text="{Binding OrderDeadline, StringFormat='dd.MM.yyyy', FallbackValue='Не указан', TargetNullValue='Не указан'}" />
-                                    </TextBlock>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Foreground="{DynamicResource TextBrush}">
+                                            <Run Text="{DynamicResource Orders_Card_DeadlinePrefix}" />
+                                        </TextBlock>
+                                        <!-- Значение дедлайна -->
+                                        <TextBlock Foreground="{DynamicResource TextBrush}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding OrderDeadline}" Value="{x:Null}">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                            <Run Text="{Binding OrderDeadline, StringFormat='dd.MM.yyyy'}" />
+                                        </TextBlock>
+                                        <!-- Текст "не указан" -->
+                                        <TextBlock Foreground="{DynamicResource TextBrush}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding OrderDeadline}" Value="{x:Null}">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                            <Run Text="{DynamicResource Orders_Card_DeadlineNotSet}" />
+                                        </TextBlock>
+                                    </StackPanel>
                                 </Border>
                             </StackPanel>
 
@@ -121,25 +150,25 @@
                                 Grid.ColumnSpan="2"
                                 Margin="0,3,0,3">
                                 <TextBlock Foreground="{DynamicResource TextBrush}">
-                                    <Run Text="Заказчик: " />
+                                    <Run Text="{DynamicResource Orders_Card_CustomerPrefix}" />
                                     <Run Text="{Binding CustomerFullName, FallbackValue='', TargetNullValue='?'}" />
                                 </TextBlock>
                                 <TextBlock Foreground="{DynamicResource TextBrush}">
-                                    <Run Text="Исполнитель: " />
+                                    <Run Text="{DynamicResource Orders_Card_FreelancerPrefix}" />
                                     <Run Text="{Binding FreelancerFullName, FallbackValue='', TargetNullValue='?'}" />
                                 </TextBlock>
                             </StackPanel>
 
                             <!-- Дата создания -->
-                            <TextBlock
-                                Grid.Row="2"
-                                Grid.Column="0"
-                                Grid.ColumnSpan="2"
-                                Margin="0,4,0,0"
-                                Style="{DynamicResource OrderMetaTextStyle}">
-                                <Run Text="Создан: " />
-                                <Run Text="{Binding OrderCreationDate, StringFormat='dd.MM.yyyy HH:mm'}" />
-                            </TextBlock>
+                                <TextBlock
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    Margin="0,4,0,0"
+                                    Style="{DynamicResource OrderMetaTextStyle}">
+                                    <Run Text="{DynamicResource Orders_Card_CreatedPrefix}" />
+                                    <Run Text="{Binding OrderCreationDate, StringFormat='dd.MM.yyyy HH:mm'}" />
+                                </TextBlock>
                         </Grid>
                     </Border>
                 </DataTemplate>
@@ -157,7 +186,7 @@
                     FontSize="16"
                     FontWeight="Bold"
                     Foreground="{DynamicResource TextBrush}"
-                    Text="Изменение заказа" />
+                    Text="{DynamicResource Orders_Edit_Header}" />
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -173,7 +202,7 @@
                         Grid.Row="0"
                         Grid.Column="0"
                         Style="{DynamicResource OrdersEditLabelStyle}"
-                        Text="Статус:" />
+                        Text="{DynamicResource Orders_Edit_Label_Status}" />
                     <ComboBox
                         Grid.Row="0"
                         Grid.Column="1"
@@ -181,18 +210,18 @@
                         SelectedValuePath="Tag"
                         SelectedValue="{Binding EditStatus}"
                         Style="{DynamicResource OrderEditComboBoxStyle}">
-                        <ComboBoxItem Content="Ожидает" Tag="pending" />
-                        <ComboBoxItem Content="В работе" Tag="active" />
-                        <ComboBoxItem Content="Завершен" Tag="completed" />
-                        <ComboBoxItem Content="Отменён" Tag="cancelled" />
-                        <ComboBoxItem Content="Спор" Tag="disputed" />
+                        <ComboBoxItem Content="{DynamicResource Orders_Edit_Status_Pending}" Tag="pending" />
+                        <ComboBoxItem Content="{DynamicResource Orders_Edit_Status_Active}" Tag="active" />
+                        <ComboBoxItem Content="{DynamicResource Orders_Edit_Status_Completed}" Tag="completed" />
+                        <ComboBoxItem Content="{DynamicResource Orders_Edit_Status_Cancelled}" Tag="cancelled" />
+                        <ComboBoxItem Content="{DynamicResource Orders_Edit_Status_Disputed}" Tag="disputed" />
                     </ComboBox>
 
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="0"
                         Style="{DynamicResource OrdersEditLabelStyle}"
-                        Text="Дедлайн:" />
+                        Text="{DynamicResource Orders_Edit_Label_Deadline}" />
                     <DatePicker
                         Grid.Row="1"
                         Grid.Column="1"
@@ -205,13 +234,13 @@
                     <Button
                         Width="120"
                         Margin="5"
-                        Content="Сохранить"
+                        Content="{DynamicResource Orders_Edit_Button_Save}"
                         Style="{DynamicResource PanelButtonStyle}"
                         Command="{Binding SaveCommand}" />
                     <Button
                         Width="120"
                         Margin="5"
-                        Content="Отмена"
+                        Content="{DynamicResource Orders_Edit_Button_Cancel}"
                         Style="{DynamicResource PanelButtonStyle}"
                         Command="{Binding CancelEditCommand}" />
                 </StackPanel>

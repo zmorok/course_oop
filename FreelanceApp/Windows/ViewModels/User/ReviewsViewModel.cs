@@ -83,7 +83,8 @@ namespace FreelanceApp.Windows.ViewModels
                     bool iAmCustomer = _currentUser.Id == r.Id_Customer;
 
                     string otherName = iAmCustomer
-                        ? (r.Freelancer_Fullname ?? "[удалён]")
+                        ? (r.Freelancer_Fullname ??
+                           (Application.Current.TryFindResource("Reviews_Text_DeletedUser") as string ?? "[удалён]"))
                         : r.Customer_Fullname;
 
                     var myComment = iAmCustomer ? r.Customer_Comment : r.Freelancer_Comment;
@@ -123,8 +124,11 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки отзывов: {ex.Message}", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Reviews_Error_Load") as string
+                           ?? "Ошибка загрузки отзывов:") + " " + ex.Message;
+                var caption = Application.Current.TryFindResource("Reviews_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -135,7 +139,9 @@ namespace FreelanceApp.Windows.ViewModels
             if (row is null) return;
             SelectedRow = row;
 
-            PanelTitle = row.ReviewId is null ? "Новый отзыв" : "Изменить отзыв";
+            var titleKey = row.ReviewId is null ? "Reviews_Edit_Title_New" : "Reviews_Edit_Title_Edit";
+            var titleLocalized = Application.Current.TryFindResource(titleKey) as string;
+            PanelTitle = titleLocalized ?? (row.ReviewId is null ? "Новый отзыв" : "Изменить отзыв");
             EditComment = row.MyComment ?? "";
             EditRating = (row.MyRating is >= 1 and <= 5) ? row.MyRating.Value : 5;
             EditImageName = row.MyImageName;
@@ -164,8 +170,11 @@ namespace FreelanceApp.Windows.ViewModels
             var comment = (EditComment ?? "").Trim();
             if (string.IsNullOrWhiteSpace(comment))
             {
-                MessageBox.Show("Комментарий не может быть пустым.",
-                    "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
+                var text = Application.Current.TryFindResource("Reviews_Warn_EmptyComment") as string
+                           ?? "Комментарий не может быть пустым.";
+                var caption = Application.Current.TryFindResource("Reviews_Warn_Caption") as string
+                              ?? "Проверьте данные";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             var rating = Math.Clamp(EditRating, 1, 5);
@@ -245,8 +254,11 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка сохранения: {ex.Message}", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Reviews_Error_Save") as string
+                           ?? "Ошибка сохранения:") + " " + ex.Message;
+                var caption = Application.Current.TryFindResource("Reviews_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -257,9 +269,15 @@ namespace FreelanceApp.Windows.ViewModels
             if (target?.ReviewId is null)
                 return;
 
+            var confirmTemplate = Application.Current.TryFindResource("Reviews_Confirm_Delete") as string
+                                  ?? "Удалить отзыв для заказа №{0}?";
+            var confirmCaption = Application.Current.TryFindResource("Reviews_Confirm_Caption") as string
+                                 ?? "Подтверждение";
+            var confirmText = string.Format(confirmTemplate, target.OrderId);
+
             if (MessageBox.Show(
-                    $"Удалить отзыв для заказа №{target.OrderId}?",
-                    "Подтверждение",
+                    confirmText,
+                    confirmCaption,
                     MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 return;
 
@@ -276,8 +294,11 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка удаления: {ex.Message}", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Reviews_Error_Delete") as string
+                           ?? "Ошибка удаления:") + " " + ex.Message;
+                var caption = Application.Current.TryFindResource("Reviews_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -301,11 +322,11 @@ namespace FreelanceApp.Windows.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(
-                        $"Не удалось прочитать файл: {ex.Message}",
-                        "Ошибка",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error);
+                    var msg = (Application.Current.TryFindResource("Reviews_Error_ReadFile") as string
+                               ?? "Не удалось прочитать файл:") + " " + ex.Message;
+                    var caption = Application.Current.TryFindResource("Reviews_Error_Load_Caption") as string
+                                  ?? "Ошибка";
+                    MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -335,9 +356,40 @@ namespace FreelanceApp.Windows.ViewModels
         public string? OppComment { get; }
         public int? OppRating { get; }
 
-        public string MyCommentPreview => string.IsNullOrWhiteSpace(MyComment) ? "[нет]" : MyComment!;
-        public string OppCommentPreview => string.IsNullOrWhiteSpace(OppComment) ? "[нет]" : OppComment!;
-        public string EditButtonText => ReviewId is null ? "Добавить" : "Изменить";
+        public string MyCommentPreview
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(MyComment))
+                    return MyComment!;
+
+                return Application.Current.TryFindResource("Reviews_Text_None") as string ?? "[нет]";
+            }
+        }
+
+        public string OppCommentPreview
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(OppComment))
+                    return OppComment!;
+
+                return Application.Current.TryFindResource("Reviews_Text_None") as string ?? "[нет]";
+            }
+        }
+
+        public string EditButtonText
+        {
+            get
+            {
+                var key = ReviewId is null ? "Reviews_Button_Add" : "Reviews_Button_Edit";
+                var localized = Application.Current.TryFindResource(key) as string;
+                if (localized is not null)
+                    return localized;
+
+                return ReviewId is null ? "Добавить" : "Изменить";
+            }
+        }
         public bool CanDelete => ReviewId is not null;
 
         // медиа моего отзыва

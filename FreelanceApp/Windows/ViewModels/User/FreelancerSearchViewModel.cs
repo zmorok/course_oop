@@ -50,8 +50,12 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка поиска: {ex.InnerException?.Message ?? ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("FreelancerSearch_Error_Search") as string
+                           ?? "Ошибка поиска:") + " " +
+                          (ex.InnerException?.Message ?? ex.Message);
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -72,13 +76,21 @@ namespace FreelanceApp.Windows.ViewModels
                 IsProjectPickerVisible = OpenProjects.Count > 0;
 
                 if (OpenProjects.Count == 0)
-                    MessageBox.Show("Нет доступных проектов для приглашения.", "Информация",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                {
+                    var text = Application.Current.TryFindResource("FreelancerSearch_Info_NoProjects") as string
+                               ?? "Нет доступных проектов для приглашения.";
+                    var caption = Application.Current.TryFindResource("Common_Info") as string ?? "Информация";
+                    MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки проектов: {ex.InnerException?.Message ?? ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("FreelancerSearch_Error_LoadProjects") as string
+                           ?? "Ошибка загрузки проектов:") + " " +
+                          (ex.InnerException?.Message ?? ex.Message);
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -97,8 +109,10 @@ namespace FreelanceApp.Windows.ViewModels
                     inviteeId: InviteeId,
                     projectId: SelectedProject.Id);
 
-                MessageBox.Show("Приглашение отправлено", "Успех",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                var text = Application.Current.TryFindResource("FreelancerSearch_Info_InviteSent") as string
+                           ?? "Приглашение отправлено";
+                var caption = Application.Current.TryFindResource("Common_Success") as string ?? "Успех";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Information);
 
                 // очистим панель, перезагрузим список
                 IsProjectPickerVisible = false;
@@ -109,8 +123,12 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка отправки приглашения: {ex.InnerException?.Message ?? ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("FreelancerSearch_Error_SendInvite") as string
+                           ?? "Ошибка отправки приглашения:") + " " +
+                          (ex.InnerException?.Message ?? ex.Message);
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -127,8 +145,12 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка закрытия окна: {ex.InnerException?.Message ?? ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("FreelancerSearch_Error_ClosePicker") as string
+                           ?? "Ошибка закрытия окна:") + " " +
+                          (ex.InnerException?.Message ?? ex.Message);
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

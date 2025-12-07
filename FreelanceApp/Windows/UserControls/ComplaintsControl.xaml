@@ -28,17 +28,17 @@
         <DockPanel Grid.Row="0" Margin="0,0,0,8">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
                 <TextBlock
-                    Text="Режим:"
+                    Text="{DynamicResource Complaints_Mode_Header}"
                     VerticalAlignment="Center"
                     Margin="0,0,8,0"
                     Foreground="{DynamicResource MutedTextBrush}" />
                 <RadioButton
-                    Content="Подача жалобы"
+                    Content="{DynamicResource Complaints_Mode_Create}"
                     Margin="0,0,10,0"
                     Foreground="{DynamicResource TextBrush}"
                     IsChecked="{Binding IsCreateMode}" />
                 <RadioButton
-                    Content="Мои жалобы"
+                    Content="{DynamicResource Complaints_Mode_MyComplaints}"
                     Foreground="{DynamicResource TextBrush}"
                     IsChecked="{Binding IsMyComplaintsMode}" />
             </StackPanel>
@@ -67,7 +67,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- Контрагенты -->
-            <GroupBox Header="Контрагенты">
+            <GroupBox Header="{DynamicResource Complaints_Group_Counterparts}">
                 <ListView
                     ItemsSource="{Binding Counterparts}"
                     SelectedItem="{Binding SelectedCounterpart}"
@@ -91,7 +91,7 @@
             <Grid Grid.Column="1"/>
 
             <!-- Заказы выбранного контрагента -->
-            <GroupBox Grid.Column="2" Header="Заказы с выбранным контрагентом">
+            <GroupBox Grid.Column="2" Header="{DynamicResource Complaints_Group_CounterpartOrders}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
@@ -123,9 +123,9 @@
                                             FontWeight="Bold"
                                             Foreground="{DynamicResource TextBrush}"
                                             TextTrimming="CharacterEllipsis">
-                                            <Run Text="Проект: "/>
+                                            <Run Text="{DynamicResource Complaints_Order_ProjectPrefix}"/>
                                             <Run Text="{Binding ProjectTitle, FallbackValue='[нет данных]'}"/>
-                                            <Run Text=" (Заказ №"/>
+                                            <Run Text="{DynamicResource Complaints_Order_OrderPrefix}"/>
                                             <Run Text="{Binding OrderId}"/>
                                             <Run Text=")"/>
                                         </TextBlock>
@@ -136,18 +136,18 @@
                                                   Foreground="{DynamicResource MutedTextBrush}"
                                                   Text="{Binding OrderStatus}" />
                                               <TextBlock Foreground="{DynamicResource MutedTextBrush}">
-                                                <Run Text="Дедлайн: "/>
+                                                <Run Text="{DynamicResource Complaints_Order_DeadlinePrefix}"/>
                                                 <Run Text="{Binding OrderDeadline, StringFormat='dd.MM.yyyy', TargetNullValue='—'}"/>
                                             </TextBlock>
                                         </StackPanel>
 
                                           <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
                                               <TextBlock Foreground="{DynamicResource TextBrush}">
-                                                <Run Text="Заказчик: "/>
+                                                <Run Text="{DynamicResource Complaints_Order_CustomerPrefix}"/>
                                                 <Run Text="{Binding CustomerFullName, TargetNullValue='?'}"/>
                                             </TextBlock>
                                               <TextBlock Foreground="{DynamicResource TextBrush}">
-                                                <Run Text="Исполнитель: "/>
+                                                <Run Text="{DynamicResource Complaints_Order_FreelancerPrefix}"/>
                                                 <Run Text="{Binding FreelancerFullName, TargetNullValue='?'}"/>
                                             </TextBlock>
                                         </StackPanel>
@@ -158,7 +158,7 @@
                                               Grid.ColumnSpan="2"
                                               FontSize="11"
                                               Foreground="{DynamicResource MutedTextBrush}">
-                                            <Run Text="Создан: "/>
+                                            <Run Text="{DynamicResource Complaints_Order_CreatedPrefix}"/>
                                             <Run Text="{Binding OrderCreationDate, StringFormat='dd.MM.yyyy HH:mm'}"/>
                                         </TextBlock>
                                     </Grid>
@@ -168,7 +168,7 @@
                     </ListView>
 
                     <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,6,0,0">
-                        <Button Content="Пожаловаться на заказ"
+                        <Button Content="{DynamicResource Complaints_Button_ComplainOrder}"
                                 Command="{Binding OpenCreatePanelCommand}"
                                 CommandParameter="{Binding SelectedOrder}"
                                 IsEnabled="{Binding SelectedOrder, Converter={StaticResource NullToFalse}}"/>
@@ -178,7 +178,7 @@
         </Grid>
 
         <!-- ===== Режим: Мои жалобы ===== -->
-        <GroupBox Grid.Row="1" Header="Мои жалобы" Foreground="{DynamicResource TextBrush}">
+        <GroupBox Grid.Row="1" Header="{DynamicResource Complaints_Group_MyComplaints}" Foreground="{DynamicResource TextBrush}">
             <GroupBox.Style>
                 <Style TargetType="GroupBox">
                     <Setter Property="Visibility" Value="Collapsed" />
@@ -209,11 +209,11 @@
 
                                 <StackPanel Grid.Column="0">
                                     <TextBlock>
-                                        <Run Text="Адресат: " Foreground="{DynamicResource TextBrush}" />
+                                        <Run Text="{DynamicResource Complaints_My_TargetPrefix}" Foreground="{DynamicResource TextBrush}" />
                                         <Run Text="{Binding TargetName}" Foreground="{DynamicResource TextBrush}" />
-                                        <Run Text="| Жалобу можно изменить" Foreground="{DynamicResource TextBrush}" />
+                                        <Run Text="{DynamicResource Complaints_My_EditLimitPrefix}" Foreground="{DynamicResource TextBrush}" />
                                         <Run Text="{Binding RemainingChanges, Mode=OneWay}" Foreground="{DynamicResource TextBrush}" />
-                                        <Run Text="раз." Foreground="{DynamicResource TextBrush}" />
+                                        <Run Text="{DynamicResource Complaints_My_EditLimitSuffix}" Foreground="{DynamicResource TextBrush}" />
                                     </TextBlock>
                                     <TextBlock
                                         FontSize="11"
@@ -241,7 +241,7 @@
                                     <TextBlock
                                         Margin="0,2,0,0"
                                         Foreground="{DynamicResource MutedTextBrush}"
-                                        Text="Медиа отсутствует">
+                                        Text="{DynamicResource Complaints_Text_NoMedia}">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Visibility" Value="Collapsed" />
@@ -258,12 +258,12 @@
 
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                     <Button Width="80" Margin="0,0,0,4"
-                                            Content="Изменить"
+                                            Content="{DynamicResource Complaints_Button_Edit}"
                                             Visibility="{Binding IsEditable, Converter={StaticResource Bool2Vis}}"
                                             Command="{Binding DataContext.EditMineCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                             CommandParameter="{Binding}"/>
                                     <Button Width="80"
-                                            Content="Удалить"
+                                            Content="{DynamicResource Complaints_Button_Delete}"
                                             Visibility="{Binding IsEditable, Converter={StaticResource Bool2Vis}}"
                                             Command="{Binding DataContext.DeleteMineCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                             CommandParameter="{Binding}"/>
@@ -289,7 +289,7 @@
 
                     <TextBlock
                         Style="{DynamicResource ComplaintsLabelTextStyle}"
-                        Text="Текст жалобы:" />
+                        Text="{DynamicResource Complaints_Edit_Label_Text}" />
                     <TextBox
                         Height="80"
                         TextWrapping="Wrap"
@@ -297,12 +297,12 @@
 
                     <TextBlock
                         Style="{DynamicResource ComplaintsLabelTextStyle}"
-                        Text="Изображение:" />
+                        Text="{DynamicResource Complaints_Edit_Label_Image}" />
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                         <Button
                             Width="140"
                             Margin="0,0,8,0"
-                            Content="Выбрать файл..."
+                            Content="{DynamicResource Complaints_Edit_Button_SelectFile}"
                             Command="{Binding SelectImageCommand}" />
                         <TextBlock
                             VerticalAlignment="Center"
@@ -318,7 +318,7 @@
                     <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
                         <Button
                             Width="140"
-                            Content="Убрать изображение"
+                            Content="{DynamicResource Complaints_Edit_Button_RemoveImage}"
                             Command="{Binding ClearImageCommand}" />
                     </StackPanel>
 
@@ -329,11 +329,11 @@
                         Margin="0,10,0,0">
                         <Button
                             Width="110"
-                            Content="Сохранить"
+                            Content="{DynamicResource Complaints_Edit_Button_Save}"
                             Command="{Binding SaveCommand}" />
                         <Button
                             Width="80"
-                            Content="Отмена"
+                            Content="{DynamicResource Complaints_Edit_Button_Cancel}"
                             Command="{Binding CancelCommand}" />
                     </StackPanel>
                 </StackPanel>

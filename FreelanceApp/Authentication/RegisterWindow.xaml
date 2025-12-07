@@ -40,21 +40,12 @@
                     <ComboBox
                         Name="GenderBox"
                         SelectedIndex="0"
-                        Style="{DynamicResource RoundedComboBox}">
+                        Style="{DynamicResource ProfileComboBoxStyle}"
+                        HorizontalAlignment="Center">
                         <ComboBoxItem Content="Male" />
                         <ComboBoxItem Content="Female" />
                         <ComboBoxItem Content="Other" />
                     </ComboBox>
-
-                    <!--  доделать после дату рождения  -->
-                    <!--<TextBlock Style="{DynamicResource RegWindowTextBlock}" Text="Дата рождения" />
-                    <DatePicker
-                        xmlns:sys="clr-namespace:System;assembly=mscorlib"
-                        Name="BirthDatePicker"
-                        Width="200"
-                        DisplayDateEnd="{x:Static sys:DateTime.Today}"
-                        SelectedDateFormat="Long" />-->
-
 
                     <StackPanel
                         Margin="10"

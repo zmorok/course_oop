@@ -79,8 +79,10 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при загрузке заказов:\n{ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Orders_Error_Load") as string ?? "Ошибка при загрузке заказов:") +
+                          "\n" + ex.Message;
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -90,14 +92,18 @@ namespace FreelanceApp.Windows.ViewModels
         {
             if (IsArchiveView)
             {
-                MessageBox.Show("Изменение недоступно для архива.", "Внимание",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                var text = Application.Current.TryFindResource("Orders_Error_EditArchive") as string
+                           ?? "Изменение недоступно для архива.";
+                var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
             if (SelectedRow is null)
             {
-                MessageBox.Show("Выберите заказ в списке.", "Внимание",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                var text = Application.Current.TryFindResource("Orders_Error_SelectOrderInList") as string
+                           ?? "Выберите заказ в списке.";
+                var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -111,20 +117,30 @@ namespace FreelanceApp.Windows.ViewModels
         {
             if (IsArchiveView)
             {
-                MessageBox.Show("Удаление недоступно для архива.", "Внимание",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                var text = Application.Current.TryFindResource("Orders_Error_DeleteArchive") as string
+                           ?? "Удаление недоступно для архива.";
+                var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
             if (SelectedRow is null)
             {
-                MessageBox.Show("Выберите заказ.", "Внимание",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                var text = Application.Current.TryFindResource("Orders_Error_SelectOrder") as string
+                           ?? "Выберите заказ.";
+                var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
+            var confirmTextTemplate = Application.Current.TryFindResource("Orders_Confirm_DeleteOrder") as string
+                                      ?? "Удалить заказ №{0}?";
+            var confirmCaption = Application.Current.TryFindResource("Orders_Confirm_Caption") as string
+                                 ?? "Подтверждение";
+            var confirmText = string.Format(confirmTextTemplate, SelectedRow.OrderId);
+
             var confirm = MessageBox.Show(
-                $"Удалить заказ №{SelectedRow.OrderId}?",
-                "Подтверждение",
+                confirmText,
+                confirmCaption,
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
 
@@ -138,8 +154,10 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при удалении:\n{ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Orders_Error_Delete") as string ?? "Ошибка при удалении:") +
+                          "\n" + ex.Message;
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -157,8 +175,10 @@ namespace FreelanceApp.Windows.ViewModels
         {
             if (SelectedRow is null)
             {
-                MessageBox.Show("Не выбран заказ.", "Внимание",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                var text = Application.Current.TryFindResource("Orders_Error_NoOrderForSave") as string
+                           ?? "Не выбран заказ.";
+                var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -174,8 +194,10 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при сохранении:\n{ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Orders_Error_Save") as string ?? "Ошибка при сохранении:") +
+                          "\n" + ex.Message;
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

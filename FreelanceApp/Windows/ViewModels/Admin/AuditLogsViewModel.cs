@@ -36,8 +36,10 @@ namespace FreelanceApp.Windows.ViewModels
             // простая валидация диапазона
             if (Since is not null && Until is not null && Since > Until)
             {
-                MessageBox.Show("Дата 'С' больше даты 'По'.", "Внимание",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                var text = Application.Current.TryFindResource("Audit_Error_InvalidRange") as string
+                           ?? "Дата 'С' больше даты 'По'.";
+                var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -58,8 +60,11 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при загрузке логов: {ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Audit_Error_Load") as string
+                           ?? "Ошибка при загрузке логов:") + " " + ex.Message;
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
@@ -81,8 +86,10 @@ namespace FreelanceApp.Windows.ViewModels
 
                 if (ContainsCyrillic(dlg.FileName))
                 {
-                    MessageBox.Show("Путь содержит кириллицу. Выберите другой каталог.",
-                        "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    var text = Application.Current.TryFindResource("Audit_Warn_PathCyrillicDir") as string
+                               ?? "Путь содержит кириллицу. Выберите другой каталог.";
+                    var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                    MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
@@ -114,14 +121,21 @@ namespace FreelanceApp.Windows.ViewModels
                 await using (var fs = File.Create(dlg.FileName))
                 await JsonSerializer.SerializeAsync(fs, exportRows, opts);
 
-                var open = MessageBox.Show("Экспорт завершён. Открыть папку?", "Успех", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                var confirmText = Application.Current.TryFindResource("Audit_Info_ExportDone") as string
+                                  ?? "Экспорт завершён. Открыть папку?";
+                var confirmCaption = Application.Current.TryFindResource("Common_Success") as string ?? "Успех";
+                var open = MessageBox.Show(confirmText, confirmCaption, MessageBoxButton.YesNo,
+                    MessageBoxImage.Information);
 
                 if (open == MessageBoxResult.Yes) Process.Start("explorer.exe", Path.GetDirectoryName(dlg.FileName)!);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка экспорта: {ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Audit_Error_Export") as string
+                           ?? "Ошибка экспорта:") + " " + ex.Message;
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
@@ -143,23 +157,30 @@ namespace FreelanceApp.Windows.ViewModels
 
                 if (ContainsCyrillic(dlg.FileName))
                 {
-                    MessageBox.Show("Путь содержит кириллицу. Выберите другой файл.", "Внимание",
-                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    var text = Application.Current.TryFindResource("Audit_Warn_PathCyrillicFile") as string
+                               ?? "Путь содержит кириллицу. Выберите другой файл.";
+                    var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                    MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
                 await using var uow = new UnitOfWork(DbContextFactory.CreateDbContext(_currentUser));
                 await uow.AdminAudit.ImportLogs(dlg.FileName);
 
-                MessageBox.Show("Импорт завершён.", "Успех",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                var textOk = Application.Current.TryFindResource("Audit_Info_ImportDone") as string
+                             ?? "Импорт завершён.";
+                var captionOk = Application.Current.TryFindResource("Common_Success") as string ?? "Успех";
+                MessageBox.Show(textOk, captionOk, MessageBoxButton.OK, MessageBoxImage.Information);
 
                 await LoadAsync(); // перезагрузить после импорта
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка импорта: {ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Audit_Error_Import") as string
+                           ?? "Ошибка импорта:") + " " + ex.Message;
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

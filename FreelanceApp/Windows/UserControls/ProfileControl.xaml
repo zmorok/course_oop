@@ -21,43 +21,43 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" HorizontalAlignment="Center">
-                        <TextBlock Style="{DynamicResource ProfileHeaderTextStyle}" Text="Мой профиль" />
+                        <TextBlock Style="{DynamicResource ProfileHeaderTextStyle}" Text="{DynamicResource Profile_Header_MyProfile}" />
                         <Image Style="{DynamicResource ProfileAvatarStyle}" Source="{Binding Photo}" />
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                             <Button
                                 Width="120"
                                 Command="{Binding UploadPhotoCommand}"
-                                Content="Загрузить…" />
+                                Content="{DynamicResource Profile_Button_UploadPhoto}" />
                             <Button
                                 Width="120"
                                 Command="{Binding DeletePhotoCommand}"
-                                Content="Удалить" />
+                                Content="{DynamicResource Profile_Button_RemovePhoto}" />
                         </StackPanel>
                     </StackPanel>
 
                     <StackPanel Grid.Column="1" Margin="12,0,0,0">
-                        <TextBlock Style="{DynamicResource ProfileLabelStyle}" Text="Имя" />
+                        <TextBlock Style="{DynamicResource ProfileLabelStyle}" Text="{DynamicResource Profile_Label_FirstName}" />
                         <TextBox Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <TextBlock Style="{DynamicResource ProfileLabelStyle}" Text="Фамилия" />
+                        <TextBlock Style="{DynamicResource ProfileLabelStyle}" Text="{DynamicResource Profile_Label_LastName}" />
                         <TextBox Text="{Binding LastName, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <TextBlock Style="{DynamicResource ProfileLabelStyle}" Text="Отчество" />
+                        <TextBlock Style="{DynamicResource ProfileLabelStyle}" Text="{DynamicResource Profile_Label_MiddleName}" />
                         <TextBox Text="{Binding MiddleName, UpdateSourceTrigger=PropertyChanged}" />
 
                         <TextBlock Style="{DynamicResource ProfileLabelStyle}" Text="Email" />
                         <TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <TextBlock Style="{DynamicResource ProfileLabelStyle}" Text="Телефон" />
+                        <TextBlock Style="{DynamicResource ProfileLabelStyle}" Text="{DynamicResource Profile_Label_Phone}" />
                         <TextBox Text="{Binding PhoneNumber, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <TextBlock Style="{DynamicResource ProfileLabelStyle}" Text="Пол" />
+                        <TextBlock Style="{DynamicResource ProfileLabelStyle}" Text="{DynamicResource Profile_Label_Gender}" />
                         <ComboBox
                             Style="{DynamicResource ProfileComboBoxStyle}"
                             ItemsSource="{Binding Genders, UpdateSourceTrigger=PropertyChanged}"
                             SelectedItem="{Binding SelectedGender}" />
 
-                        <TextBlock Style="{DynamicResource ProfileLabelStyle}" Text="Новый пароль (опционально)" />
+                        <TextBlock Style="{DynamicResource ProfileLabelStyle}" Text="{DynamicResource Profile_Label_NewPassword}" />
                         <PasswordBox
                             x:Name="PasswordBox"
                             Style="{DynamicResource ProfilePasswordBoxStyle}"
@@ -68,7 +68,8 @@
                             Margin="0,6,0,0"
                             HorizontalAlignment="Center"
                             Command="{Binding SaveCommand}"
-                            Content="Сохранить изменения" VerticalAlignment="Center" />
+                            Content="{DynamicResource Profile_Button_SaveChanges}"
+                            VerticalAlignment="Center" />
                     </StackPanel>
                 </Grid>
             </Border>
@@ -76,7 +77,7 @@
             <!--  === Уведомления ===  -->
             <Border Style="{DynamicResource ProfileSectionBorderStyle}">
                 <StackPanel>
-                    <TextBlock Style="{DynamicResource ProfileHeaderTextStyle}" Text="Приглашения на выполнение проектов" />
+                    <TextBlock Style="{DynamicResource ProfileHeaderTextStyle}" Text="{DynamicResource Profile_Header_Invitations}" />
                     <ScrollViewer Height="220" VerticalScrollBarVisibility="Auto">
                         <ListView
                             Margin="0,4,0,0"
@@ -107,12 +108,12 @@
                                                     Margin="0,0,8,0"
                                                     Command="{Binding DataContext.AcceptInviteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                     CommandParameter="{Binding}"
-                                                    Content="Принять" />
+                                                    Content="{DynamicResource Profile_Button_Accept}" />
                                                 <Button
                                                     Width="110"
                                                     Command="{Binding DataContext.DeclineInviteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                     CommandParameter="{Binding}"
-                                                    Content="Отклонить" />
+                                                    Content="{DynamicResource Profile_Button_Reject}" />
                                             </StackPanel>
                                         </StackPanel>
                                     </Border>
@@ -126,7 +127,7 @@
             <!--  === Предупреждения ===  -->
             <Border Style="{DynamicResource ProfileSectionBorderStyle}">
                 <StackPanel>
-                    <TextBlock Style="{DynamicResource ProfileHeaderTextStyle}" Text="Предупреждения пользователя" />
+                    <TextBlock Style="{DynamicResource ProfileHeaderTextStyle}" Text="{DynamicResource Profile_Header_Warnings}" />
                     <ListView
                         Height="220"
                         ItemsSource="{Binding Warnings}"
@@ -137,9 +138,9 @@
                                 <Border Style="{DynamicResource ProfileCardBorderStyle}">
                                     <StackPanel>
                                         <TextBlock Foreground="{DynamicResource TextBrush}">
-                                            <Run Text="Предупреждение №" />
+                                            <Run Text="{DynamicResource Profile_Warning_Prefix}" />
                                             <Run FontWeight="Bold" Text="{Binding WarningId}" />
-                                            <Run Text=", разобрал: " />
+                                            <Run Text="{DynamicResource Profile_Warning_ResolvedBy}" />
                                             <Run FontWeight="Bold" Text="{Binding AdminName}" />
                                         </TextBlock>
 
@@ -148,7 +149,7 @@
                                             Margin="0,4,0,0"
                                             TextWrapping="Wrap"
                                             Foreground="{DynamicResource TextBrush}">
-                                            <Run Text="Текст: " />
+                                            <Run Text="{DynamicResource Profile_Warning_Text}" />
                                             <Run Text="{Binding Message}" />
                                         </TextBlock>
 
@@ -156,7 +157,7 @@
                                             Margin="0,4,0,0"
                                             FontSize="11"
                                             Foreground="{DynamicResource MutedTextBrush}">
-                                            <Run Text="Действительно до: " />
+                                            <Run Text="{DynamicResource Profile_Warning_ValidUntil}" />
                                             <Run Text="{Binding ExpiresAt, StringFormat='dd.MM.yyyy'}" />
                                         </TextBlock>
                                     </StackPanel>

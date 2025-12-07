@@ -21,16 +21,16 @@
         <!-- Переключатель режима: я заказчик / я исполнитель -->
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <TextBlock
-                Text="Показать заказы, где я:"
+                Text="{DynamicResource Reviews_Mode_Label}"
                 VerticalAlignment="Center"
                 Margin="0,0,10,0"
                 Foreground="{DynamicResource MutedTextBrush}" />
             <RadioButton
-                Content="Заказчик"
+                Content="{DynamicResource Reviews_Mode_AsCustomer}"
                 Style="{DynamicResource ReviewsModeRadioButtonStyle}"
                 IsChecked="{Binding AsCustomer, Mode=TwoWay}" />
             <RadioButton
-                Content="Исполнитель"
+                Content="{DynamicResource Reviews_Mode_AsFreelancer}"
                 Style="{DynamicResource ReviewsModeRadioButtonStyle}"
                 IsChecked="{Binding AsFreelancer, Mode=TwoWay}" />
         </StackPanel>
@@ -79,7 +79,7 @@
 
                                 <!-- Имя другого участника -->
                                 <TextBlock FontSize="12" Foreground="{DynamicResource MutedTextBrush}">
-                                    <Run Text="Другой участник: " />
+                                    <Run Text="{DynamicResource Reviews_Label_OtherSide}" />
                                     <Run Text="{Binding OtherSideName, Mode=OneWay}" />
                                 </TextBlock>
 
@@ -94,7 +94,7 @@
                                     <TextBlock
                                         Grid.Column="0"
                                         Style="{DynamicResource ReviewsInlineLabelStyle}"
-                                        Text="Ваш отзыв:" />
+                                        Text="{DynamicResource Reviews_Label_MyReview}" />
                                     <StackPanel Grid.Column="2" HorizontalAlignment="Left">
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock
@@ -134,7 +134,7 @@
                                     <TextBlock
                                         Grid.Column="0"
                                         Style="{DynamicResource ReviewsInlineLabelStyle}"
-                                        Text="Отзыв оппонента:" />
+                                        Text="{DynamicResource Reviews_Label_OpponentReview}" />
                                     <StackPanel Grid.Column="2" HorizontalAlignment="Left">
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock
@@ -165,20 +165,35 @@
                             </StackPanel>
 
                             <!-- Правая колонка: кнопки -->
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <Button
-                                    Width="90"
-                                    Margin="0,0,0,4"
-                                    Content="{Binding EditButtonText, Mode=OneWay}"
-                                    Command="{Binding DataContext.OpenEditForCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
-                                    CommandParameter="{Binding}" />
-                                <Button
-                                    Width="90"
-                                    Content="Удалить"
-                                    Visibility="{Binding CanDelete, Converter={StaticResource BoolToVis}}"
-                                    Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
-                                    CommandParameter="{Binding}" />
-                            </StackPanel>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <!-- Кнопка добавления/редактирования отзыва с локализацией -->
+                            <Button
+                                Width="90"
+                                Margin="0,0,0,4"
+                                Command="{Binding DataContext.OpenEditForCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                CommandParameter="{Binding}">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource PanelButtonStyle}">
+                                        <!-- По умолчанию считаем, что отзыв есть (Edit) -->
+                                        <Setter Property="Content" Value="{DynamicResource Reviews_Button_Edit}" />
+                                        <Style.Triggers>
+                                            <!-- Если ReviewId == null, показываем "Добавить" -->
+                                            <DataTrigger Binding="{Binding ReviewId}" Value="{x:Null}">
+                                                <Setter Property="Content" Value="{DynamicResource Reviews_Button_Add}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+
+                            <!-- Кнопка удаления с локализацией -->
+                            <Button
+                                Width="90"
+                                Content="{DynamicResource Reviews_Button_Delete}"
+                                Visibility="{Binding CanDelete, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                CommandParameter="{Binding}" />
+                        </StackPanel>
                         </Grid>
                     </Border>
                 </DataTemplate>
@@ -198,7 +213,7 @@
                         Style="{DynamicResource ReviewsHeaderTextStyle}"
                         Text="{Binding PanelTitle, Mode=OneWay}" />
 
-                    <TextBlock Style="{DynamicResource ReviewsLabelTextStyle}" Text="Оценка:" />
+                    <TextBlock Style="{DynamicResource ReviewsLabelTextStyle}" Text="{DynamicResource Reviews_Edit_Label_Rating}" />
                     <StackPanel Orientation="Horizontal" Margin="0,2,0,6">
                         <ComboBox
                             Style="{DynamicResource ReviewsRatingComboBoxStyle}"
@@ -217,18 +232,18 @@
                             Text="★" />
                     </StackPanel>
 
-                    <TextBlock Style="{DynamicResource ReviewsLabelTextStyle}" Text="Комментарий:" />
+                    <TextBlock Style="{DynamicResource ReviewsLabelTextStyle}" Text="{DynamicResource Reviews_Edit_Label_Comment}" />
                     <TextBox
                         Height="60"
                         TextWrapping="Wrap"
                         Text="{Binding EditComment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                    <TextBlock Style="{DynamicResource ReviewsLabelTextStyle}" Text="Изображение:" />
+                    <TextBlock Style="{DynamicResource ReviewsLabelTextStyle}" Text="{DynamicResource Reviews_Edit_Label_Image}" />
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                         <Button
                             Width="140"
                             Margin="0,0,8,0"
-                            Content="Выбрать файл..."
+                            Content="{DynamicResource Reviews_Edit_Button_SelectFile}"
                             Command="{Binding SelectImageCommand}" />
                         <TextBlock
                             VerticalAlignment="Center"
@@ -244,7 +259,7 @@
                     <StackPanel Orientation="Horizontal">
                         <Button
                             Width="140"
-                            Content="Убрать изображение"
+                            Content="{DynamicResource Reviews_Edit_Button_RemoveImage}"
                             Command="{Binding ClearImageCommand}" />
                     </StackPanel>
 
@@ -253,11 +268,11 @@
                                 VerticalAlignment="Top">
                         <Button
                             Width="100"
-                            Content="Сохранить"
+                            Content="{DynamicResource Reviews_Edit_Button_Save}"
                             Command="{Binding SaveCommand}" />
                         <Button
                             Width="80"
-                            Content="Отмена"
+                            Content="{DynamicResource Reviews_Edit_Button_Cancel}"
                             Command="{Binding CancelCommand}" />
                     </StackPanel>
                 </StackPanel>

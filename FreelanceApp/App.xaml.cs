@@ -1,4 +1,5 @@
-﻿using System.Windows;
+using System;
+using System.Windows;
 using Microsoft.Extensions.Configuration;
 using FreelanceApp.Services;
 
@@ -28,6 +29,9 @@ namespace FreelanceApp
 
             // сразу подхватываем активную тему (светлая/тёмная) при старте
             ThemeManager.Apply(ThemeManager.CurrentTheme);
+
+            // инициализация локализации (по умолчанию — русский)
+            LocalizationManager.SetLanguage(AppLanguage.Ru);
         }
 
         public static string GetConnectionForRole(string pgRole)

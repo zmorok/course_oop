@@ -60,11 +60,10 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Ошибка при загрузке портфолио:\n{ex.Message}",
-                    "Ошибка",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Portfolio_Error_Load") as string ?? "Ошибка при загрузке портфолио:") +
+                          "\n" + ex.Message;
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -106,11 +105,11 @@ namespace FreelanceApp.Windows.ViewModels
             $";
             if (!string.IsNullOrWhiteSpace(experience) && !Regex.IsMatch(experience, experiencePattern, RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace))
             {
-                MessageBox.Show(
-                    "Поле «Опыт» должно содержать число с указанием единицы (например, \"3 года\", \"6 мес\" или \"1 год 6 месяцев\").",
-                    "Проверьте данные",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
+                var text = Application.Current.TryFindResource("Portfolio_Warn_Experience") as string
+                           ?? "Поле «Опыт» должно содержать число с указанием единицы (например, \"3 года\", \"6 мес\" или \"1 год 6 месяцев\").";
+                var caption = Application.Current.TryFindResource("Portfolio_Warn_Experience_Caption") as string
+                              ?? "Проверьте данные";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -148,8 +147,10 @@ namespace FreelanceApp.Windows.ViewModels
                         experience: experience
                     );
 
-                    MessageBox.Show("Портфолио добавлено.", "Успех",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    var textAdded = Application.Current.TryFindResource("Portfolio_Info_Added") as string
+                                    ?? "Портфолио добавлено.";
+                    var captionSuccess = Application.Current.TryFindResource("Common_Success") as string ?? "Успех";
+                    MessageBox.Show(textAdded, captionSuccess, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
                 {
@@ -164,8 +165,10 @@ namespace FreelanceApp.Windows.ViewModels
                         experience: experience
                     );
 
-                    MessageBox.Show("Портфолио обновлено.", "Успех",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    var textUpdated = Application.Current.TryFindResource("Portfolio_Info_Updated") as string
+                                      ?? "Портфолио обновлено.";
+                    var captionSuccess = Application.Current.TryFindResource("Common_Success") as string ?? "Успех";
+                    MessageBox.Show(textUpdated, captionSuccess, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
 
                 CloseForm();
@@ -173,11 +176,10 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Ошибка при сохранении портфолио:\n{ex.Message}",
-                    "Ошибка",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Portfolio_Error_Save") as string ?? "Ошибка при сохранении портфолио:") +
+                          "\n" + ex.Message;
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -186,8 +188,10 @@ namespace FreelanceApp.Windows.ViewModels
         {
             if (SelectedPortfolio is null)
             {
-                MessageBox.Show("Выберите портфолио для удаления.",
-                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                var text = Application.Current.TryFindResource("Portfolio_Error_SelectForDelete") as string
+                           ?? "Выберите портфолио для удаления.";
+                var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Предупреждение";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -200,9 +204,15 @@ namespace FreelanceApp.Windows.ViewModels
         {
             if (item is null) return;
 
+            var tmpl = Application.Current.TryFindResource("Portfolio_Confirm_Delete") as string
+                       ?? "Удалить портфолио №{0}?\n{1}";
+            var captionConfirm = Application.Current.TryFindResource("Portfolio_Confirm_Caption") as string
+                                 ?? "Подтвердите удаление";
+            var confirmText = string.Format(tmpl, item.Id, item.Description);
+
             var confirm = MessageBox.Show(
-                $"Удалить портфолио №{item.Id}?\n{item.Description}",
-                "Подтвердите удаление",
+                confirmText,
+                captionConfirm,
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
 
@@ -216,8 +226,10 @@ namespace FreelanceApp.Windows.ViewModels
                     userId: _currentUser.Id,
                     portfolioId: item.Id);
 
-                MessageBox.Show("Портфолио удалено.", "Успех",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                var textDeleted = Application.Current.TryFindResource("Portfolio_Info_Deleted") as string
+                                  ?? "Портфолио удалено.";
+                var captionSuccess = Application.Current.TryFindResource("Common_Success") as string ?? "Успех";
+                MessageBox.Show(textDeleted, captionSuccess, MessageBoxButton.OK, MessageBoxImage.Information);
 
                 if (ReferenceEquals(SelectedPortfolio, item))
                     CloseForm();
@@ -226,11 +238,10 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Ошибка при удалении портфолио:\n{ex.Message}",
-                    "Ошибка",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Portfolio_Error_Delete") as string ?? "Ошибка при удалении портфолио:") +
+                          "\n" + ex.Message;
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -294,8 +305,10 @@ namespace FreelanceApp.Windows.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Не удалось прочитать файл: {ex.Message}",
-                        "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    var msg = (Application.Current.TryFindResource("Portfolio_Error_ReadFile") as string ?? "Не удалось прочитать файл:") +
+                              $" {ex.Message}";
+                    var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string ?? "Ошибка";
+                    MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }

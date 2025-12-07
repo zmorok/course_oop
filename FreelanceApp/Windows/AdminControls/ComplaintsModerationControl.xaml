@@ -25,12 +25,46 @@
 
         <!-- Фильтры -->
         <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Orientation="Horizontal" VerticalAlignment="Center">
-            <TextBlock Text="Статус:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{DynamicResource TextBrush}"/>
+            <TextBlock Text="{DynamicResource AdminComplaints_Filter_StatusLabel}" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{DynamicResource TextBrush}"/>
             <ComboBox Width="170" Margin="0,0,8,0"
                       ItemsSource="{Binding StatusFilters}"
-                      SelectedItem="{Binding SelectedStatusFilter}"
-                      Style="{DynamicResource ProfileComboBoxStyle}"
-                      DisplayMemberPath="Title"/>
+                      SelectedItem="{Binding SelectedStatusFilter, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                      Style="{DynamicResource ProfileComboBoxStyle}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <!-- по умолчанию показываем код, чтобы не было пусто -->
+                                    <Setter Property="Text" Value="{Binding Code}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Code}" Value="new">
+                                            <Setter Property="Text"
+                                                    Value="{DynamicResource AdminComplaints_Filter_Status_New}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Code}" Value="in_progress">
+                                            <Setter Property="Text"
+                                                    Value="{DynamicResource AdminComplaints_Filter_Status_InProgress}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Code}" Value="resolved">
+                                            <Setter Property="Text"
+                                                    Value="{DynamicResource AdminComplaints_Filter_Status_Resolved}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Code}" Value="dismissed">
+                                            <Setter Property="Text"
+                                                    Value="{DynamicResource AdminComplaints_Filter_Status_Dismissed}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Code}" Value="all">
+                                            <Setter Property="Text"
+                                                    Value="{DynamicResource AdminComplaints_Filter_Status_All}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
 
             <TextBox Width="240" Margin="8,0,0,0"
                      Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
@@ -38,12 +72,12 @@
                     <KeyBinding Key="Enter" Command="{Binding RefreshCommand}"/>
                 </TextBox.InputBindings>
             </TextBox>
-            <Button Content="Найти" Margin="6,0,0,0" Command="{Binding RefreshCommand}"/>
-            <Button Content="Обновить" Margin="6,0,0,0" Command="{Binding RefreshCommand}"/>
+            <Button Content="{DynamicResource AdminComplaints_Button_Find}" Margin="6,0,0,0" Command="{Binding RefreshCommand}"/>
+            <Button Content="{DynamicResource AdminComplaints_Button_Refresh}" Margin="6,0,0,0" Command="{Binding RefreshCommand}"/>
         </StackPanel>
 
         <!-- Список жалоб -->
-        <GroupBox Grid.Row="1" Grid.Column="0" Header="Жалобы" Foreground="{DynamicResource TextBrush}">
+        <GroupBox Grid.Row="1" Grid.Column="0" Header="{DynamicResource AdminComplaints_Group_Complaints}" Foreground="{DynamicResource TextBrush}">
             <ListView ItemsSource="{Binding Complaints}"
                       SelectedItem="{Binding SelectedComplaint}"
                       HorizontalContentAlignment="Stretch"
@@ -60,15 +94,15 @@
 
                                 <StackPanel Grid.Column="0">
                                     <TextBlock FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}">
-                                        <Run Text="От: "/><Run Text="{Binding FiledByName}"/>
-                                        <Run Text=" → На: "/><Run Text="{Binding UserComName}"/>
+                                        <Run Text="{DynamicResource AdminComplaints_Row_FromPrefix}"/><Run Text="{Binding FiledByName}"/>
+                                        <Run Text="{DynamicResource AdminComplaints_Row_ToPrefix}"/><Run Text="{Binding UserComName}"/>
                                     </TextBlock>
                                     <TextBlock FontSize="11" Foreground="{DynamicResource MutedTextBrush}">
-                                        <Run Text="Статус: "/><Run Text="{Binding Status}"/>
+                                        <Run Text="{DynamicResource AdminComplaints_Row_StatusPrefix}"/><Run Text="{Binding Status}"/>
                                         <Run Text="  •  №"/><Run Text="{Binding Id_Complaint}"/>
-                                        <Run Text="  •  Заказ: "/>
+                                        <Run Text="{DynamicResource AdminComplaints_Row_OrderPrefix}"/>
                                         <Run Text="{Binding Id_Order, TargetNullValue=—}"/>
-                                        <Run Text=" / Архив: "/>
+                                        <Run Text="{DynamicResource AdminComplaints_Row_ArchivePrefix}"/>
                                         <Run Text="{Binding Id_Order_Arc, TargetNullValue=—}"/>
                                     </TextBlock>
                                     <TextBlock Margin="0,4,0,0"
@@ -105,45 +139,76 @@
         <Grid Grid.Row="1" Grid.Column="1"/>
 
         <!-- Детали + действия -->
-        <GroupBox Grid.Row="1" Grid.Column="2" Header="Детали" Foreground="{DynamicResource TextBrush}">
+        <GroupBox Grid.Row="1" Grid.Column="2" Header="{DynamicResource AdminComplaints_Group_Details}" Foreground="{DynamicResource TextBrush}">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <Border Style="{DynamicResource ComplaintsEditBorderStyle}">
                     <StackPanel>
                         <TextBlock FontWeight="Bold"
                                    Foreground="{DynamicResource TextBrush}"
-                                   Text="{Binding SelectedComplaint.Id_Complaint, StringFormat=Жалоба №{0}}"/>
+                                   Text="{Binding SelectedComplaint.Id_Complaint, StringFormat={StaticResource AdminComplaints_Details_ComplaintNo}}"/>
                         <TextBlock Margin="0,4,0,0" Foreground="{DynamicResource TextBrush}">
-                            <Run Text="От: "/><Run Text="{Binding SelectedComplaint.FiledByName, TargetNullValue=—}"/>
-                            <Run Text="  →  На: "/><Run Text="{Binding SelectedComplaint.UserComName, TargetNullValue=—}"/>
+                            <Run Text="{DynamicResource AdminComplaints_Details_FromPrefix}"/><Run Text="{Binding SelectedComplaint.FiledByName, TargetNullValue=—}"/>
+                            <Run Text="{DynamicResource AdminComplaints_Details_ToPrefix}"/><Run Text="{Binding SelectedComplaint.UserComName, TargetNullValue=—}"/>
                         </TextBlock>
 
                         <StackPanel 
                             Orientation="Horizontal"
                             Margin="0,6,0,0">
-                            <TextBlock VerticalAlignment="Center" Text="Статус:" Margin="0,0,6,0"
-                                       Foreground="{DynamicResource TextBrush}"/>
-                        <ComboBox Width="180"
-                                  Margin="5"
-                                  ItemsSource="{Binding StatusEditOptions}"
-                                  DisplayMemberPath="Title"
-                                  SelectedValuePath="Code"
-                                  SelectedValue="{Binding StatusEdit}"
-                                  Style="{DynamicResource ProfileComboBoxStyle}"
-                                  IsEnabled="{Binding SelectedComplaint, Converter={StaticResource Bool2Vis}}"/>
-                            <Button Content="Сохранить статус" Margin="6,0,0,0"
+                            <TextBlock VerticalAlignment="Center"
+                                       Text="{DynamicResource AdminComplaints_Details_StatusLabel}"
+                                       Margin="0,0,6,0"
+                                       Foreground="{DynamicResource TextBrush}" />
+                            <ComboBox Width="180"
+                                      Margin="5"
+                                      ItemsSource="{Binding StatusEditOptions}"
+                                      SelectedValuePath="Code"
+                                      SelectedValue="{Binding StatusEdit, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                      Style="{DynamicResource ProfileComboBoxStyle}"
+                                      IsEnabled="{Binding SelectedComplaint, Converter={StaticResource Bool2Vis}}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock>
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Text" Value="{Binding Code}" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Code}" Value="new">
+                                                            <Setter Property="Text"
+                                                                    Value="{DynamicResource AdminComplaints_Status_New}" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Code}" Value="in_progress">
+                                                            <Setter Property="Text"
+                                                                    Value="{DynamicResource AdminComplaints_Status_InProgress}" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Code}" Value="resolved">
+                                                            <Setter Property="Text"
+                                                                    Value="{DynamicResource AdminComplaints_Status_Resolved}" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Code}" Value="dismissed">
+                                                            <Setter Property="Text"
+                                                                    Value="{DynamicResource AdminComplaints_Status_Dismissed}" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <Button Content="{DynamicResource AdminComplaints_Button_SaveStatus}" Margin="6,0,0,0"
                                     Command="{Binding SaveStatusCommand}"
                                     IsEnabled="{Binding SelectedComplaint, Converter={StaticResource Bool2Vis}}"/>
-                            <Button Content="Взять в работу" Margin="6,0,0,0"
+                            <Button Content="{DynamicResource AdminComplaints_Button_TakeInWork}" Margin="6,0,0,0"
                                     Command="{Binding TakeInWorkCommand}"
                                     IsEnabled="{Binding SelectedComplaint, Converter={StaticResource Bool2Vis}}"/>
                         </StackPanel>
 
-                        <TextBlock Margin="0,8,0,2" Text="Текст жалобы:"
+                        <TextBlock Margin="0,8,0,2" Text="{DynamicResource AdminComplaints_Details_ComplaintText}"
                                    Style="{DynamicResource ComplaintsLabelTextStyle}"/>
                         <TextBox Height="90" TextWrapping="Wrap" IsReadOnly="True"
                                  Text="{Binding SelectedComplaint.Description}"/>
 
-                        <TextBlock Margin="0,8,0,2" Text="Медиа (JSON):"
+                        <TextBlock Margin="0,8,0,2" Text="{DynamicResource AdminComplaints_Details_MediaJson}"
                                    Style="{DynamicResource ComplaintsLabelTextStyle}"/>
                         
                         <!-- Превью медиа для выбранной жалобы -->
@@ -164,12 +229,12 @@
 
                         <Separator Margin="0,10"/>
 
-                        <TextBlock FontWeight="Bold" Text="Предупреждение пользователю"
+                        <TextBlock FontWeight="Bold" Text="{DynamicResource AdminComplaints_Warning_Header}"
                                    Foreground="{DynamicResource TextBrush}"/>
                         <TextBox Height="60" TextWrapping="Wrap"
                                  Text="{Binding WarningText}"/>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,6,0,0">
-                            <Button Content="Выдать предупреждение"
+                            <Button Content="{DynamicResource AdminComplaints_Button_IssueWarning}"
                                     Command="{Binding IssueWarningCommand}"
                                     IsEnabled="{Binding SelectedComplaint, Converter={StaticResource Bool2Vis}}"/>
                         </StackPanel>
@@ -181,10 +246,10 @@
         <!-- Нижняя панель: быстрые действия -->
         <StackPanel Grid.Row="2" Grid.ColumnSpan="3"
                     Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="Отклонить" Margin="6,0,0,0"
+            <Button Content="{DynamicResource AdminComplaints_Footer_Reject}" Margin="6,0,0,0"
                     Command="{Binding DismissCommand}"
                     IsEnabled="{Binding SelectedComplaint, Converter={StaticResource Bool2Vis}}"/>
-            <Button Content="Закрыть (решено)" Margin="6,0,0,0"
+            <Button Content="{DynamicResource AdminComplaints_Footer_Close}" Margin="6,0,0,0"
                     Command="{Binding ResolveCommand}"
                     IsEnabled="{Binding SelectedComplaint, Converter={StaticResource Bool2Vis}}"/>
         </StackPanel>

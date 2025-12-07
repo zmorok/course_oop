@@ -17,7 +17,10 @@ namespace FreelanceApp.Windows
         public UserDashboardWindow(User user)
         {
             _currentUser = user;
-            Title = "Панель пользователя: " + user.FirstName + " " + user.LastName;
+
+            var baseTitle = Application.Current.TryFindResource("UserDashboard_Title") as string ?? "Панель пользователя";
+            Title = $"{baseTitle}: {user.FirstName} {user.LastName}";
+
             Loaded += (_, __) =>
             {
                 if (TabControlMain.SelectedItem is TabItem t) InitTab(t);
@@ -36,17 +39,31 @@ namespace FreelanceApp.Windows
 
         private async void InitTab(TabItem tab)
         {
-            if (tab.Header is not string header || !_initializedTabs.Add(header)) return;
+            if (tab.Tag is not string key || !_initializedTabs.Add(key)) return;
 
-            switch (header)
+            switch (key)
             {
-                case "Профиль": await ProfileControl.InitializeAsync(_currentUser); break;
-                case "Портфолио": await PortfolioControl.InitializeAsync(_currentUser); break;
-                case "Мои заказы": await OrdersControl.InitializeAsync(_currentUser); break;
-                case "Проекты": await ProjectsControl.InitializeAsync(_currentUser); break;
-                case "Отзывы": await ReviewsControl.InitializeAsync(_currentUser); break;
-                case "Жалобы": await ComplaintsControl.InitializeAsync(_currentUser); break;
-                case "Поиск исполнителя": await FreelancerSearchControl.InitializeAsync(_currentUser); break;
+                case "Profile":
+                    await ProfileControl.InitializeAsync(_currentUser);
+                    break;
+                case "Portfolio":
+                    await PortfolioControl.InitializeAsync(_currentUser);
+                    break;
+                case "Orders":
+                    await OrdersControl.InitializeAsync(_currentUser);
+                    break;
+                case "Projects":
+                    await ProjectsControl.InitializeAsync(_currentUser);
+                    break;
+                case "Reviews":
+                    await ReviewsControl.InitializeAsync(_currentUser);
+                    break;
+                case "Complaints":
+                    await ComplaintsControl.InitializeAsync(_currentUser);
+                    break;
+                case "FreelancerSearch":
+                    await FreelancerSearchControl.InitializeAsync(_currentUser);
+                    break;
             }
         }
 

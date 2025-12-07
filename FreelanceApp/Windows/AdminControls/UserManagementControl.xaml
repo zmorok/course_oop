@@ -49,11 +49,11 @@
                     </Style>
                 </StackPanel.Style>
 
-                <Button Margin="5" Content="Добавить" Command="{Binding AddCommand}"/>
-                <Button Margin="5" Content="Редактировать"
+                <Button Margin="5" Content="{DynamicResource AdminUsers_Button_Add}" Command="{Binding AddCommand}"/>
+                <Button Margin="5" Content="{DynamicResource AdminUsers_Button_Edit}"
                         Command="{Binding EditCommand}"
                         IsEnabled="{Binding SelectedUser, Converter={StaticResource NullToFalse}}"/>
-                <Button Margin="5" Content="Удалить"
+                <Button Margin="5" Content="{DynamicResource AdminUsers_Button_Delete}"
                         Command="{Binding DeleteCommand}"
                         IsEnabled="{Binding SelectedUser, Converter={StaticResource NullToFalse}}"/>
             </StackPanel>
@@ -93,7 +93,7 @@
                                 </Style>
                             </StackPanel.Style>
 
-                            <TextBlock Margin="10,0,10,2" Text="ID пользователя" Foreground="{DynamicResource TextBrush}"/>
+                            <TextBlock Margin="10,0,10,2" Text="{DynamicResource AdminUsers_Label_UserId}" Foreground="{DynamicResource TextBrush}"/>
                             <TextBox Text="{Binding FormId}" IsReadOnly="True"/>
                         </StackPanel>
 
@@ -135,7 +135,7 @@
                             <TextBlock Margin="10,5,10,0" Text="Email" Foreground="{DynamicResource TextBrush}"/>
                             <TextBox Text="{Binding Email}"/>
 
-                            <TextBlock Margin="10,5,10,0" Text="Пароль" Foreground="{DynamicResource TextBrush}"/>
+                            <TextBlock Margin="10,5,10,0" Text="{DynamicResource AdminUsers_Label_Password}" Foreground="{DynamicResource TextBrush}"/>
                             <!-- Привязка Password через поведение -->
                             <PasswordBox
                                 Style="{DynamicResource ProfilePasswordBoxStyle}"
@@ -156,8 +156,8 @@
 
                         <!-- Кнопки Сохранить/Отмена -->
                         <StackPanel Margin="0,10,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Width="80" Margin="5" Content="Сохранить" Command="{Binding SaveCommand}"/>
-                            <Button Width="80" Margin="5" Content="Отмена" Command="{Binding CancelCommand}"/>
+                            <Button Width="80" Margin="5" Content="{DynamicResource AdminUsers_Button_Save}" Command="{Binding SaveCommand}"/>
+                            <Button Width="80" Margin="5" Content="{DynamicResource AdminUsers_Button_Cancel}" Command="{Binding CancelCommand}"/>
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
@@ -278,7 +278,7 @@
                                         VerticalAlignment="Center"
                                         FontSize="12"
                                         Foreground="{DynamicResource TextBrush}">
-                                        <Run Text="Рейтинг: " />
+                                        <Run Text="{DynamicResource AdminUsers_Card_RatingPrefix}" />
                                         <Run Text="{Binding Rating}" />
                                     </TextBlock>
                                 </StackPanel>
@@ -286,28 +286,28 @@
                                 <!-- Дополнительные данные -->
                                 <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,4,0,0">
                                     <TextBlock FontSize="12" Foreground="{DynamicResource MutedTextBrush}">
-                                        <Run Text="Пол: " />
+                                        <Run Text="{DynamicResource AdminUsers_Card_GenderPrefix}" />
                                         <Run Text="{Binding Gender}" />
                                     </TextBlock>
                                     <TextBlock
                                         Margin="16,0,0,0"
                                         FontSize="12"
                                         Foreground="{DynamicResource MutedTextBrush}">
-                                        <Run Text="Телефон: " />
+                                        <Run Text="{DynamicResource AdminUsers_Card_PhonePrefix}" />
                                         <Run Text="{Binding PhoneNumber}" />
                                     </TextBlock>
                                 </StackPanel>
 
                                 <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Margin="0,4,0,0">
                                     <TextBlock FontSize="11" Foreground="{DynamicResource MutedTextBrush}">
-                                        <Run Text="Зарегистрирован: " />
+                                        <Run Text="{DynamicResource AdminUsers_Card_RegisteredPrefix}" />
                                         <Run Text="{Binding RegistrationDate, StringFormat='dd.MM.yyyy'}" />
                                     </TextBlock>
                                     <TextBlock
                                         Margin="16,0,0,0"
                                         FontSize="11"
                                         Foreground="{DynamicResource MutedTextBrush}">
-                                        <Run Text="Последний онлайн: " />
+                                        <Run Text="{DynamicResource AdminUsers_Card_LastOnlinePrefix}" />
                                         <Run Text="{Binding LastOnlineTime, StringFormat='dd.MM.yyyy HH:mm', TargetNullValue='—'}" />
                                     </TextBlock>
                                 </StackPanel>

@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="Панель администратора"
+    Title="{DynamicResource AdminDashboard_Title}"
     Width="1000"
     Height="650"
     MinWidth="900"
@@ -29,12 +29,12 @@
                     <TextBlock
                         HorizontalAlignment="Left"
                         Style="{DynamicResource WelcomeTextStyle}"
-                        Text="Администрирование" />
+                        Text="{DynamicResource AdminDashboard_Header_Title}" />
                     <TextBlock
                         Margin="2,2,0,0"
                         Foreground="{DynamicResource SecondaryBrush}"
                         FontSize="13"
-                        Text="Контроль пользователей, ролей и жалоб" />
+                        Text="{DynamicResource AdminDashboard_Header_Subtitle}" />
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
@@ -49,19 +49,33 @@
                         Style="{DynamicResource ThemeToggleButtonStyle}"
                         Click="LightThemeButton_Click"
                         Content="☀"
-                        ToolTip="Светлая тема" />
+                        ToolTip="{DynamicResource TopBar_Theme_Light_Tooltip}" />
                     <Button
                         x:Name="AdminDarkThemeButton"
                         Style="{DynamicResource ThemeToggleButtonStyle}"
                         Click="DarkThemeButton_Click"
                         Content="🌙"
                         Margin="0"
-                        ToolTip="Тёмная тема" />
+                        ToolTip="{DynamicResource TopBar_Theme_Dark_Tooltip}" />
+                    <Button
+                        Width="36"
+                        Margin="10,0,0,0"
+                        Style="{DynamicResource ThemeToggleButtonStyle}"
+                        Click="SetRu_Click"
+                        Content="RU"
+                        ToolTip="{DynamicResource TopBar_Language_Ru_Tooltip}" />
+                    <Button
+                        Width="36"
+                        Margin="4,0,0,0"
+                        Style="{DynamicResource ThemeToggleButtonStyle}"
+                        Click="SetEn_Click"
+                        Content="EN"
+                        ToolTip="{DynamicResource TopBar_Language_En_Tooltip}" />
                     <Button
                         Width="130"
                         Margin="10,0,0,0"
                         Click="Logout_Click"
-                        Content="Выйти"
+                        Content="{DynamicResource Common_Logout}"
                         Style="{DynamicResource LogoutButtonStyle}" />
                 </StackPanel>
             </Grid>
@@ -81,21 +95,21 @@
                         FontSize="14"
                         FontWeight="SemiBold"
                         Foreground="{DynamicResource TextBrush}"
-                        Text="Навигация" />
+                        Text="{DynamicResource AdminDashboard_Navigation_Header}" />
                     <Button
                         Margin="0,2"
                         Click="ShowUsers_Click"
-                        Content="Пользователи"
+                        Content="{DynamicResource AdminDashboard_Navigation_Users}"
                         Style="{DynamicResource MenuButtonStyle}" />
                     <Button
                         Margin="0,2"
                         Click="ShowAudit_Click"
-                        Content="Аудит"
+                        Content="{DynamicResource AdminDashboard_Navigation_Audit}"
                         Style="{DynamicResource MenuButtonStyle}" />
                     <Button
                         Margin="0,2"
                         Click="ShowComplaints_Click"
-                        Content="Жалобы"
+                        Content="{DynamicResource AdminDashboard_Navigation_Complaints}"
                         Style="{DynamicResource MenuButtonStyle}" />
                 </StackPanel>
             </Grid>

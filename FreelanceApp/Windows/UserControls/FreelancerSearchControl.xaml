@@ -36,7 +36,7 @@
                     <KeyBinding Key="Enter" Command="{Binding SearchCommand}"/>
                 </TextBox.InputBindings>
             </TextBox>
-            <Button Content="Найти"
+            <Button Content="{DynamicResource FreelancerSearch_Button_Search}"
                     Style="{DynamicResource PanelButtonStyle}"
                     Command="{Binding SearchCommand}"/>
         </StackPanel>
@@ -96,7 +96,7 @@
                                 Grid.Column="1"
                                 FontSize="11"
                                 Foreground="{DynamicResource MutedTextBrush}">
-                                <Run Text="Скиллы: " />
+                                <Run Text="{DynamicResource FreelancerSearch_SkillsPrefix}" />
                                 <Run Text="{Binding SkillsPreview}" />
                             </TextBlock>
 
@@ -105,7 +105,7 @@
                                 Grid.Column="1"
                                 Width="140"
                                 Margin="0,4,0,0"
-                                Content="Выберите проект"
+                                Content="{DynamicResource FreelancerSearch_Button_SelectProject}"
                                 Command="{Binding DataContext.OpenProjectPickerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                 CommandParameter="{Binding}"
                                 IsEnabled="{Binding CanInvite}"
@@ -124,18 +124,18 @@
                 Visibility="{Binding IsProjectPickerVisible, Converter={StaticResource BoolToVisibility}}">
             <StackPanel Orientation="Horizontal">
                 <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextBrush}"
-                           Text="Выберите проект: "/>
+                           Text="{DynamicResource FreelancerSearch_Label_SelectProject}"/>
                 <ComboBox Width="280"
                           ItemsSource="{Binding OpenProjects}"
                           SelectedItem="{Binding SelectedProject}"
                           DisplayMemberPath="Title"
                           Style="{DynamicResource PanelComboBoxStyle}"/>
                 <Button Margin="6,0,0,0"
-                        Content="Отправить"
+                        Content="{DynamicResource FreelancerSearch_Button_Send}"
                         Style="{DynamicResource PanelButtonStyle}"
                         Command="{Binding SendInviteCommand}"/>
                 <Button Margin="6,0,0,0"
-                        Content="Отмена"
+                        Content="{DynamicResource FreelancerSearch_Button_Cancel}"
                         Style="{DynamicResource PanelButtonStyle}"
                         Command="{Binding DataContext.CloseProjectPickerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
             </StackPanel>
