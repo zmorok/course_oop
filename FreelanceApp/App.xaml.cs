@@ -11,8 +11,6 @@ namespace FreelanceApp
 
         // начальное подключение (svc_app)
         public static string? DefaultConnection => Configuration.GetConnectionString("DefaultConnection");
-
-        // текущее подключение, используемое в контексте
         public static string? ConnectionString { get; private set; }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -24,13 +22,8 @@ namespace FreelanceApp
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            // по умолчанию — подключение svc_app
             ConnectionString = DefaultConnection;
-
-            // сразу подхватываем активную тему (светлая/тёмная) при старте
             ThemeManager.Apply(ThemeManager.CurrentTheme);
-
-            // инициализация локализации (по умолчанию — русский)
             LocalizationManager.SetLanguage(AppLanguage.Ru);
         }
 

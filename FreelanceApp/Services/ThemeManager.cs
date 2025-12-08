@@ -4,21 +4,14 @@ using System.Windows;
 
 namespace FreelanceApp.Services
 {
-    public enum AppTheme
-    {
-        Light,
-        Dark
-    }
+    public enum AppTheme { Light, Dark }
 
     public static class ThemeManager
     {
         private static readonly Uri LightThemeUri = new("/Styles/Brushes/Brushes_WHITE.xaml", UriKind.Relative);
         private static readonly Uri DarkThemeUri = new("/Styles/Brushes/Brushes_BLACK.xaml", UriKind.Relative);
 
-        static ThemeManager()
-        {
-            CurrentTheme = DetectCurrentTheme();
-        }
+        static ThemeManager() { CurrentTheme = DetectCurrentTheme(); }
 
         public static AppTheme CurrentTheme { get; private set; }
 
@@ -64,9 +57,7 @@ namespace FreelanceApp.Services
             var (owner, index) = FindBrushDictionary(app.Resources.MergedDictionaries);
             var source = index >= 0 && owner != null ? owner[index].Source?.OriginalString : string.Empty;
 
-            return !string.IsNullOrWhiteSpace(source) && source.Contains("BLACK", StringComparison.OrdinalIgnoreCase)
-                ? AppTheme.Dark
-                : AppTheme.Light;
+            return !string.IsNullOrWhiteSpace(source) && source.Contains("BLACK", StringComparison.OrdinalIgnoreCase) ? AppTheme.Dark : AppTheme.Light;
         }
 
         private static (IList<ResourceDictionary>? owner, int index) FindBrushDictionary(IList<ResourceDictionary> dictionaries)
@@ -80,14 +71,10 @@ namespace FreelanceApp.Services
                 }
             }
 
-            for (var i = 0; i < dictionaries.Count; i++)
-            {
-                if (IsBrushDictionary(dictionaries[i].Source))
-                {
-                    return (dictionaries, i);
-                }
-            }
+            // поиск и возврат нужного набора кистей
+            for (var i = 0; i < dictionaries.Count; i++) if (IsBrushDictionary(dictionaries[i].Source)) return (dictionaries, i);
 
+            // в случае отсутствия возврат ничего
             return (null, -1);
         }
 
@@ -96,8 +83,7 @@ namespace FreelanceApp.Services
             if (source == null) return false;
 
             var path = source.OriginalString;
-            return path.Contains("Brushes_WHITE.xaml", StringComparison.OrdinalIgnoreCase)
-                   || path.Contains("Brushes_BLACK.xaml", StringComparison.OrdinalIgnoreCase);
+            return path.Contains("Brushes_WHITE.xaml", StringComparison.OrdinalIgnoreCase) || path.Contains("Brushes_BLACK.xaml", StringComparison.OrdinalIgnoreCase);
         }
 
         private static bool SameSource(Uri? current, Uri target) =>

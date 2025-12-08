@@ -18,11 +18,10 @@ namespace FreelanceApp.Windows
             InitializeComponent();
             _currentUser = currentUser;
 
-            // вызывать асинхронную навигацию после загрузки окна
             Loaded += async (_, __) =>
             {
-                UpdateThemeButtons();
                 await ShowUsers();
+                UpdateThemeButtons(); UpdateLocaleButtons(); SetTitle();
             };
 
             Closing += async (_, __) => await UpdateLastOnlineAsync();
@@ -39,9 +38,10 @@ namespace FreelanceApp.Windows
             }
             catch (Exception ex)
             {
+                var text = Application.Current.TryFindResource("_Info_OnlineStatus") as string ?? "Ошибка обновления статуса онлайн";
+
                 ex = ex.InnerException ?? ex;
-                MessageBox.Show("Ошибка обновления статуса онлайн:\n\n" + ex.Message,
-                    "Ошибка обновления статуса онлайн", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"{text}\n\n{ex.Message}\n\n", text, MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -87,6 +87,26 @@ namespace FreelanceApp.Windows
 
             AdminLightThemeButton.IsEnabled = ThemeManager.CurrentTheme != AppTheme.Light;
             AdminDarkThemeButton.IsEnabled = ThemeManager.CurrentTheme != AppTheme.Dark;
+        }
+
+        private void SetRu_Click(object sender, RoutedEventArgs e) => ApplyLang(AppLanguage.Ru);
+
+        private void SetEn_Click(object sender, RoutedEventArgs e) => ApplyLang(AppLanguage.En);
+
+        private void ApplyLang(AppLanguage lang) { LocalizationManager.SetLanguage(lang); UpdateLocaleButtons(); SetTitle(); }
+
+        private void UpdateLocaleButtons()
+        {
+            if (RuLangButton == null || EnLangButton == null) return;
+
+            RuLangButton.IsEnabled = LocalizationManager.CurrentLanguage != AppLanguage.Ru;
+            EnLangButton.IsEnabled = LocalizationManager.CurrentLanguage != AppLanguage.En;
+        }
+
+        private void SetTitle()
+        {
+            var baseTitle = Application.Current.TryFindResource("UserDashboard_Title") as string ?? "Панель пользователя";
+            Title = $"{baseTitle}: {_currentUser.Email}";
         }
     }
 }

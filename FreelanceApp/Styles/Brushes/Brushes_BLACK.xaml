@@ -69,7 +69,7 @@
 
     <!--#region  ViewsStyles-->
     <SolidColorBrush x:Key="Button_BgColor_Brush" Color="#22C55E" />
-    <SolidColorBrush x:Key="Button_FgColor_Brush" Color="#E5E7EB" />
+    <SolidColorBrush x:Key="Button_FgColor_Brush" Color="#0B1220" />  <!--E5E7EB-->
     <SolidColorBrush x:Key="Button_IsOver_BgColor_Brush" Color="#38D87A" />
     <SolidColorBrush x:Key="Button_IsPressed_BgColor_Brush" Color="#1B8A52" />
     <SolidColorBrush x:Key="Button_IsEnabled_BgColor_Brush" Color="#1C2435" />

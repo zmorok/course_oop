@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+    <sys:String x:Key="_Info_OnlineStatus">Error of updating last online</sys:String>
     <!--#region Startup window-->
     <sys:String x:Key="StartupWindow_Title">Welcome</sys:String>
     <sys:String x:Key="StartupWindow_Actions">Choose an action</sys:String>
@@ -18,8 +19,12 @@
     <sys:String x:Key="LoginWindow_Btn_Login">Login</sys:String>
     <sys:String x:Key="LoginWindow_Btn_Back">Back</sys:String>
     <!--  Login - MessageBox  -->
-    <sys:String x:Key="LoginWindow_Greetings">Welcome</sys:String>
-    <sys:String x:Key="LoginWindow_ErrorPassword">Invalid login or password!</sys:String>
+    <sys:String x:Key="LoginWindow_Info_ErrorText">Please, fill all necessary fields.</sys:String>
+    <sys:String x:Key="LoginWindow_Info_ErrorText_Caption">Erroe</sys:String>
+    <sys:String x:Key="LoginWindow_Info_Greetings">Welcome!</sys:String>
+    <sys:String x:Key="LoginWindow_Info_Greetings_Caption">Success</sys:String>
+    <sys:String x:Key="LoginWindow_Info_ErrorPassword">Invalid email or password!</sys:String>
+    <sys:String x:Key="LoginWindow_Info_ErrorPassword_Caption">Erroe</sys:String>
     <!--#endregion-->
 
     <!--#region Registration-->
@@ -34,6 +39,18 @@
     <sys:String x:Key="RegisterWindow_Gender">Gender (Male / Female / Other):</sys:String>
     <sys:String x:Key="RegisterWindow_Btn_Register">Register</sys:String>
     <sys:String x:Key="RegisterWindow_Btn_Back">Back</sys:String>
+
+    <sys:String x:Key="RegisterWindow_Info_ErrorText">Please, fill all necessary fields.</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_ErrorText_Caption">Error</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_EmailExist">This Email is using.</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_EmailExist_Caption">Error</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_RegError">Error in registration:</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_RegError_Caption">Error</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_Success">You have successfully registered!\nYour credentials:\n\n</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_SuccessEmail">-Email:</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_SuccessPassword">-Password:</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_Success_Caption">Success registration!</sys:String>
+
     <sys:String x:Key="RegisterWindow_Greetings">Registration successful! You are now logged in.</sys:String>
     <sys:String x:Key="RegisterWindow_ErrorRegistration">A user with this username already exists!</sys:String>
     <!--#endregion-->

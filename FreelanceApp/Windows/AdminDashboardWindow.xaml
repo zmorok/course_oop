@@ -58,6 +58,7 @@
                         Margin="0"
                         ToolTip="{DynamicResource TopBar_Theme_Dark_Tooltip}" />
                     <Button
+                        x:Name="RuLangButton"
                         Width="36"
                         Margin="10,0,0,0"
                         Style="{DynamicResource ThemeToggleButtonStyle}"
@@ -65,6 +66,7 @@
                         Content="RU"
                         ToolTip="{DynamicResource TopBar_Language_Ru_Tooltip}" />
                     <Button
+                        x:Name="EnLangButton"
                         Width="36"
                         Margin="4,0,0,0"
                         Style="{DynamicResource ThemeToggleButtonStyle}"

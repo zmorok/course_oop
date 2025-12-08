@@ -1,12 +1,10 @@
-﻿using System.ComponentModel;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
+﻿using DAL.Models.Tables;
 using FreelanceApp.Authentication;
-using DAL.Models.Tables;
 using FreelanceApp.Services;
 using FreelanceApp.Windows.UserControls;
 using Microsoft.EntityFrameworkCore;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace FreelanceApp.Windows
 {
@@ -18,13 +16,10 @@ namespace FreelanceApp.Windows
         {
             _currentUser = user;
 
-            var baseTitle = Application.Current.TryFindResource("UserDashboard_Title") as string ?? "Панель пользователя";
-            Title = $"{baseTitle}: {user.FirstName} {user.LastName}";
-
             Loaded += (_, __) =>
             {
                 if (TabControlMain.SelectedItem is TabItem t) InitTab(t);
-                UpdateThemeButtons();
+                UpdateThemeButtons(); UpdateLocaleButtons(); SetTitle();
             };
             Closing += async (_, _) => await UpdateLastOnlineAsync();
             InitializeComponent();
@@ -78,13 +73,10 @@ namespace FreelanceApp.Windows
             }
             catch (Exception ex)
             {
+                var text = Application.Current.TryFindResource("_Info_OnlineStatus") as string ?? "Ошибка обновления статуса онлайн";
+
                 ex = ex.InnerException ?? ex;
-                MessageBox.Show(
-                    "Ошибка обновления статуса онлайн:\n\n" + $"{ex.Message}\n\n",
-                    "Ошибка обновления статуса онлайн",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning
-                );
+                MessageBox.Show($"{text}\n\n{ex.Message}\n\n", text, MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -95,10 +87,11 @@ namespace FreelanceApp.Windows
             Close();
         }
 
+        // переключение тем
         private void LightThemeButton_Click(object sender, RoutedEventArgs e) => ApplyTheme(AppTheme.Light);
-
+        
         private void DarkThemeButton_Click(object sender, RoutedEventArgs e) => ApplyTheme(AppTheme.Dark);
-
+        
         private void ApplyTheme(AppTheme theme)
         {
             ThemeManager.Apply(theme);
@@ -113,6 +106,25 @@ namespace FreelanceApp.Windows
             DarkThemeButton.IsEnabled = ThemeManager.CurrentTheme != AppTheme.Dark;
         }
 
-        private void TabItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) { }
+        // переключение языков
+        private void SetRu_Click(object sender, RoutedEventArgs e) => ApplyLang(AppLanguage.Ru);
+
+        private void SetEn_Click(object sender, RoutedEventArgs e) => ApplyLang(AppLanguage.En);
+
+        private void ApplyLang(AppLanguage lang) { LocalizationManager.SetLanguage(lang); UpdateLocaleButtons(); SetTitle(); }
+
+        private void UpdateLocaleButtons()
+        {
+            if (RuLangButton == null || EnLangButton == null) return;
+
+            RuLangButton.IsEnabled = LocalizationManager.CurrentLanguage != AppLanguage.Ru;
+            EnLangButton.IsEnabled = LocalizationManager.CurrentLanguage != AppLanguage.En;
+        }
+
+        private void SetTitle()
+        {
+            var baseTitle = Application.Current.TryFindResource("UserDashboard_Title") as string ?? "Панель пользователя";
+            Title = $"{baseTitle}: {_currentUser.Email}";
+        }
     }
 }

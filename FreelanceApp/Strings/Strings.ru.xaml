@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+    <sys:String x:Key="_Info_OnlineStatus">Ошибка обновления статуса онлайн</sys:String>
     <!--#region  Стартовое окно-->
     <sys:String x:Key="StartupWindow_Title">Добро пожаловать</sys:String>
     <sys:String x:Key="StartupWindow_Actions">Выберите действие</sys:String>
@@ -18,8 +19,12 @@
     <sys:String x:Key="LoginWindow_Btn_Login">Войти</sys:String>
     <sys:String x:Key="LoginWindow_Btn_Back">Назад</sys:String>
     <!--  Авторизация - MessageBox  -->
-    <sys:String x:Key="LoginWindow_Greetings">Добро пожаловать</sys:String>
-    <sys:String x:Key="LoginWindow_ErrorPassword">Неверный логин или пароль!</sys:String>
+    <sys:String x:Key="LoginWindow_Info_ErrorText">Пожалуйста, заполните все обязательные поля.</sys:String>
+    <sys:String x:Key="LoginWindow_Info_ErrorText_Caption">Ошибка</sys:String>
+    <sys:String x:Key="LoginWindow_Info_Greetings">Добро пожаловать!</sys:String>
+    <sys:String x:Key="LoginWindow_Info_Greetings_Caption">Успех</sys:String>
+    <sys:String x:Key="LoginWindow_Info_ErrorPassword">Неверная почта или пароль!</sys:String>
+    <sys:String x:Key="LoginWindow_Info_ErrorPassword_Caption">Ошибка</sys:String>
     <!--#endregion-->
 
     <!--#region  Регистрация-->
@@ -34,6 +39,17 @@
     <sys:String x:Key="RegisterWindow_Gender">Пол (Male / Female / Other):</sys:String>
     <sys:String x:Key="RegisterWindow_Btn_Register">Зарегистрироваться</sys:String>
     <sys:String x:Key="RegisterWindow_Btn_Back">Назад</sys:String>
+
+    <sys:String x:Key="RegisterWindow_Info_ErrorText">Пожалуйста, заполните все обязательные поля.</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_ErrorText_Caption">Ошибка</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_EmailExist">Email уже используется.</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_EmailExist_Caption">Ошибка</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_RegError">Ошибка при регистрации: </sys:String>
+    <sys:String x:Key="RegisterWindow_Info_RegError_Caption">Ошибка</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_Success">Вы успешно зарегистрированы!\nВаши данные для входа:\n\n</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_SuccessEmail">-Почта:   </sys:String>
+    <sys:String x:Key="RegisterWindow_Info_SuccessPassword">-Пароль:   </sys:String>
+    <sys:String x:Key="RegisterWindow_Info_Success_Caption">Регистрация завершена!</sys:String>
     <!--  Регистрация - MessageBox  -->
     <sys:String x:Key="RegisterWindow_Greetings">Регистрация успешна! Выполнен вход в систему.</sys:String>
     <sys:String x:Key="RegisterWindow_ErrorRegistration">Пользователь с таким логином уже существует!</sys:String>
@@ -169,6 +185,7 @@
     <sys:String x:Key="UserDashboard_Title">Панель пользователя</sys:String>
     <sys:String x:Key="UserDashboard_Header_Title">Добро пожаловать!</sys:String>
     <sys:String x:Key="UserDashboard_Header_Subtitle">Панель пользователя фрилансера</sys:String>
+    
 
     <sys:String x:Key="TopBar_Theme_Light_Tooltip">Светлая тема</sys:String>
     <sys:String x:Key="TopBar_Theme_Dark_Tooltip">Тёмная тема</sys:String>
@@ -195,6 +212,7 @@
     <sys:String x:Key="AdminDashboard_Navigation_Audit">Аудит</sys:String>
     <sys:String x:Key="AdminDashboard_Navigation_Complaints">Жалобы</sys:String>
     <!--#endregion-->
+
 
     <!--#region User/ProfileControl-->
     <sys:String x:Key="Profile_Header_MyProfile">Мой профиль</sys:String>
