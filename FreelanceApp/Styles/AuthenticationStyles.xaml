@@ -27,7 +27,6 @@
 
     <Style x:Key="HeaderText" TargetType="TextBlock">
         <Setter Property="FontSize" Value="24" />
-        <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Foreground" Value="{DynamicResource Login_HeaderText_FgColor_Brush}" />
         <Setter Property="Margin" Value="0,0,0,18" />
         <Setter Property="HorizontalAlignment" Value="Center" />
@@ -138,8 +137,9 @@
     <Style x:Key="RegWindowTextBlock" TargetType="TextBlock">
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="Foreground" Value="{DynamicResource Fg_Brush}" />
-        <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Margin" Value="0,0,0,4" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="Margin" Value="20,0,0,0" />
     </Style>
 
     <Style x:Key="AccentButton" BasedOn="{StaticResource PrimaryButton}" TargetType="Button">

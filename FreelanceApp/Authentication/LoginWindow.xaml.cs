@@ -21,7 +21,7 @@ namespace FreelanceApp.Authentication
         public ICommand LoginCommand =>
             new RelayCommand(async () =>
             {
-                string email = UsernameBox.Text;
+                string email = LoginBox.Text;
                 string password = PasswordBox.Password;
                 string hash = HashPassword(password);
 

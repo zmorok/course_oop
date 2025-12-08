@@ -18,8 +18,6 @@ namespace FreelanceApp.Windows.ViewModels
         private readonly User _currentUser;
         private bool _isReady;
 
-        // ===== Фильтр статусов (для верхнего комбобокса)
-        // В модели храним только код статуса (Code); человекочитаемый текст берём из ресурсных словарей.
         public sealed record StatusFilter(string Code, string Mode, string? ExactStatus)
         {
             public override string ToString()
@@ -43,8 +41,6 @@ namespace FreelanceApp.Windows.ViewModels
             new("new",        "unsolved", "new"),
             new("in_progress","unsolved", "in_progress"),
             new("resolved",   "resolved", "resolved"),
-            // Для отклонённых берём все из БД и фильтруем по точному статусу,
-            // иначе репозиторий в режиме "unsolved" их не вернёт.
             new("dismissed",  "all",      "dismissed"),
             new("all",        "all",       null),
         ];
@@ -62,8 +58,6 @@ namespace FreelanceApp.Windows.ViewModels
         [ObservableProperty] private ObservableCollection<AdminComplaint> complaints = [];
         [ObservableProperty] private AdminComplaint? selectedComplaint;
 
-        // ===== Правый блок (редактирование статуса)
-        // Здесь тоже храним только код статуса; ToString возвращает локализованный текст для выбранного значения.
         public sealed record StatusEditOption(string Code)
         {
             public override string ToString()
@@ -72,7 +66,6 @@ namespace FreelanceApp.Windows.ViewModels
                 {
                     "new"         => "AdminComplaints_Status_New",
                     "in_progress" => "AdminComplaints_Status_InProgress",
-                    "resolved"    => "AdminComplaints_Status_Resolved",
                     "dismissed"   => "AdminComplaints_Status_Dismissed",
                     _             => Code
                 };
@@ -85,7 +78,6 @@ namespace FreelanceApp.Windows.ViewModels
         [
             new("new"),
             new("in_progress"),
-            new("resolved"),
             new("dismissed")
         ];
         [ObservableProperty] private string? statusEdit;
@@ -114,14 +106,8 @@ namespace FreelanceApp.Windows.ViewModels
             OnPropertyChanged(nameof(StatusEdit));
         }
 
-        // Вызывается MVVM Toolkit при изменении StatusEdit (кода статуса).
-        // Можно использовать как триггер для обновления связанных свойств/привязок.
-        partial void OnStatusEditChanged(string? value)
-        {
-            // На всякий случай уведомляем об изменении самого свойства,
-            // чтобы все привязки, использующие StatusEdit, перерисовались.
-            OnPropertyChanged(nameof(StatusEdit));
-        }
+        partial void OnStatusEditChanged(string? value) => OnPropertyChanged(nameof(StatusEdit));
+        
 
         // обновляем правую панель при выборе строки
         partial void OnSelectedComplaintChanged(AdminComplaint? value)

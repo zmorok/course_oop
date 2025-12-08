@@ -102,10 +102,13 @@
                                                 Foreground="{DynamicResource MutedTextBrush}"
                                                 Text="{Binding Created_At, StringFormat='dd.MM.yyyy HH:mm'}" />
 
-                                            <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                                            <StackPanel
+                                                Margin="0,8,0,0"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                Orientation="Horizontal">
                                                 <Button
                                                     Width="110"
-                                                    Margin="0,0,8,0"
                                                     Command="{Binding DataContext.AcceptInviteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                     CommandParameter="{Binding}"
                                                     Content="{DynamicResource Profile_Button_Accept}" />

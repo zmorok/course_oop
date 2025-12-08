@@ -15,9 +15,6 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
         <conv:MediaJsonToImageSourceConverter x:Key="MediaToImageConverter" />
-        <Style TargetType="ListViewItem">
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        </Style>
     </UserControl.Resources>
 
     <Grid Margin="10">
@@ -46,6 +43,7 @@
                   ItemsSource="{Binding Freelancers}"
                   SelectedItem="{Binding SelectedFreelancer}"
                   SelectionMode="Single"
+                  HorizontalContentAlignment="Stretch"
                   Background="Transparent">
             <ListView.ItemTemplate>
                 <DataTemplate DataType="{x:Type data:FreelancerRow}">
@@ -128,8 +126,13 @@
                 <ComboBox Width="280"
                           ItemsSource="{Binding OpenProjects}"
                           SelectedItem="{Binding SelectedProject}"
-                          DisplayMemberPath="Title"
-                          Style="{DynamicResource PanelComboBoxStyle}"/>
+                          Style="{DynamicResource ProfileComboBoxStyle}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Title}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
                 <Button Margin="6,0,0,0"
                         Content="{DynamicResource FreelancerSearch_Button_Send}"
                         Style="{DynamicResource PanelButtonStyle}"

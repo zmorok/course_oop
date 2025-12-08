@@ -25,11 +25,13 @@
     <!--#region Registration-->
     <sys:String x:Key="RegisterWindow_Title">Registration</sys:String>
     <sys:String x:Key="RegisterWindow_Header">Register</sys:String>
-    <sys:String x:Key="RegisterWindow_Login">Username:</sys:String>
+
+    <sys:String x:Key="RegisterWindow_Name">Name:</sys:String>
+    <sys:String x:Key="RegisterWindow_Surname">Surname:</sys:String>
+    <sys:String x:Key="RegisterWindow_Email">Email:</sys:String>
     <sys:String x:Key="RegisterWindow_Password">Password:</sys:String>
-    <sys:String x:Key="RegisterWindow_Role">Role:</sys:String>
-    <sys:String x:Key="RegisterWindow_Role_Client">Client</sys:String>
-    <sys:String x:Key="RegisterWindow_Role_Administrator">Administrator</sys:String>
+    <sys:String x:Key="RegisterWindow_Phone">Phone number:</sys:String>
+    <sys:String x:Key="RegisterWindow_Gender">Gender (Male / Female / Other):</sys:String>
     <sys:String x:Key="RegisterWindow_Btn_Register">Register</sys:String>
     <sys:String x:Key="RegisterWindow_Btn_Back">Back</sys:String>
     <sys:String x:Key="RegisterWindow_Greetings">Registration successful! You are now logged in.</sys:String>

@@ -22,7 +22,7 @@
                     FontWeight="SemiBold"
                     Foreground="{DynamicResource Fg_Brush}"
                     Text="{DynamicResource LoginWindow_Login}" />
-                <TextBox x:Name="UsernameBox" Style="{DynamicResource RoundedTextBox}" />
+                <TextBox x:Name="LoginBox" Style="{DynamicResource RoundedTextBox}" />
 
                 <TextBlock
                     FontWeight="SemiBold"

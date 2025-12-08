@@ -180,10 +180,6 @@
                                                             <Setter Property="Text"
                                                                     Value="{DynamicResource AdminComplaints_Status_InProgress}" />
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Code}" Value="resolved">
-                                                            <Setter Property="Text"
-                                                                    Value="{DynamicResource AdminComplaints_Status_Resolved}" />
-                                                        </DataTrigger>
                                                         <DataTrigger Binding="{Binding Code}" Value="dismissed">
                                                             <Setter Property="Text"
                                                                     Value="{DynamicResource AdminComplaints_Status_Dismissed}" />

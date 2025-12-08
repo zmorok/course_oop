@@ -21,22 +21,22 @@
 
                     <TextBlock Style="{DynamicResource HeaderText}" Text="{DynamicResource RegisterWindow_Header}" />
 
-                    <TextBlock Style="{DynamicResource RegWindowTextBlock}" Text="Имя" />
+                    <TextBlock Style="{DynamicResource RegWindowTextBlock}" Text="{DynamicResource RegisterWindow_Name}" />
                     <TextBox Name="FirstNameBox" Style="{DynamicResource RoundedTextBox}" />
 
-                    <TextBlock Style="{DynamicResource RegWindowTextBlock}" Text="Фамилия" />
+                    <TextBlock Style="{DynamicResource RegWindowTextBlock}" Text="{DynamicResource RegisterWindow_Surname}" />
                     <TextBox Name="LastNameBox" Style="{DynamicResource RoundedTextBox}" />
 
-                    <TextBlock Style="{DynamicResource RegWindowTextBlock}" Text="Email (логин)" />
+                    <TextBlock Style="{DynamicResource RegWindowTextBlock}" Text="{DynamicResource RegisterWindow_Email}" />
                     <TextBox Name="EmailBox" Style="{DynamicResource RoundedTextBox}" />
 
-                    <TextBlock Style="{DynamicResource RegWindowTextBlock}" Text="Пароль" />
+                    <TextBlock Style="{DynamicResource RegWindowTextBlock}" Text="{DynamicResource RegisterWindow_Password}" />
                     <PasswordBox Name="PasswordBox" Style="{DynamicResource RoundedPasswordBox}" />
 
-                    <TextBlock Style="{DynamicResource RegWindowTextBlock}" Text="Телефон" />
+                    <TextBlock Style="{DynamicResource RegWindowTextBlock}" Text="{DynamicResource RegisterWindow_Phone}" />
                     <TextBox Name="PhoneBox" Style="{DynamicResource RoundedTextBox}" />
 
-                    <TextBlock Style="{DynamicResource RegWindowTextBlock}" Text="Пол (Male / Female / Other)" />
+                    <TextBlock Style="{DynamicResource RegWindowTextBlock}" Text="{DynamicResource RegisterWindow_Gender}" />
                     <ComboBox
                         Name="GenderBox"
                         SelectedIndex="0"

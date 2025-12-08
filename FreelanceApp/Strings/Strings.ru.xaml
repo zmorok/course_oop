@@ -13,7 +13,7 @@
     <!--#region  Авторизация-->
     <sys:String x:Key="LoginWindow_Title">Авторизация</sys:String>
     <sys:String x:Key="LoginWindow_Header">Вход</sys:String>
-    <sys:String x:Key="LoginWindow_Login">Логин:</sys:String>
+    <sys:String x:Key="LoginWindow_Login">Почта:</sys:String>
     <sys:String x:Key="LoginWindow_Password">Пароль:</sys:String>
     <sys:String x:Key="LoginWindow_Btn_Login">Войти</sys:String>
     <sys:String x:Key="LoginWindow_Btn_Back">Назад</sys:String>
@@ -25,12 +25,13 @@
     <!--#region  Регистрация-->
     <sys:String x:Key="RegisterWindow_Title">Регистрация</sys:String>
     <sys:String x:Key="RegisterWindow_Header">Регистрация</sys:String>
-    <sys:String x:Key="RegisterWindow_Login">Логин:</sys:String>
+
+    <sys:String x:Key="RegisterWindow_Name">Имя:</sys:String>
+    <sys:String x:Key="RegisterWindow_Surname">Фамилия:</sys:String>
+    <sys:String x:Key="RegisterWindow_Email">Электронная почта:</sys:String>
     <sys:String x:Key="RegisterWindow_Password">Пароль:</sys:String>
-    <sys:String x:Key="RegisterWindow_Role">Роль:</sys:String>
-    <!--  Регистрация - Роли  -->
-    <sys:String x:Key="RegisterWindow_Role_Client">Клиент</sys:String>
-    <sys:String x:Key="RegisterWindow_Role_Administrator">Администратор</sys:String>
+    <sys:String x:Key="RegisterWindow_Phone">Номер телефона:</sys:String>
+    <sys:String x:Key="RegisterWindow_Gender">Пол (Male / Female / Other):</sys:String>
     <sys:String x:Key="RegisterWindow_Btn_Register">Зарегистрироваться</sys:String>
     <sys:String x:Key="RegisterWindow_Btn_Back">Назад</sys:String>
     <!--  Регистрация - MessageBox  -->
