@@ -5,12 +5,6 @@ using System.Windows.Data;
 
 namespace FreelanceApp.Converters
 {
-    /// <summary>
-    /// Конвертер кода статуса жалобы в локализованный текст из словарей строк.
-    /// Использует параметр converterParameter:
-    ///  - "Filter"  -> ключи AdminComplaints_Filter_Status_*
-    ///  - "Status"  -> ключи AdminComplaints_Status_*
-    /// </summary>
     public sealed class StatusCodeToLocalizedStringConverter : IValueConverter
     {
         public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)

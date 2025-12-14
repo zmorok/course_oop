@@ -46,9 +46,12 @@
     <sys:String x:Key="RegisterWindow_Info_EmailExist_Caption">Ошибка</sys:String>
     <sys:String x:Key="RegisterWindow_Info_RegError">Ошибка при регистрации: </sys:String>
     <sys:String x:Key="RegisterWindow_Info_RegError_Caption">Ошибка</sys:String>
-    <sys:String x:Key="RegisterWindow_Info_Success">Вы успешно зарегистрированы!\nВаши данные для входа:\n\n</sys:String>
-    <sys:String x:Key="RegisterWindow_Info_SuccessEmail">-Почта:   </sys:String>
-    <sys:String x:Key="RegisterWindow_Info_SuccessPassword">-Пароль:   </sys:String>
+    <sys:String x:Key="RegisterWindow_Info_Success" xml:space="preserve">Вы успешно зарегистрированы!
+Ваши данные для входа:
+    
+    </sys:String>
+    <sys:String x:Key="RegisterWindow_Info_SuccessEmail">- Почта:   </sys:String>
+    <sys:String x:Key="RegisterWindow_Info_SuccessPassword">- Пароль:   </sys:String>
     <sys:String x:Key="RegisterWindow_Info_Success_Caption">Регистрация завершена!</sys:String>
     <!--  Регистрация - MessageBox  -->
     <sys:String x:Key="RegisterWindow_Greetings">Регистрация успешна! Выполнен вход в систему.</sys:String>

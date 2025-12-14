@@ -12,17 +12,12 @@
     <Style x:Key="BorderMainStyle" TargetType="Border">
         <Setter Property="Background" Value="{DynamicResource Login_BorderMain_BgColor_Brush}" />
         <Setter Property="Padding" Value="24" />
-        <Setter Property="Width" Value="340" />
+        <Setter Property="Width" Value="500" />
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="CornerRadius" Value="14" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
-        <Setter Property="Effect">
-            <Setter.Value>
-                <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="16" ShadowDepth="0" />
-            </Setter.Value>
-        </Setter>
     </Style>
 
     <Style x:Key="HeaderText" TargetType="TextBlock">
@@ -138,6 +133,8 @@
     <Style x:Key="RegWindowTextBlock" TargetType="TextBlock">
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="Foreground" Value="{DynamicResource Fg_Brush}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontSize" Value="14" />
         <Setter Property="Margin" Value="0,0,0,4" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="Margin" Value="20,0,0,0" />

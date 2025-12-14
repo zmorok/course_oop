@@ -5,12 +5,10 @@ using DAL.Models.Tables;
 using FreelanceApp.Services;
 using FreelanceApp.Helpers;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Text.Json;
 using System.Windows;
 using Microsoft.Win32;
 using System.IO;
-using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using System.Text.RegularExpressions;
 
@@ -20,18 +18,13 @@ namespace FreelanceApp.Windows.ViewModels
     {
         private readonly User _currentUser;
 
-        // Список карточек портфолио
         [ObservableProperty] private ObservableCollection<PortfolioItemViewModel> portfolios = [];
-
-        // Выбранная карточка (для Delete/редактирования)
         [ObservableProperty] private PortfolioItemViewModel? selectedPortfolio;
 
-        // Панель формы
         [ObservableProperty] private bool isFormOpen;
 
-        // Поля формы
         [ObservableProperty] private string? formDescription;
-        [ObservableProperty] private string? formSkills;     // через запятую
+        [ObservableProperty] private string? formSkills;
         [ObservableProperty] private string? formExperience;
         [ObservableProperty] private string? formImageName;
         [ObservableProperty] private string? formImageBase64;
@@ -44,7 +37,6 @@ namespace FreelanceApp.Windows.ViewModels
 
         public async Task InitializeAsync() => await LoadAsync();
 
-        // === Загрузка ===
         private async Task LoadAsync()
         {
             await using var uow = new UnitOfWork(DbContextFactory.CreateDbContext(_currentUser));
@@ -60,14 +52,11 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                var msg = (Application.Current.TryFindResource("Portfolio_Error_Load") as string ?? "Ошибка при загрузке портфолио:") +
-                          "\n" + ex.Message;
+                var msg = (Application.Current.TryFindResource("Portfolio_Error_Load") as string ?? "Ошибка при загрузке портфолио:") + "\n" + ex.Message;
                 var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string ?? "Ошибка";
                 MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-        // === Команды панели ===
 
         [RelayCommand]
         private void Add()
@@ -92,7 +81,7 @@ namespace FreelanceApp.Windows.ViewModels
             var experience = (FormExperience ?? "").Trim();
             var imageBase64 = (FormImageBase64 ?? "").Trim();
 
-            // Валидация опыта: число + суффикс лет/года/год/мес и т.п., допускается комбинация "1 год 6 месяцев"
+            // число + суффикс лет/года/год/мес и т.п., допускается комбинация "1 год 6 месяцев"
             var experiencePattern = @"^(?ix)
                 (                                   # вариант с годами (и, возможно, месяцами)
                     \d+(\.\d+)?\s*(год|года|лет|г\.?|лет\.?)
@@ -198,7 +187,6 @@ namespace FreelanceApp.Windows.ViewModels
             await DeleteItemAsync(SelectedPortfolio);
         }
 
-        // Удаление прямо с карточки (через CommandParameter)
         [RelayCommand]
         private async Task DeleteItemAsync(PortfolioItemViewModel? item)
         {
@@ -245,7 +233,6 @@ namespace FreelanceApp.Windows.ViewModels
             }
         }
 
-        // Выбор карточки для редактирования (с кнопки «Редактировать» на карточке)
         [RelayCommand]
         private void SelectForEdit(PortfolioItemViewModel? item)
         {
@@ -254,7 +241,6 @@ namespace FreelanceApp.Windows.ViewModels
             OpenFormFor(item.Model);
         }
 
-        // === Вспомогательные ===
         private void OpenFormFor(Portfolio? p)
         {
             if (p is null)
@@ -272,7 +258,6 @@ namespace FreelanceApp.Windows.ViewModels
                 FormSkills = p.Skills is null ? "" : string.Join(", ", p.Skills);
                 FormExperience = p.Experience ?? "";
 
-                // извлекаем первую картинку, если есть
                 (FormImageName, FormImageBase64) = MediaJsonHelper.ExtractFirstImage(p.Media);
                 FormImagePreview = MediaJsonHelper.CreateImageSource(FormImageBase64);
             }
@@ -322,7 +307,6 @@ namespace FreelanceApp.Windows.ViewModels
         }
     }
 
-    // VM одной карточки
     public sealed class PortfolioItemViewModel
     {
         public Portfolio Model { get; }

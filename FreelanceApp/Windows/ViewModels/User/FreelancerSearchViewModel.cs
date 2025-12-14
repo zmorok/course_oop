@@ -21,17 +21,15 @@ namespace FreelanceApp.Windows.ViewModels
         [ObservableProperty] private Project? selectedProject;
         [ObservableProperty] private bool isProjectPickerVisible;   // видимость нижней панели
 
-        // хранить Id выбранного приглашённого (когда открываем панель)
         [ObservableProperty] private int inviteeId;
 
         public FreelancerSearchViewModel(User currentUser) => _currentUser = currentUser;
 
         public async Task InitializeAsync()
         {
-            await SearchAsync(); // начальный поиск (пустой запрос)
+            await SearchAsync();
         }
 
-        // Поиск
         [RelayCommand]
         private async Task SearchAsync()
         {
@@ -59,7 +57,6 @@ namespace FreelanceApp.Windows.ViewModels
             }
         }
 
-        // Открыть выбор проекта для фрилансера
         [RelayCommand]
         private async Task OpenProjectPickerAsync(FreelancerRow? row)
         {
@@ -94,7 +91,6 @@ namespace FreelanceApp.Windows.ViewModels
             }
         }
 
-        // Отправить приглашение
         [RelayCommand]
         private async Task SendInviteAsync()
         {
@@ -114,7 +110,6 @@ namespace FreelanceApp.Windows.ViewModels
                 var caption = Application.Current.TryFindResource("Common_Success") as string ?? "Успех";
                 MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Information);
 
-                // очистим панель, перезагрузим список
                 IsProjectPickerVisible = false;
                 OpenProjects.Clear();
                 SelectedProject = null;

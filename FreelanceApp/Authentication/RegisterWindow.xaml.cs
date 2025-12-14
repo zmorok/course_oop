@@ -84,8 +84,8 @@ namespace FreelanceApp.Authentication
                 }
 
                 var textSuccess = Application.Current.TryFindResource("RegisterWindow_Info_Success") as string ?? "Вы успешно зарегистрированы!\nВаши данные для входа:\n\n";
-                var textSuccessEmail = Application.Current.TryFindResource("RegisterWindow_Info_SuccessEmail") as string ?? "-Логин:   ";
-                var textSuccessPassword = Application.Current.TryFindResource("RegisterWindow_Info_SuccessPassword") as string ?? "-Пароль:   ";
+                var textSuccessEmail = Application.Current.TryFindResource("RegisterWindow_Info_SuccessEmail") as string ?? "- Логин:   ";
+                var textSuccessPassword = Application.Current.TryFindResource("RegisterWindow_Info_SuccessPassword") as string ?? "- Пароль:   ";
 
                 text = textSuccess + $"{textSuccessEmail}{user.Email}\n" + $"{textSuccessPassword}{password}";
                 caption = Application.Current.TryFindResource("RegisterWindow_Info_Success_Caption") as string ?? "Регистрация завершена!";

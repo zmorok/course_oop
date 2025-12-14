@@ -33,10 +33,7 @@ namespace FreelanceApp.Windows.ViewModels
             {
                 var key = ShowOnlyMine ? "Projects_Toggle_ShowAll" : "Projects_Toggle_ShowMine";
                 var localized = Application.Current.TryFindResource(key) as string;
-                if (localized is not null)
-                    return localized;
-
-                // Fallback (русский текст) на случай отсутствия ресурса
+                if (localized is not null) return localized;
                 return ShowOnlyMine ? "Показать все" : "Показать только мои";
             }
         }
@@ -358,8 +355,6 @@ namespace FreelanceApp.Windows.ViewModels
             await LoadAsync();
         }
 
-        // ===== Вспомогательные
-
         private void OpenFormFor(Project? p)
         {
             if (p is null)
@@ -379,7 +374,6 @@ namespace FreelanceApp.Windows.ViewModels
                 MediaText = p.Media is null ? "" : p.Media.RootElement.GetRawText();
                 SelectedStatus = p.Status ?? "draft";
 
-                // извлекаем первую картинку, если есть
                 (FormImageName, FormImageBase64) = MediaJsonHelper.ExtractFirstImage(p.Media);
                 FormImagePreview = MediaJsonHelper.CreateImageSource(FormImageBase64);
             }
@@ -463,7 +457,6 @@ namespace FreelanceApp.Windows.ViewModels
                         return localized;
                 }
 
-                // Fallback (русский текст) на случай отсутствия ресурса
                 return Status switch
                 {
                     "draft" => "Черновик",
@@ -483,7 +476,6 @@ namespace FreelanceApp.Windows.ViewModels
             ShowRespondButton = showRespondButton;
         }
 
-        // конструктор «проекции» для v_projects (ProjectWithoutStatus)
         public static ProjectItemViewModel FromProjectWithoutStatus(
             DAL.Models.Views.ProjectWithoutStatus pws,
             string status,

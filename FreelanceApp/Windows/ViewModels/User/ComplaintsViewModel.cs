@@ -7,7 +7,6 @@ using DAL.Models.Tables;
 using FreelanceApp.Services;
 using System.Windows;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using System.Windows.Media;
 using Microsoft.Win32;
@@ -20,13 +19,30 @@ namespace FreelanceApp.Windows.ViewModels
         private readonly User _currentUser;
 
         [ObservableProperty] private bool isCreateMode = true;
+        partial void OnIsCreateModeChanged(bool value)
+        {
+            if (value && IsMyComplaintsMode) IsMyComplaintsMode = false;
+            CloseEditor();
+        }
+
         [ObservableProperty] private bool isMyComplaintsMode;
+        partial void OnIsMyComplaintsModeChanged(bool value)
+        {
+            if (value && IsCreateMode) IsCreateMode = false;
+            SelectedCounterpart = null;
+            CloseEditor();
+        }
 
         [ObservableProperty] private ObservableCollection<Counterpart> counterparts = [];
         [ObservableProperty] private ObservableCollection<OrdersArchiveForComplaint> counterpartOrders = [];
         [ObservableProperty] private ObservableCollection<MyComplaintRow> myComplaints = [];
 
         [ObservableProperty] private Counterpart? selectedCounterpart;
+        partial void OnSelectedCounterpartChanged(Counterpart? value)
+        {
+            _ = LoadOrdersForCounterpartAsync(value);
+        }
+
         [ObservableProperty] private OrdersArchiveForComplaint? selectedOrder;
         [ObservableProperty] private MyComplaintRow? selectedMyComplaint;
 
@@ -40,7 +56,6 @@ namespace FreelanceApp.Windows.ViewModels
         [ObservableProperty] private ImageSource? editImagePreview;
 
         public bool HasEditImage => EditImagePreview is not null;
-
         partial void OnEditImagePreviewChanged(ImageSource? value)
         {
             OnPropertyChanged(nameof(HasEditImage));
@@ -51,17 +66,6 @@ namespace FreelanceApp.Windows.ViewModels
 
         public async Task InitializeAsync() => await LoadAllAsync();
 
-        // Закрываем панель при переключении режимов
-        partial void OnIsCreateModeChanged(bool value)
-        {
-            if (value && IsMyComplaintsMode) IsMyComplaintsMode = false;
-            CloseEditor();
-        }
-        partial void OnIsMyComplaintsModeChanged(bool value)
-        {
-            if (value && IsCreateMode) IsCreateMode = false;
-            CloseEditor();
-        }
 
         private async Task LoadAllAsync()
         {
@@ -105,11 +109,6 @@ namespace FreelanceApp.Windows.ViewModels
             }
         }
 
-        // Подгрузка заказов при выборе контрагента
-        partial void OnSelectedCounterpartChanged(Counterpart? value)
-        {
-            _ = LoadOrdersForCounterpartAsync(value);
-        }
 
         private async Task LoadOrdersForCounterpartAsync(Counterpart? cp)
         {
@@ -136,7 +135,6 @@ namespace FreelanceApp.Windows.ViewModels
             }
         }
 
-        // Открыть панель — теперь с параметром выбранного заказа
         [RelayCommand]
         private void OpenCreatePanel(OrdersArchiveForComplaint? row)
         {
@@ -157,8 +155,8 @@ namespace FreelanceApp.Windows.ViewModels
                 return;
             }
 
-            SelectedOrder = row;        // фиксируем выбор
-            EditingComplaint = null;    // создаём новую
+            SelectedOrder = row;
+            EditingComplaint = null;
             var titleTemplate = Application.Current.TryFindResource("ComplaintsVM_Create_Title") as string
                                 ?? "Жалоба на: {0}, заказ №{1}";
             PanelTitle = string.Format(titleTemplate, SelectedCounterpart.FullName, row.OrderId);
@@ -279,7 +277,6 @@ namespace FreelanceApp.Windows.ViewModels
             EditImagePreview = null;
         }
 
-        // Мои жалобы
         [RelayCommand]
         private void EditMine(MyComplaintRow? c)
         {
@@ -376,7 +373,6 @@ namespace FreelanceApp.Windows.ViewModels
         }
     }
 
-    // Row-VM для "Мои жалобы"
     public sealed class MyComplaintRow
     {
         private readonly MyComplaint _base;

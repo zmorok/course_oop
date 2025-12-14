@@ -259,12 +259,12 @@
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                     <Button Width="80" Margin="0,0,0,4"
                                             Content="{DynamicResource Complaints_Button_Edit}"
-                                            Visibility="{Binding IsEditable, Converter={StaticResource Bool2Vis}}"
+                                            Visibility="{Binding CanEditMore, Converter={StaticResource Bool2Vis}}"
                                             Command="{Binding DataContext.EditMineCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                             CommandParameter="{Binding}"/>
                                     <Button Width="80"
                                             Content="{DynamicResource Complaints_Button_Delete}"
-                                            Visibility="{Binding IsEditable, Converter={StaticResource Bool2Vis}}"
+                                            Visibility="{Binding CanEditMore, Converter={StaticResource Bool2Vis}}"
                                             Command="{Binding DataContext.DeleteMineCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                             CommandParameter="{Binding}"/>
                                 </StackPanel>

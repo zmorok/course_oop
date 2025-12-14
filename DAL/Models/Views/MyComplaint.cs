@@ -23,17 +23,9 @@ namespace DAL.Models.Views
         [Column("Media", TypeName = "jsonb")]
         public JsonDocument? Media { get; set; }
 
-
-        [NotMapped]
-        public string DescriptionPreview => Description.Length <= 50 ? Description : Description[..50] + "…";
-
-        [NotMapped]
-        public bool IsEditable => Status == "new";
-
-        // Новое: сколько осталось изменений (не уходим в минус)
-        [NotMapped] public short RemainingChanges => (short)Math.Max(0, 3 - ChangeCounter);
-
-        // Если нужно скрывать/отключать кнопку «Изменить», когда лимит исчерпан:
+        [NotMapped] public string DescriptionPreview => Description.Length <= 50 ? Description : Description[..50] + "…";
+        [NotMapped] public bool IsEditable => Status == "new";
+        [NotMapped] public short RemainingChanges => Status == "resolved" ? (short)0 : (short)Math.Max(0, 3 - ChangeCounter);
         [NotMapped] public bool CanEditMore => IsEditable && RemainingChanges > 0;
     }
 }

@@ -16,14 +16,11 @@ namespace FreelanceApp.Windows.ViewModels
     {
         private readonly User _currentUser;
 
-        // Список и выбор
         [ObservableProperty] private ObservableCollection<LocalOrderDisplay> orders = [];
         [ObservableProperty] private LocalOrderDisplay? selectedRow;
 
-        // Какая вкладка выбрана (радиокнопки)
         [ObservableProperty] private OrderViewType selectedView = OrderViewType.Customer;
 
-        // Панель редактирования
         [ObservableProperty] private bool isEditOpen;
         [ObservableProperty] private string? editStatus;     // "pending","active","completed","cancelled","disputed"
         [ObservableProperty] private DateTime? editDeadline;
@@ -32,7 +29,6 @@ namespace FreelanceApp.Windows.ViewModels
 
         public async Task InitializeAsync() => await LoadAsync();
 
-        // ---- Вычислимые свойства для XAML ----
         public bool IsCustomerView
         {
             get => SelectedView == OrderViewType.Customer;
@@ -50,7 +46,6 @@ namespace FreelanceApp.Windows.ViewModels
         }
         public bool ShowEditActions => !IsArchiveView;
 
-        // При смене вида — перегружаем список и обновляем зависимые пропы
         partial void OnSelectedViewChanged(OrderViewType value)
         {
             IsEditOpen = false;
@@ -58,10 +53,9 @@ namespace FreelanceApp.Windows.ViewModels
             OnPropertyChanged(nameof(IsFreelancerView));
             OnPropertyChanged(nameof(IsArchiveView));
             OnPropertyChanged(nameof(ShowEditActions));
-            _ = LoadAsync(); // fire & forget
+            _ = LoadAsync();
         }
 
-        // ---- Загрузка ----
         private async Task LoadAsync()
         {
             Orders.Clear();
@@ -86,7 +80,6 @@ namespace FreelanceApp.Windows.ViewModels
             }
         }
 
-        // ---- Команды верхних кнопок ----
         [RelayCommand]
         private void EditSelected()
         {
@@ -107,8 +100,8 @@ namespace FreelanceApp.Windows.ViewModels
                 return;
             }
 
-            EditStatus = SelectedRow.OrderStatus;      // свяжется с ComboBox.SelectedValue(Tag)
-            EditDeadline = SelectedRow.OrderDeadline;    // свяжется с DatePicker.SelectedDate
+            EditStatus = SelectedRow.OrderStatus;       // с ComboBox.SelectedValue(Tag)
+            EditDeadline = SelectedRow.OrderDeadline;   // с DatePicker.SelectedDate
             IsEditOpen = true;
         }
 
@@ -161,7 +154,6 @@ namespace FreelanceApp.Windows.ViewModels
             }
         }
 
-        // ---- Команды формы ----
         [RelayCommand]
         private void CancelEdit()
         {
@@ -201,7 +193,6 @@ namespace FreelanceApp.Windows.ViewModels
             }
         }
 
-        // Дополнительно — открыть редактирование по двойному клику на элемент
         [RelayCommand]
         private void OpenEditFor(LocalOrderDisplay? row)
         {

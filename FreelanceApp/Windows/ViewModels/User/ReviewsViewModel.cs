@@ -20,15 +20,10 @@ namespace FreelanceApp.Windows.ViewModels
     {
         private readonly User _currentUser;
 
-        // ===== коллекция в списке
         [ObservableProperty] private ObservableCollection<ReviewRow> rows = [];
         [ObservableProperty] private ReviewRow? selectedRow;
 
-        // ===== режим просмотра (я — заказчик/исполнитель)
         [ObservableProperty] private bool asCustomer = true;
-        [ObservableProperty] private bool asFreelancer;
-
-        // переключатели взаимно-исключающие + автоперезагрузка
         partial void OnAsCustomerChanged(bool value)
         {
             if (value)
@@ -37,6 +32,8 @@ namespace FreelanceApp.Windows.ViewModels
                 _ = LoadAsync();
             }
         }
+
+        [ObservableProperty] private bool asFreelancer;
         partial void OnAsFreelancerChanged(bool value)
         {
             if (value)
@@ -46,7 +43,6 @@ namespace FreelanceApp.Windows.ViewModels
             }
         }
 
-        // ===== панель редактирования
         [ObservableProperty] private bool isEditOpen;
         [ObservableProperty] private string panelTitle = "";
         [ObservableProperty] private int editRating = 5;       // 1..5
@@ -55,9 +51,7 @@ namespace FreelanceApp.Windows.ViewModels
         [ObservableProperty] private string? editImageBase64;
         [ObservableProperty] private ImageSource? editImagePreview;
 
-        // Есть ли превью изображения для текущего редактируемого отзыва
         public bool HasEditImage => EditImagePreview is not null;
-
         partial void OnEditImagePreviewChanged(ImageSource? value)
         {
             OnPropertyChanged(nameof(HasEditImage));
@@ -74,12 +68,10 @@ namespace FreelanceApp.Windows.ViewModels
                 Rows.Clear();
                 await using var uow = new UnitOfWork(DbContextFactory.CreateDbContext(_currentUser));
 
-                // получаем строки «заказы из архива + мои/их отзывы» (включая медиа) через view
                 var items = await uow.Reviews.GetOrderReviewsAsync(_currentUser.Id, AsCustomer);
 
                 foreach (var r in items)
                 {
-                    // определяем, кем я был в заказе по факту:
                     bool iAmCustomer = _currentUser.Id == r.Id_Customer;
 
                     string otherName = iAmCustomer
@@ -94,7 +86,6 @@ namespace FreelanceApp.Windows.ViewModels
                     var oppComment = iAmCustomer ? r.Freelancer_Comment : r.Customer_Comment;
                     var oppRating = iAmCustomer ? r.Freelancer_Rating : r.Customer_Rating;
 
-                    // медиа берём напрямую из v_orders_reviews (customer_media / freelancer_media)
                     var myMediaDoc = iAmCustomer ? r.Customer_Media : r.Freelancer_Media;
                     var oppMediaDoc = iAmCustomer ? r.Freelancer_Media : r.Customer_Media;
 
@@ -118,7 +109,6 @@ namespace FreelanceApp.Windows.ViewModels
                     ));
                 }
 
-                // закрыть форму, сбросить выбор
                 IsEditOpen = false;
                 SelectedRow = null;
             }
@@ -132,7 +122,6 @@ namespace FreelanceApp.Windows.ViewModels
             }
         }
 
-        // открыть форму для добавления/редактирования
         [RelayCommand]
         private void OpenEditFor(ReviewRow? row)
         {
@@ -185,9 +174,9 @@ namespace FreelanceApp.Windows.ViewModels
             {
                 await using var uow = new UnitOfWork(DbContextFactory.CreateDbContext(_currentUser));
 
+                // создание
                 if (SelectedRow.ReviewId is null)
                 {
-                    // Создание нового отзыва: если картинки нет — вообще не передаём медиа (останется NULL)
                     string? mediaJsonCreate = null;
                     if (hasImage)
                     {
@@ -212,11 +201,9 @@ namespace FreelanceApp.Windows.ViewModels
                         mediaJson: mediaJsonCreate
                     );
                 }
+                // обновление
                 else
                 {
-                    // Обновление существующего: 
-                    //  - если картинка есть => передаём массив с изображением
-                    //  - если картинку убрали => передаём "[]" чтобы принудительно очистить media в БД
                     string mediaJsonUpdate;
                     if (hasImage)
                     {
@@ -338,18 +325,15 @@ namespace FreelanceApp.Windows.ViewModels
             EditImageName = "";
             EditImagePreview = null;
         }
-
-        // Вспомогательные методы для медиа вынесены в Helpers.MediaJsonHelper.
     }
 
-    // ===== Row-VM для DataTemplate
     public sealed class ReviewRow
     {
         public int OrderId { get; }
         public string ProjectTitle { get; }
         public string OtherSideName { get; }
 
-        public int? ReviewId { get; }            // мой review_id (null — отзыва ещё нет)
+        public int? ReviewId { get; } 
         public string? MyComment { get; }
         public int? MyRating { get; }
 
@@ -392,12 +376,12 @@ namespace FreelanceApp.Windows.ViewModels
         }
         public bool CanDelete => ReviewId is not null;
 
-        // медиа моего отзыва
+        // медиа клиентского отзыва
         public string? MyImageName { get; }
         public string? MyImageBase64 { get; }
         public JsonDocument? MyMedia { get; }
 
-        // медиа оппонента (маленькое превью в списке)
+        // медиа оппонента
         public string? OppImageName { get; }
         public JsonDocument? OppMedia { get; }
 
