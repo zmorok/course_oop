@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DAL;
-using DAL.Models.Tables; // User, Role
+using DAL.Models.Tables;
 using FreelanceApp.Services;
 using Microsoft.SqlServer.Server;
 using System.Collections.ObjectModel;
@@ -19,18 +19,15 @@ namespace FreelanceApp.Windows.ViewModels
     {
         private readonly User _currentUser;
 
-        // ===== Коллекции / выбор =====
         [ObservableProperty] private ObservableCollection<User> users = [];
         [ObservableProperty] private ObservableCollection<Role> roles = [];
         [ObservableProperty] private User? selectedUser;
 
-        // ===== Состояние формы =====
         [ObservableProperty] private bool isFormOpen;
         [ObservableProperty] private bool isAddMode;
         [ObservableProperty] private bool isEditMode;
         [ObservableProperty] private bool isDeleteMode;
 
-        // ===== Поля формы =====
         [ObservableProperty] private int? formId;
         [ObservableProperty] private string lastName = "";
         [ObservableProperty] private string firstName = "";
@@ -42,12 +39,10 @@ namespace FreelanceApp.Windows.ViewModels
         [ObservableProperty] private int? selectedRoleId;
         [ObservableProperty] private decimal? rating;
 
-        public UserManagementViewModel() : this(new User { Id = 0, RoleId = 1, FirstName = "Design" }) { } // для дизайна
         public UserManagementViewModel(User currentUser) => _currentUser = currentUser;
 
         public async Task InitializeAsync() => await ReloadAsync();
 
-        // ==== Загрузка данных
         [RelayCommand]
         private async Task ReloadAsync()
         {
@@ -70,7 +65,6 @@ namespace FreelanceApp.Windows.ViewModels
             }
         }
 
-        // ==== Режимы
         [RelayCommand]
         private void Add()
         {
@@ -110,7 +104,6 @@ namespace FreelanceApp.Windows.ViewModels
             {
                 IsAddMode = false; IsEditMode = false; IsDeleteMode = true;
                 FormId = SelectedUser.Id;
-                // остальные поля не нужны
                 IsFormOpen = true;
             }
         }
@@ -208,7 +201,6 @@ namespace FreelanceApp.Windows.ViewModels
             }
         }
 
-        // ==== Вспомогательные
         private void FillForm(User u)
         {
             FormId = u.Id;
@@ -220,7 +212,7 @@ namespace FreelanceApp.Windows.ViewModels
             Email = u.Email ?? "";
             SelectedRoleId = u.RoleId;
             Rating = u.Rating;
-            Password = null; // при редактировании пароль не подставляем
+            Password = null;
         }
 
         private void ClearForm()

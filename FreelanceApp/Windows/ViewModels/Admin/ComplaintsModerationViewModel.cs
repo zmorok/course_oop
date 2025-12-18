@@ -5,8 +5,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DAL;
 using DAL.Context;
-using DAL.Models.Tables;      // User
-using DAL.Models.Views;       // AdminComplaint (ваша проекция из v_admin_complaints)
+using DAL.Models.Tables;
+using DAL.Models.Views;
 using DAL.Repository.AdminRepositories;
 using FreelanceApp.Services;
 using System.Windows.Data;
@@ -49,12 +49,11 @@ namespace FreelanceApp.Windows.ViewModels
         partial void OnSelectedStatusFilterChanged(StatusFilter value)
         {
             if (!_isReady) return;
-            _ = RefreshAsync();     // fire-and-forget, чтобы не блокировать UI
+            _ = RefreshAsync();
         }
 
         [ObservableProperty] private string searchText = "";
 
-        // ===== Данные списка
         [ObservableProperty] private ObservableCollection<AdminComplaint> complaints = [];
         [ObservableProperty] private AdminComplaint? selectedComplaint;
 
@@ -82,7 +81,6 @@ namespace FreelanceApp.Windows.ViewModels
         ];
         [ObservableProperty] private string? statusEdit;
 
-        // ===== Прочее
         [ObservableProperty] private string warningText = "";
         [ObservableProperty] private bool isBusy;
 
@@ -90,7 +88,7 @@ namespace FreelanceApp.Windows.ViewModels
         public ComplaintsModerationViewModel(User currentUser)
         {
             _currentUser = currentUser;
-            SelectedStatusFilter = StatusFilters[0]; // по умолчанию «Новые»
+            SelectedStatusFilter = StatusFilters[0];
             LocalizationManager.LanguageChanged += OnLanguageChanged;
         }
 
@@ -98,7 +96,6 @@ namespace FreelanceApp.Windows.ViewModels
 
         private void OnLanguageChanged(object? sender, EventArgs e)
         {
-            // Обновляем коллекции и выбранные значения, чтобы ComboBox пересчитал отображение
             CollectionViewSource.GetDefaultView(StatusFilters)?.Refresh();
             CollectionViewSource.GetDefaultView(StatusEditOptions)?.Refresh();
 
@@ -109,14 +106,12 @@ namespace FreelanceApp.Windows.ViewModels
         partial void OnStatusEditChanged(string? value) => OnPropertyChanged(nameof(StatusEdit));
         
 
-        // обновляем правую панель при выборе строки
         partial void OnSelectedComplaintChanged(AdminComplaint? value)
         {
             StatusEdit = value?.Status;
             WarningText = "";
         }
 
-        // ===== Команды
 
         [RelayCommand]
         private async Task RefreshAsync()
@@ -131,14 +126,11 @@ namespace FreelanceApp.Windows.ViewModels
                 await using var ctx = DbContextFactory.CreateDbContext(_currentUser);
                 var repo = new AdminModerationRepository(ctx);
 
-                // 1) базовый набор по «режиму» (all | unsolved | resolved)
                 var rows = await repo.GetComplaintsAsync(SelectedStatusFilter.Mode);
 
-                // 2) точный статус (для «Новые», «В работе», «Отклонённые»)
                 if (!string.IsNullOrWhiteSpace(SelectedStatusFilter.ExactStatus))
                     rows = rows.Where(r => r.Status == SelectedStatusFilter.ExactStatus).ToList();
 
-                // 3) клиентский поиск
                 var q = (SearchText ?? "").Trim().ToLowerInvariant();
                 if (!string.IsNullOrWhiteSpace(q))
                 {
@@ -265,7 +257,6 @@ namespace FreelanceApp.Windows.ViewModels
                     message: reason,
                     expiresDays: 7);
 
-                // опционально — сразу закрыть как resolved
                 await repo.ResolveComplaintAsync(
                     actorId: _currentUser.Id,
                     complaintId: SelectedComplaint.Id_Complaint,
@@ -285,7 +276,5 @@ namespace FreelanceApp.Windows.ViewModels
                 MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-        
     }
 }

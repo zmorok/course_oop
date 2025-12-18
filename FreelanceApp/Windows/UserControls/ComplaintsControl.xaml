@@ -67,7 +67,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- Контрагенты -->
-            <GroupBox Header="{DynamicResource Complaints_Group_Counterparts}">
+            <GroupBox Header="{DynamicResource Complaints_Group_Counterparts}" Foreground="{DynamicResource TextBrush}">
                 <ListView
                     ItemsSource="{Binding Counterparts}"
                     SelectedItem="{Binding SelectedCounterpart}"
@@ -91,7 +91,7 @@
             <Grid Grid.Column="1"/>
 
             <!-- Заказы выбранного контрагента -->
-            <GroupBox Grid.Column="2" Header="{DynamicResource Complaints_Group_CounterpartOrders}">
+            <GroupBox Grid.Column="2" Header="{DynamicResource Complaints_Group_CounterpartOrders}" Foreground="{DynamicResource TextBrush}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />

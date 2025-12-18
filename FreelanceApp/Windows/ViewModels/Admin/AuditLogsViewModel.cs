@@ -6,8 +6,8 @@ using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DAL;
-using DAL.Models.Tables;   // User
-using System.Text.Json;    // AuditLog (класс вашей вьюхи)
+using DAL.Models.Tables;
+using System.Text.Json;
 using FreelanceApp.Services;
 using Microsoft.Win32;
 
@@ -17,7 +17,6 @@ namespace FreelanceApp.Windows.ViewModels
     {
         private readonly User _currentUser;
 
-        // ===== Состояние/данные
         [ObservableProperty] private DateTime? since;
         [ObservableProperty] private DateTime? until;
         [ObservableProperty] private ObservableCollection<AuditLog> logs = [];
@@ -29,11 +28,9 @@ namespace FreelanceApp.Windows.ViewModels
 
         public async Task InitializeAsync() => await LoadAsync();
 
-        // ===== Команды
         [RelayCommand]
         private async Task LoadAsync()
         {
-            // простая валидация диапазона
             if (Since is not null && Until is not null && Since > Until)
             {
                 var text = Application.Current.TryFindResource("Audit_Error_InvalidRange") as string
@@ -48,7 +45,6 @@ namespace FreelanceApp.Windows.ViewModels
                 IsBusy = true;
                 Logs.Clear();
 
-                // Нормализуем в UTC (DatePicker даёт Kind=Unspecified)
                 DateTime? sUtc = Since is null ? null : DateTime.SpecifyKind(Since.Value, DateTimeKind.Utc);
                 DateTime? uUtc = Until is null ? null : DateTime.SpecifyKind(Until.Value, DateTimeKind.Utc);
 
@@ -109,7 +105,6 @@ namespace FreelanceApp.Windows.ViewModels
                     table_name = l.TableName,
                     record_id = l.RecordId,
                     changed_at = DateTime.SpecifyKind(l.ChangedAt, DateTimeKind.Utc),
-                    // клонируем JsonElement, чтобы не зависеть от жизненного цикла JsonDocument
                     old_data = l.OldData?.RootElement.Clone(),
                     new_data = l.NewData?.RootElement.Clone()
                 });
@@ -172,7 +167,7 @@ namespace FreelanceApp.Windows.ViewModels
                 var captionOk = Application.Current.TryFindResource("Common_Success") as string ?? "Успех";
                 MessageBox.Show(textOk, captionOk, MessageBoxButton.OK, MessageBoxImage.Information);
 
-                await LoadAsync(); // перезагрузить после импорта
+                await LoadAsync();
             }
             catch (Exception ex)
             {
