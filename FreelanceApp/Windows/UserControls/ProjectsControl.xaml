@@ -14,108 +14,237 @@
 
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="320" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <!-- Левая панель -->
-        <StackPanel Grid.Column="0" Margin="0,0,10,0">
-            <Button Margin="0,0,0,5" Command="{Binding AddCommand}" Content="Добавить"/>
-            <Button Margin="0,0,0,5" Command="{Binding EditCommand}" Content="Обновить"/>
-            <Button Margin="0,0,0,5" Command="{Binding DeleteCommand}" Content="Удалить"/>
-            <Button Margin="0,10,0,5" Command="{Binding ToggleMineCommand}" Content="{Binding ToggleMineButtonText}"/>
+        <!-- Левая панель: управление и форма проекта (с прокруткой) -->
+        <ScrollViewer
+            Grid.Column="0"
+            Margin="0,0,14,0"
+            VerticalScrollBarVisibility="Auto"
+            HorizontalScrollBarVisibility="Disabled">
+            <Border Style="{DynamicResource ProjectsSectionBorderStyle}">
+                <StackPanel>
+                    <TextBlock Style="{DynamicResource ProjectsHeaderTextStyle}" Text="{DynamicResource Projects_Header_Manage}" />
 
-            <TextBlock Margin="0,10,0,0" Text="Фильтр по статусу:"/>
-            <ComboBox Margin="0,0,0,5"
-                      SelectedValue="{Binding StatusFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                      SelectedValuePath="Tag">
-                <ComboBoxItem Content="Все"        Tag="" IsSelected="True"/>
-                <ComboBoxItem Content="Черновик"   Tag="draft"/>
-                <ComboBoxItem Content="Открыт"     Tag="open"/>
-                <ComboBoxItem Content="В прогрессе" Tag="in_progress"/>
-            </ComboBox>
+                    <!-- Основные действия -->
+                    <StackPanel 
+                        Orientation="Horizontal"
+                        Margin="0,0,0,10"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                        <Button
+                            Width="70"
+                            Style="{DynamicResource PanelButtonStyle}"
+                            Command="{Binding AddCommand}"
+                            Content="{DynamicResource Projects_Button_Add}" />
+                        <Button
+                            Width="70"
+                            Style="{DynamicResource PanelButtonStyle}"
+                            Command="{Binding EditCommand}"
+                            Content="{DynamicResource Projects_Button_Update}" />
+                        <Button
+                            Width="70"
+                            Style="{DynamicResource PanelButtonStyle}"
+                            Command="{Binding DeleteCommand}"
+                            Content="{DynamicResource Projects_Button_Delete}" />
+                    </StackPanel>
 
+                    <Button
+                        Width="200"
+                        Margin="0,0,0,10"
+                        Command="{Binding ToggleMineCommand}">
+                        <Button.Style>
+                            <!-- В качестве базы используем PanelButtonStyle через StaticResource,
+                                 а текст берём из словарей через DynamicResource -->
+                            <Style TargetType="Button" BasedOn="{StaticResource PanelButtonStyle}">
+                                <!-- По умолчанию: "Показать только мои" -->
+                                <Setter Property="Content" Value="{DynamicResource Projects_Toggle_ShowMine}" />
+                                <Style.Triggers>
+                                    <!-- Если ShowOnlyMine == true → "Показать все" -->
+                                    <DataTrigger Binding="{Binding ShowOnlyMine}" Value="True">
+                                        <Setter Property="Content" Value="{DynamicResource Projects_Toggle_ShowAll}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
 
-            <!-- Форма -->
-            <StackPanel Margin="0,10,0,0" Visibility="{Binding IsFormOpen, Converter={StaticResource BoolToVisibilityConverter}}">
-                <TextBlock Text="Название:"/>
-                <TextBox Margin="0,0,0,5" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"/>
+                    <!-- Фильтр по статусу -->
+                    <TextBlock Style="{DynamicResource ProjectsLabelStyle}" Text="{DynamicResource Projects_Label_StatusFilter}" />
+                    <ComboBox
+                        Style="{DynamicResource ProjectsFilterComboBoxStyle}"
+                        SelectedValue="{Binding StatusFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectedValuePath="Tag">
+                        <ComboBoxItem Content="{DynamicResource Projects_Status_All}" Tag="" IsSelected="True" />
+                        <ComboBoxItem Content="{DynamicResource Projects_Status_Draft}" Tag="draft" />
+                        <ComboBoxItem Content="{DynamicResource Projects_Status_Open}" Tag="open" />
+                        <ComboBoxItem Content="{DynamicResource Projects_Status_InProgress}" Tag="in_progress" />
+                    </ComboBox>
 
-                <TextBlock Text="Описание:"/>
-                <TextBox Margin="0,0,0,5"
-                         MinHeight="60"
-                         AcceptsReturn="True"
-                         TextWrapping="Wrap"
-                         VerticalScrollBarVisibility="Auto"
-                         Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"/>
+                    <!-- Форма -->
+                    <StackPanel
+                        Margin="0,10,0,0"
+                        Visibility="{Binding IsFormOpen, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock Style="{DynamicResource ProjectsLabelStyle}" Text="{DynamicResource Projects_Label_Title}" />
+                        <TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBlock Text="Статус:"/>
-                <ComboBox Margin="0,0,0,5"
-                          SelectedValue="{Binding SelectedStatus}"
-                          SelectedValuePath="Tag">
-                    <ComboBoxItem Content="Черновик"    Tag="draft"/>
-                    <ComboBoxItem Content="Открыт"      Tag="open"/>
-                    <ComboBoxItem Content="В прогрессе" Tag="in_progress"/>
-                </ComboBox>
+                        <TextBlock Style="{DynamicResource ProjectsLabelStyle}" Text="{DynamicResource Projects_Label_Description}" />
+                        <TextBox
+                            MinHeight="60"
+                            AcceptsReturn="True"
+                            TextWrapping="Wrap"
+                            VerticalScrollBarVisibility="Auto"
+                            Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBlock Text="Медиа (JSON):"/>
-                <TextBox Margin="0,0,0,5"
-                         MinHeight="40"
-                         AcceptsReturn="True"
-                         VerticalScrollBarVisibility="Auto"
-                         Text="{Binding MediaText, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Style="{DynamicResource ProjectsLabelStyle}" Text="{DynamicResource Projects_Label_Status}" />
+                        <ComboBox
+                            Style="{DynamicResource ProjectsStatusComboBoxStyle}"
+                            SelectedValue="{Binding SelectedStatus}"
+                            SelectedValuePath="Tag">
+                            <ComboBoxItem Content="{DynamicResource Projects_Status_Draft}" Tag="draft" />
+                            <ComboBoxItem Content="{DynamicResource Projects_Status_Open}" Tag="open" />
+                            <ComboBoxItem Content="{DynamicResource Projects_Status_InProgress}" Tag="in_progress" />
+                        </ComboBox>
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                    <Button Width="100" Margin="0,5,5,0" Command="{Binding SaveCommand}" Content="Сохранить"/>
-                    <Button Width="100" Margin="0,5,0,0" Command="{Binding CancelCommand}" Content="Отмена"/>
+                        <TextBlock Style="{DynamicResource ProjectsLabelStyle}" Text="{DynamicResource Projects_Label_Image}" />
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <Button
+                                Width="140"
+                                Style="{DynamicResource PanelButtonStyle}"
+                                Command="{Binding SelectImageCommand}"
+                                Content="{DynamicResource Projects_Button_SelectFile}" />
+                            <TextBlock
+                                Margin="8,6,0,0"
+                                Foreground="{DynamicResource MutedTextBrush}"
+                                Text="{Binding FormImageName}" />
+                        </StackPanel>
+
+                        <!-- Превью изображения (без закруглений) -->
+                        <Image>
+                            <Image.Style>
+                                <Style TargetType="Image" BasedOn="{StaticResource ProjectMediaImageStyle}">
+                                    <Setter Property="Source" Value="{Binding FormImagePreview}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding FormImagePreview}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <Button
+                                Width="140"
+                                Style="{DynamicResource PanelButtonStyle}"
+                                Command="{Binding ClearImageCommand}"
+                                Content="{DynamicResource Projects_Button_RemoveImage}" />
+                        </StackPanel>
+
+                        <StackPanel 
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Margin="0,10,0,0">
+                            <Button
+                                Width="120"
+                                Style="{DynamicResource PanelButtonStyle}"
+                                Command="{Binding SaveCommand}"
+                                Content="{DynamicResource Projects_Button_Save}" />
+                            <Button
+                                Width="120"
+                                Style="{DynamicResource PanelButtonStyle}"
+                                Command="{Binding CancelCommand}"
+                                Content="{DynamicResource Projects_Button_Cancel}" />
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
-        </StackPanel>
+            </Border>
+        </ScrollViewer>
 
-        <!-- Правая панель -->
-        <ScrollViewer Grid.Column="1">
+        <!-- Правая панель: карточки проектов -->
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Projects}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal"/>
+                        <WrapPanel Orientation="Horizontal" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Width="250" Margin="5" Padding="10" BorderBrush="Gray" BorderThickness="1">
-                            <Border.InputBindings>
-                                <MouseBinding MouseAction="LeftClick"
-                                    Command="{Binding DataContext.SelectForEditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                    CommandParameter="{Binding}" />
-                            </Border.InputBindings>
+                        <Border>
                             <Border.Style>
-                                <Style TargetType="Border">
-                                    <Setter Property="Background" Value="#EEE"/>
+                                <Style TargetType="Border" BasedOn="{StaticResource ProjectCardStyle}">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsMine}" Value="True">
-                                            <Setter Property="Background" Value="#DFFFD6"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </Border.Style>
-                            <StackPanel>
-                                <TextBlock FontWeight="Bold" Text="{Binding Project.Title}"/>
-                                <TextBlock MaxHeight="100"
-                                           Text="{Binding Project.Description}"
-                                           TextWrapping="Wrap"
-                                           TextTrimming="CharacterEllipsis"/>
-                                <TextBlock FontSize="10" Foreground="Gray" Text="{Binding Status}"/>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                                    <Button Margin="0,0,5,0"
-                                            Content="Откликнуться"
-                                            Visibility="{Binding ShowRespondButton, Converter={StaticResource BoolToVisibilityConverter}}"
-                                            Command="{Binding DataContext.RespondCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                            CommandParameter="{Binding}"/>
-                                    <Button Content="Редактировать"
-                                            Visibility="{Binding IsMine, Converter={StaticResource BoolToVisibilityConverter}}"
-                                            Command="{Binding DataContext.SelectForEditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                            CommandParameter="{Binding}"/>
+                            <StackPanel>
+                                <TextBlock
+                                    Margin="0,0,0,4"
+                                    FontWeight="Bold"
+                                    FontSize="14"
+                                    Foreground="{DynamicResource TextBrush}"
+                                    Text="{Binding Project.Title}" />
+
+                                <Border Style="{DynamicResource ProjectStatusChipStyle}">
+                                    <TextBlock
+                                        FontSize="12"
+                                        FontWeight="SemiBold"
+                                        Foreground="{DynamicResource TextBrush}">
+                                        <Run Text="{DynamicResource Projects_Card_StatusPrefix}" />
+                                        <Run Text="{Binding StatusDisplay, Mode=OneWay}" />
+                                    </TextBlock>
+                                </Border>
+
+                                <Image>
+                                    <Image.Style>
+                                        <Style TargetType="Image" BasedOn="{StaticResource ProjectMediaImageStyle}">
+                                            <Setter Property="Source"
+                                                    Value="{Binding Project.Media, Converter={StaticResource MediaToImageConverter}}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Project.Media, Converter={StaticResource MediaToImageConverter}}"
+                                                             Value="{x:Null}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+
+                                <TextBlock
+                                    Margin="0,4,0,2"
+                                    FontSize="12"
+                                    FontWeight="SemiBold"
+                                    Foreground="{DynamicResource MutedTextBrush}"
+                                    Text="{DynamicResource Projects_Card_DescriptionHeader}" />
+                                <TextBlock
+                                    MaxHeight="80"
+                                    Text="{Binding Project.Description, Mode=OneWay}"
+                                    TextWrapping="Wrap"
+                                    TextTrimming="CharacterEllipsis"
+                                    Foreground="{DynamicResource TextBrush}" />
+
+                                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                    <Button
+                                        Margin="0,0,8,0"
+                                        Content="{DynamicResource Projects_Button_Respond}"
+                                        Style="{DynamicResource PanelButtonStyle}"
+                                        Visibility="{Binding ShowRespondButton, Converter={StaticResource BoolToVisibilityConverter}}"
+                                        Command="{Binding DataContext.RespondCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" />
+                                    <Button
+                                        Content="{DynamicResource Projects_Button_Edit}"
+                                        Style="{DynamicResource PanelButtonStyle}"
+                                        Visibility="{Binding IsMine, Converter={StaticResource BoolToVisibilityConverter}}"
+                                        Command="{Binding DataContext.SelectForEditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" />
                                 </StackPanel>
                             </StackPanel>
                         </Border>

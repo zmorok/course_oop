@@ -7,10 +7,7 @@ namespace FreelanceApp.Windows.UserControls
 {
     public partial class ProfileControl : UserControl
     {
-        public ProfileControl()
-        {
-            InitializeComponent();
-        }
+        public ProfileControl() => InitializeComponent();
 
         public async Task InitializeAsync(User user)
         {
@@ -21,10 +18,7 @@ namespace FreelanceApp.Windows.UserControls
 
         private void OnPasswordChanged(object sender, RoutedEventArgs e)
         {
-            if (DataContext is ProfileViewModel vm && sender is PasswordBox pb)
-            {
-                vm.Password = pb.Password;
-            }
+            if (DataContext is ProfileViewModel vm && sender is PasswordBox pb) vm.Password = pb.Password;
         }
     }
 };

@@ -3,10 +3,15 @@ using CommunityToolkit.Mvvm.Input;
 using DAL;
 using DAL.Models.Tables;
 using FreelanceApp.Services;
+using FreelanceApp.Helpers;
 using System.Collections.ObjectModel;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.Win32;
+using System.IO;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace FreelanceApp.Windows.ViewModels
 {
@@ -19,16 +24,28 @@ namespace FreelanceApp.Windows.ViewModels
         [ObservableProperty] private bool showOnlyMine;
 
         [ObservableProperty] private string statusFilter = ""; // "", "draft", "open", "in_progress"
-        partial void OnStatusFilterChanged(string value) { _ = LoadAsync();}
+        partial void OnStatusFilterChanged(string value) { _ = LoadAsync(); }
 
 
-        public string ToggleMineButtonText => ShowOnlyMine ? "Показать все" : "Показать только мои";
+        public string ToggleMineButtonText
+        {
+            get
+            {
+                var key = ShowOnlyMine ? "Projects_Toggle_ShowAll" : "Projects_Toggle_ShowMine";
+                var localized = Application.Current.TryFindResource(key) as string;
+                if (localized is not null) return localized;
+                return ShowOnlyMine ? "Показать все" : "Показать только мои";
+            }
+        }
 
         [ObservableProperty] private bool isFormOpen;
         [ObservableProperty] private string? title;
         [ObservableProperty] private string? description;
         [ObservableProperty] private string? selectedStatus; // "draft" | "open" | "in_progress"
-        [ObservableProperty] private string? mediaText;      // JSON-строка
+        [ObservableProperty] private string? mediaText;      // JSON-строка (для совместимости, не редактируется пользователем)
+        [ObservableProperty] private string? formImageName;
+        [ObservableProperty] private string? formImageBase64;
+        [ObservableProperty] private ImageSource? formImagePreview;
 
         public ProjectsViewModel(User currentUser)
         {
@@ -101,11 +118,11 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Ошибка при загрузке проектов:\n{ex.Message}",
-                    "Ошибка",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Projects_Error_Load") as string
+                           ?? "Ошибка при загрузке проектов:") + "\n" + ex.Message;
+                var caption = Application.Current.TryFindResource("Projects_Error_LoadCaption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -130,14 +147,18 @@ namespace FreelanceApp.Windows.ViewModels
         {
             if (SelectedProject is null)
             {
-                MessageBox.Show("Выберите проект для редактирования.", "Внимание",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                var text = Application.Current.TryFindResource("Projects_Warn_SelectForEdit") as string
+                           ?? "Выберите проект для редактирования.";
+                var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             if (!SelectedProject.IsMine)
             {
-                MessageBox.Show("Редактировать можно только свои проекты.", "Внимание",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                var text = Application.Current.TryFindResource("Projects_Warn_EditNotMine") as string
+                           ?? "Редактировать можно только свои проекты.";
+                var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             OpenFormFor(SelectedProject.Project);
@@ -149,14 +170,22 @@ namespace FreelanceApp.Windows.ViewModels
             await using var uow = new UnitOfWork(DbContextFactory.CreateDbContext(_currentUser));
             if (SelectedProject?.Project is null)
             {
-                MessageBox.Show("Выберите проект.", "Внимание",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                var text = Application.Current.TryFindResource("Projects_Warn_SelectForDelete") as string
+                           ?? "Выберите проект.";
+                var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
+            var confirmTemplate = Application.Current.TryFindResource("Projects_Confirm_Delete") as string
+                                  ?? "Удалить проект №{0}?";
+            var confirmCaption = Application.Current.TryFindResource("Projects_Confirm_Caption") as string
+                                 ?? "Подтверждение";
+            var confirmText = string.Format(confirmTemplate, SelectedProject.Project.Title);
+
             var confirm = MessageBox.Show(
-                $"Удалить проект №{SelectedProject.Project.Id}?",
-                "Подтверждение",
+                confirmText,
+                confirmCaption,
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
 
@@ -165,14 +194,20 @@ namespace FreelanceApp.Windows.ViewModels
             try
             {
                 await uow.Projects.DeleteProjectAsync(_currentUser.Id, SelectedProject.Project.Id);
-                MessageBox.Show("Проект удалён.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                var textDeleted = Application.Current.TryFindResource("Projects_Info_Deleted") as string
+                                  ?? "Проект удалён.";
+                var captionSuccess = Application.Current.TryFindResource("Common_Success") as string ?? "Успех";
+                MessageBox.Show(textDeleted, captionSuccess, MessageBoxButton.OK, MessageBoxImage.Information);
                 CloseForm();
                 await LoadAsync();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при удалении проекта:\n{ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Projects_Error_Delete") as string
+                           ?? "Ошибка при удалении проекта:") + "\n" + ex.Message;
+                var caption = Application.Current.TryFindResource("Projects_Error_LoadCaption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -187,18 +222,22 @@ namespace FreelanceApp.Windows.ViewModels
             var title = (Title ?? "").Trim();
             var description = (Description ?? "").Trim();
             var status = string.IsNullOrWhiteSpace(SelectedStatus) ? "draft" : SelectedStatus!;
-            var mediaJson = (MediaText ?? "").Trim();
+            var imageBase64 = (FormImageBase64 ?? "").Trim();
 
-            // если JSON указан — проверим валидность, чтобы не падать на БД слое
-            if (!string.IsNullOrWhiteSpace(mediaJson))
+            // строим JSON для медиа, если выбрали файл
+            string mediaJson = "[]";
+            if (!string.IsNullOrWhiteSpace(imageBase64))
             {
-                try { _ = JsonDocument.Parse(mediaJson); }
-                catch
+                var media = new[]
                 {
-                    MessageBox.Show("Поле «Медиа (JSON)» содержит некорректный JSON.",
-                        "Проверьте данные", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
+                    new
+                    {
+                        type = "image",
+                        name = FormImageName ?? "image",
+                        content = imageBase64
+                    }
+                };
+                mediaJson = JsonSerializer.Serialize(media);
             }
 
             try
@@ -214,7 +253,10 @@ namespace FreelanceApp.Windows.ViewModels
                         description: description,
                         mediaJson: string.IsNullOrWhiteSpace(mediaJson) ? "[]" : mediaJson
                     );
-                    MessageBox.Show("Проект создан.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                    var textCreated = Application.Current.TryFindResource("Projects_Info_Created") as string
+                                      ?? "Проект создан.";
+                    var captionSuccess = Application.Current.TryFindResource("Common_Success") as string ?? "Успех";
+                    MessageBox.Show(textCreated, captionSuccess, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
                 {
@@ -227,7 +269,10 @@ namespace FreelanceApp.Windows.ViewModels
                         description: description,
                         mediaJson: string.IsNullOrWhiteSpace(mediaJson) ? "[]" : mediaJson
                     );
-                    MessageBox.Show("Проект обновлён.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                    var textUpdated = Application.Current.TryFindResource("Projects_Info_Updated") as string
+                                      ?? "Проект обновлён.";
+                    var captionSuccess = Application.Current.TryFindResource("Common_Success") as string ?? "Успех";
+                    MessageBox.Show(textUpdated, captionSuccess, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
 
                 CloseForm();
@@ -235,8 +280,11 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при сохранении проекта:\n{ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Projects_Error_Save") as string
+                           ?? "Ошибка при сохранении проекта:") + "\n" + ex.Message;
+                var caption = Application.Current.TryFindResource("Projects_Error_LoadCaption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -247,8 +295,10 @@ namespace FreelanceApp.Windows.ViewModels
             if (item?.Project is null) return;
             if (item.IsMine)
             {
-                MessageBox.Show("Нельзя откликаться на собственный проект.", "Внимание",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                var text = Application.Current.TryFindResource("Projects_Warn_SelfResponse") as string
+                           ?? "Нельзя откликаться на собственный проект.";
+                var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
@@ -261,24 +311,41 @@ namespace FreelanceApp.Windows.ViewModels
                     status: "pending",
                     deadline: null
                 );
-                MessageBox.Show("Вы откликнулись на проект!", "Успех",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                var textResponded = Application.Current.TryFindResource("Projects_Info_Responded") as string
+                                    ?? "Вы откликнулись на проект!";
+                var captionSuccess = Application.Current.TryFindResource("Common_Success") as string ?? "Успех";
+                MessageBox.Show(textResponded, captionSuccess, MessageBoxButton.OK, MessageBoxImage.Information);
 
                 await LoadAsync();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при отклике: {ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Projects_Error_Respond") as string
+                           ?? "Ошибка при отклике:") + " " + ex.Message;
+                var caption = Application.Current.TryFindResource("Projects_Error_LoadCaption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         [RelayCommand]
         private void SelectForEdit(ProjectItemViewModel? item)
         {
-            if (item is null) return;
+            if (item is null)
+            {
+                CloseForm();
+                return;
+            }
+
             SelectedProject = item;
-            if (item.IsMine) OpenFormFor(item.Project);
+            if (item.IsMine)
+            {
+                OpenFormFor(item.Project);
+            }
+            else
+            {
+                CloseForm();
+            }
         }
 
         [RelayCommand]
@@ -288,8 +355,6 @@ namespace FreelanceApp.Windows.ViewModels
             await LoadAsync();
         }
 
-        // ===== Вспомогательные
-
         private void OpenFormFor(Project? p)
         {
             if (p is null)
@@ -298,6 +363,9 @@ namespace FreelanceApp.Windows.ViewModels
                 Description = "";
                 MediaText = "";
                 SelectedStatus = "draft";
+                FormImageName = "";
+                FormImageBase64 = "";
+                FormImagePreview = null;
             }
             else
             {
@@ -305,6 +373,9 @@ namespace FreelanceApp.Windows.ViewModels
                 Description = p.Description;
                 MediaText = p.Media is null ? "" : p.Media.RootElement.GetRawText();
                 SelectedStatus = p.Status ?? "draft";
+
+                (FormImageName, FormImageBase64) = MediaJsonHelper.ExtractFirstImage(p.Media);
+                FormImagePreview = MediaJsonHelper.CreateImageSource(FormImageBase64);
             }
             IsFormOpen = true;
         }
@@ -313,6 +384,49 @@ namespace FreelanceApp.Windows.ViewModels
         {
             IsFormOpen = false;
             SelectedProject = null;
+        }
+
+        [RelayCommand]
+        private void ClearSelection()
+        {
+            CloseForm();
+        }
+
+        [RelayCommand]
+        private void SelectImage()
+        {
+            var dialog = new OpenFileDialog
+            {
+                Filter = "Изображения|*.png;*.jpg;*.jpeg;*.bmp;*.gif",
+                Title = "Выберите изображение проекта"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                try
+                {
+                    var bytes = File.ReadAllBytes(dialog.FileName);
+                    FormImageBase64 = Convert.ToBase64String(bytes);
+                    FormImageName = Path.GetFileName(dialog.FileName);
+                    FormImagePreview = MediaJsonHelper.CreateImageSource(FormImageBase64);
+                }
+                catch (Exception ex)
+                {
+                    var msg = (Application.Current.TryFindResource("Projects_Error_ReadFile") as string
+                               ?? "Не удалось прочитать файл:") + " " + ex.Message;
+                    var caption = Application.Current.TryFindResource("Projects_Error_LoadCaption") as string
+                                  ?? "Ошибка";
+                    MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        [RelayCommand]
+        private void ClearImage()
+        {
+            FormImageBase64 = "";
+            FormImageName = "";
+            FormImagePreview = null;
         }
     }
 
@@ -323,6 +437,37 @@ namespace FreelanceApp.Windows.ViewModels
         public bool IsMine { get; }
         public bool ShowRespondButton { get; }
 
+        public string StatusDisplay
+        {
+            get
+            {
+                string? key = Status switch
+                {
+                    "draft" => "Projects_Status_Draft",
+                    "open" => "Projects_Status_Open",
+                    "in_progress" => "Projects_Status_InProgress",
+                    "completed" => "Projects_Status_Completed",
+                    _ => null
+                };
+
+                if (!string.IsNullOrEmpty(key))
+                {
+                    var localized = Application.Current.TryFindResource(key) as string;
+                    if (localized is not null)
+                        return localized;
+                }
+
+                return Status switch
+                {
+                    "draft" => "Черновик",
+                    "open" => "Открыт",
+                    "in_progress" => "В прогрессе",
+                    "completed" => "Завершён",
+                    _ => Status
+                };
+            }
+        }
+
         public ProjectItemViewModel(Project project, string status, bool isMine, bool showRespondButton)
         {
             Project = project;
@@ -331,7 +476,6 @@ namespace FreelanceApp.Windows.ViewModels
             ShowRespondButton = showRespondButton;
         }
 
-        // конструктор «проекции» для v_projects (ProjectWithoutStatus)
         public static ProjectItemViewModel FromProjectWithoutStatus(
             DAL.Models.Views.ProjectWithoutStatus pws,
             string status,

@@ -5,10 +5,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DAL;
 using DAL.Context;
-using DAL.Models.Tables;      // User
-using DAL.Models.Views;       // AdminComplaint (ваша проекция из v_admin_complaints)
+using DAL.Models.Tables;
+using DAL.Models.Views;
 using DAL.Repository.AdminRepositories;
 using FreelanceApp.Services;
+using System.Windows.Data;
 
 namespace FreelanceApp.Windows.ViewModels
 {
@@ -17,57 +18,100 @@ namespace FreelanceApp.Windows.ViewModels
         private readonly User _currentUser;
         private bool _isReady;
 
-        // ===== Фильтр статусов (для верхнего комбобокса)
-        public sealed record StatusFilter(string Title, string Mode, string? ExactStatus);
+        public sealed record StatusFilter(string Code, string Mode, string? ExactStatus)
+        {
+            public override string ToString()
+            {
+                string resourceKey = Code switch
+                {
+                    "new"         => "AdminComplaints_Filter_Status_New",
+                    "in_progress" => "AdminComplaints_Filter_Status_InProgress",
+                    "resolved"    => "AdminComplaints_Filter_Status_Resolved",
+                    "dismissed"   => "AdminComplaints_Filter_Status_Dismissed",
+                    "all"         => "AdminComplaints_Filter_Status_All",
+                    _             => Code
+                };
+
+                var localized = Application.Current.TryFindResource(resourceKey) as string;
+                return localized ?? Code;
+            }
+        }
         public ObservableCollection<StatusFilter> StatusFilters { get; } =
         [
-            new("Новые",        "unsolved", "new"),
-            new("В работе",     "unsolved", "in_progress"),
-            new("Решённые",     "resolved", "resolved"),
-            new("Отклонённые",  "unsolved", "dismissed"),
-            new("Все",          "all",       null),
+            new("new",        "unsolved", "new"),
+            new("in_progress","unsolved", "in_progress"),
+            new("resolved",   "resolved", "resolved"),
+            new("dismissed",  "all",      "dismissed"),
+            new("all",        "all",       null),
         ];
 
         [ObservableProperty] private StatusFilter selectedStatusFilter;
         partial void OnSelectedStatusFilterChanged(StatusFilter value)
         {
             if (!_isReady) return;
-            _ = RefreshAsync();     // fire-and-forget, чтобы не блокировать UI
+            _ = RefreshAsync();
         }
 
         [ObservableProperty] private string searchText = "";
 
-        // ===== Данные списка
         [ObservableProperty] private ObservableCollection<AdminComplaint> complaints = [];
         [ObservableProperty] private AdminComplaint? selectedComplaint;
 
-        // ===== Правый блок (редактирование статуса)
-        public string[] StatusEditOptions { get; } = ["new", "in_progress", "resolved", "dismissed"];
+        public sealed record StatusEditOption(string Code)
+        {
+            public override string ToString()
+            {
+                string resourceKey = Code switch
+                {
+                    "new"         => "AdminComplaints_Status_New",
+                    "in_progress" => "AdminComplaints_Status_InProgress",
+                    "dismissed"   => "AdminComplaints_Status_Dismissed",
+                    _             => Code
+                };
+
+                var localized = Application.Current.TryFindResource(resourceKey) as string;
+                return localized ?? Code;
+            }
+        }
+        public IReadOnlyList<StatusEditOption> StatusEditOptions { get; } =
+        [
+            new("new"),
+            new("in_progress"),
+            new("dismissed")
+        ];
         [ObservableProperty] private string? statusEdit;
 
-        // ===== Прочее
         [ObservableProperty] private string warningText = "";
-        [ObservableProperty] private string selectedMediaPretty = "";
         [ObservableProperty] private bool isBusy;
 
         public ComplaintsModerationViewModel() : this(new User { Id = 0, RoleId = 1, FirstName = "Design" }) { }
         public ComplaintsModerationViewModel(User currentUser)
         {
             _currentUser = currentUser;
-            SelectedStatusFilter = StatusFilters[0]; // по умолчанию «Новые»
+            SelectedStatusFilter = StatusFilters[0];
+            LocalizationManager.LanguageChanged += OnLanguageChanged;
         }
 
         public async Task InitializeAsync() { _isReady = true; await RefreshAsync(); }
 
-        // обновляем правую панель при выборе строки
+        private void OnLanguageChanged(object? sender, EventArgs e)
+        {
+            CollectionViewSource.GetDefaultView(StatusFilters)?.Refresh();
+            CollectionViewSource.GetDefaultView(StatusEditOptions)?.Refresh();
+
+            OnPropertyChanged(nameof(SelectedStatusFilter));
+            OnPropertyChanged(nameof(StatusEdit));
+        }
+
+        partial void OnStatusEditChanged(string? value) => OnPropertyChanged(nameof(StatusEdit));
+        
+
         partial void OnSelectedComplaintChanged(AdminComplaint? value)
         {
             StatusEdit = value?.Status;
             WarningText = "";
-            SelectedMediaPretty = Pretty(value?.Media);
         }
 
-        // ===== Команды
 
         [RelayCommand]
         private async Task RefreshAsync()
@@ -82,14 +126,11 @@ namespace FreelanceApp.Windows.ViewModels
                 await using var ctx = DbContextFactory.CreateDbContext(_currentUser);
                 var repo = new AdminModerationRepository(ctx);
 
-                // 1) базовый набор по «режиму» (all | unsolved | resolved)
                 var rows = await repo.GetComplaintsAsync(SelectedStatusFilter.Mode);
 
-                // 2) точный статус (для «Новые», «В работе», «Отклонённые»)
                 if (!string.IsNullOrWhiteSpace(SelectedStatusFilter.ExactStatus))
                     rows = rows.Where(r => r.Status == SelectedStatusFilter.ExactStatus).ToList();
 
-                // 3) клиентский поиск
                 var q = (SearchText ?? "").Trim().ToLowerInvariant();
                 if (!string.IsNullOrWhiteSpace(q))
                 {
@@ -105,8 +146,12 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки: {ex.InnerException?.Message ?? ex.Message}",
-                    "Жалобы", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("AdminComplaintsVM_Error_Load") as string
+                           ?? "Ошибка загрузки:") + " " +
+                          (ex.InnerException?.Message ?? ex.Message);
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Жалобы";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally { IsBusy = false; }
         }
@@ -131,8 +176,12 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка изменения статуса: {ex.InnerException?.Message ?? ex.Message}",
-                    "Жалобы", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("AdminComplaintsVM_Error_SaveStatus") as string
+                           ?? "Ошибка изменения статуса:") + " " +
+                          (ex.InnerException?.Message ?? ex.Message);
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Жалобы";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -170,8 +219,12 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка закрытия жалобы: {ex.InnerException?.Message ?? ex.Message}",
-                    "Жалобы", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("AdminComplaintsVM_Error_Resolve") as string
+                           ?? "Ошибка закрытия жалобы:") + " " +
+                          (ex.InnerException?.Message ?? ex.Message);
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Жалобы";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -186,8 +239,11 @@ namespace FreelanceApp.Windows.ViewModels
                 var reason = (WarningText ?? "").Trim();
                 if (string.IsNullOrWhiteSpace(reason))
                 {
-                    MessageBox.Show("Укажи причину предупреждения.", "Предупреждение",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    var text = Application.Current.TryFindResource("AdminComplaintsVM_Warn_ReasonRequired") as string
+                               ?? "Укажи причину предупреждения.";
+                    var caption = Application.Current.TryFindResource("AdminComplaintsVM_Warn_ReasonCaption") as string
+                                  ?? "Предупреждение";
+                    MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Information);
                     return;
                 }
 
@@ -201,7 +257,6 @@ namespace FreelanceApp.Windows.ViewModels
                     message: reason,
                     expiresDays: 7);
 
-                // опционально — сразу закрыть как resolved
                 await repo.ResolveComplaintAsync(
                     actorId: _currentUser.Id,
                     complaintId: SelectedComplaint.Id_Complaint,
@@ -213,21 +268,13 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка выдачи предупреждения: {ex.InnerException?.Message ?? ex.Message}",
-                    "Жалобы", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("AdminComplaintsVM_Error_IssueWarning") as string
+                           ?? "Ошибка выдачи предупреждения:") + " " +
+                          (ex.InnerException?.Message ?? ex.Message);
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Жалобы";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }
-
-        // ===== Utils
-        private static string Pretty(string? json)
-        {
-            if (string.IsNullOrWhiteSpace(json)) return "";
-            try
-            {
-                using var doc = JsonDocument.Parse(json);
-                return JsonSerializer.Serialize(doc, new JsonSerializerOptions { WriteIndented = true });
-            }
-            catch { return json; }
         }
     }
 }

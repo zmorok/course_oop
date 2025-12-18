@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+    <sys:String x:Key="_Info_OnlineStatus">Error of updating last online</sys:String>
     <!--#region Startup window-->
     <sys:String x:Key="StartupWindow_Title">Welcome</sys:String>
     <sys:String x:Key="StartupWindow_Actions">Choose an action</sys:String>
@@ -18,20 +19,42 @@
     <sys:String x:Key="LoginWindow_Btn_Login">Login</sys:String>
     <sys:String x:Key="LoginWindow_Btn_Back">Back</sys:String>
     <!--  Login - MessageBox  -->
-    <sys:String x:Key="LoginWindow_Greetings">Welcome</sys:String>
-    <sys:String x:Key="LoginWindow_ErrorPassword">Invalid login or password!</sys:String>
+    <sys:String x:Key="LoginWindow_Info_ErrorText">Please, fill all necessary fields.</sys:String>
+    <sys:String x:Key="LoginWindow_Info_ErrorText_Caption">Erroe</sys:String>
+    <sys:String x:Key="LoginWindow_Info_Greetings">Welcome!</sys:String>
+    <sys:String x:Key="LoginWindow_Info_Greetings_Caption">Success</sys:String>
+    <sys:String x:Key="LoginWindow_Info_ErrorPassword">Invalid email or password!</sys:String>
+    <sys:String x:Key="LoginWindow_Info_ErrorPassword_Caption">Erroe</sys:String>
     <!--#endregion-->
 
     <!--#region Registration-->
     <sys:String x:Key="RegisterWindow_Title">Registration</sys:String>
     <sys:String x:Key="RegisterWindow_Header">Register</sys:String>
-    <sys:String x:Key="RegisterWindow_Login">Username:</sys:String>
+
+    <sys:String x:Key="RegisterWindow_Name">Name:</sys:String>
+    <sys:String x:Key="RegisterWindow_Surname">Surname:</sys:String>
+    <sys:String x:Key="RegisterWindow_Email">Email:</sys:String>
     <sys:String x:Key="RegisterWindow_Password">Password:</sys:String>
-    <sys:String x:Key="RegisterWindow_Role">Role:</sys:String>
-    <sys:String x:Key="RegisterWindow_Role_Client">Client</sys:String>
-    <sys:String x:Key="RegisterWindow_Role_Administrator">Administrator</sys:String>
+    <sys:String x:Key="RegisterWindow_Phone">Phone number:</sys:String>
+    <sys:String x:Key="RegisterWindow_Gender">Gender (Male / Female / Other):</sys:String>
     <sys:String x:Key="RegisterWindow_Btn_Register">Register</sys:String>
     <sys:String x:Key="RegisterWindow_Btn_Back">Back</sys:String>
+
+    <sys:String x:Key="RegisterWindow_Info_ErrorText">Please, fill all necessary fields.</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_ErrorText_Caption">Error</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_EmailExist">This Email is using.</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_EmailExist_Caption">Error</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_RegError">Error in registration:</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_RegError_Caption">Error</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_Success" xml:space="preserve">
+        You have successfully registered!
+        Your credentials:
+    
+    </sys:String>
+    <sys:String x:Key="RegisterWindow_Info_SuccessEmail">- Email:</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_SuccessPassword">- Password:</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_Success_Caption">Success registration!</sys:String>
+
     <sys:String x:Key="RegisterWindow_Greetings">Registration successful! You are now logged in.</sys:String>
     <sys:String x:Key="RegisterWindow_ErrorRegistration">A user with this username already exists!</sys:String>
     <!--#endregion-->
@@ -147,5 +170,381 @@
     <sys:String x:Key="MainWindow_Profile_Theme">Theme</sys:String>
     <sys:String x:Key="MainWindow_Profile_Save">Save</sys:String>
     <sys:String x:Key="MainWindow_Profile_GoBack">Back</sys:String>
+    <!--#endregion-->
+
+    <!--#region User Dashboard-->
+    <sys:String x:Key="UserDashboard_Title">User panel</sys:String>
+    <sys:String x:Key="UserDashboard_Header_Title">Welcome!</sys:String>
+    <sys:String x:Key="UserDashboard_Header_Subtitle">Freelancer user dashboard</sys:String>
+
+    <sys:String x:Key="TopBar_Theme_Light_Tooltip">Light theme</sys:String>
+    <sys:String x:Key="TopBar_Theme_Dark_Tooltip">Dark theme</sys:String>
+    <sys:String x:Key="TopBar_Language_Ru_Tooltip">Russian</sys:String>
+    <sys:String x:Key="TopBar_Language_En_Tooltip">English</sys:String>
+    <sys:String x:Key="Common_Logout">Logout</sys:String>
+
+    <sys:String x:Key="UserDashboard_Tab_Profile">Profile</sys:String>
+    <sys:String x:Key="UserDashboard_Tab_Portfolio">Portfolio</sys:String>
+    <sys:String x:Key="UserDashboard_Tab_Orders">My orders</sys:String>
+    <sys:String x:Key="UserDashboard_Tab_Projects">Projects</sys:String>
+    <sys:String x:Key="UserDashboard_Tab_Reviews">Reviews</sys:String>
+    <sys:String x:Key="UserDashboard_Tab_Complaints">Complaints</sys:String>
+    <sys:String x:Key="UserDashboard_Tab_FreelancerSearch">Freelancer search</sys:String>
+    <!--#endregion-->
+
+    <!--#region Admin Dashboard-->
+    <sys:String x:Key="AdminDashboard_Title">Admin panel</sys:String>
+    <sys:String x:Key="AdminDashboard_Header_Title">Administration</sys:String>
+    <sys:String x:Key="AdminDashboard_Header_Subtitle">Manage users, roles and complaints</sys:String>
+
+    <sys:String x:Key="AdminDashboard_Navigation_Header">Navigation</sys:String>
+    <sys:String x:Key="AdminDashboard_Navigation_Users">Users</sys:String>
+    <sys:String x:Key="AdminDashboard_Navigation_Audit">Audit</sys:String>
+    <sys:String x:Key="AdminDashboard_Navigation_Complaints">Complaints</sys:String>
+    <!--#endregion-->
+
+    <!--#region User/ProfileControl-->
+    <sys:String x:Key="Profile_Header_MyProfile">My profile</sys:String>
+    <sys:String x:Key="Profile_Button_UploadPhoto">Upload…</sys:String>
+    <sys:String x:Key="Profile_Button_RemovePhoto">Remove</sys:String>
+    <sys:String x:Key="Profile_Label_FirstName">First name</sys:String>
+    <sys:String x:Key="Profile_Label_LastName">Last name</sys:String>
+    <sys:String x:Key="Profile_Label_MiddleName">Middle name</sys:String>
+    <sys:String x:Key="Profile_Label_Phone">Phone</sys:String>
+    <sys:String x:Key="Profile_Label_Gender">Gender</sys:String>
+    <sys:String x:Key="Profile_Label_NewPassword">New password (optional)</sys:String>
+    <sys:String x:Key="Profile_Button_SaveChanges">Save changes</sys:String>
+    <sys:String x:Key="Profile_Header_Invitations">Project invitations</sys:String>
+    <sys:String x:Key="Profile_Button_Accept">Accept</sys:String>
+    <sys:String x:Key="Profile_Button_Reject">Decline</sys:String>
+    <sys:String x:Key="Profile_Header_Warnings">User warnings</sys:String>
+    <sys:String x:Key="Profile_Warning_Prefix">Warning №</sys:String>
+    <sys:String x:Key="Profile_Warning_ResolvedBy">, handled by: </sys:String>
+    <sys:String x:Key="Profile_Warning_Text">Text: </sys:String>
+    <sys:String x:Key="Profile_Warning_ValidUntil">Valid until: </sys:String>
+    <!--#endregion-->
+
+    <!--#region User/PortfolioControl-->
+    <sys:String x:Key="Portfolio_Header_Manage">Manage portfolio</sys:String>
+    <sys:String x:Key="Portfolio_Button_Add">Add</sys:String>
+    <sys:String x:Key="Portfolio_Button_Delete">Delete</sys:String>
+    <sys:String x:Key="Portfolio_Label_Description">Description</sys:String>
+    <sys:String x:Key="Portfolio_Label_Experience">Experience</sys:String>
+    <sys:String x:Key="Portfolio_Label_SkillsCsv">Skills (comma separated)</sys:String>
+    <sys:String x:Key="Portfolio_Label_Image">Image</sys:String>
+    <sys:String x:Key="Portfolio_Button_SelectFile">Choose file...</sys:String>
+    <sys:String x:Key="Portfolio_Button_RemoveImage">Remove image</sys:String>
+    <sys:String x:Key="Portfolio_Button_Save">Save</sys:String>
+    <sys:String x:Key="Portfolio_Button_Cancel">Cancel</sys:String>
+    <sys:String x:Key="Portfolio_Text_NoMedia">No media</sys:String>
+    <sys:String x:Key="Portfolio_Button_Edit">Edit</sys:String>
+    <sys:String x:Key="Portfolio_Button_DeleteItem">Delete</sys:String>
+    <!--#endregion-->
+
+    <!--#region User/ProjectsControl-->
+    <sys:String x:Key="Projects_Header_Manage">Manage projects</sys:String>
+    <sys:String x:Key="Projects_Button_Add">Add</sys:String>
+    <sys:String x:Key="Projects_Button_Update">Update</sys:String>
+    <sys:String x:Key="Projects_Button_Delete">Delete</sys:String>
+    <sys:String x:Key="Projects_Label_StatusFilter">Filter by status:</sys:String>
+    <sys:String x:Key="Projects_Status_All">All</sys:String>
+    <sys:String x:Key="Projects_Status_Draft">Draft</sys:String>
+    <sys:String x:Key="Projects_Status_Open">Open</sys:String>
+    <sys:String x:Key="Projects_Status_InProgress">In progress</sys:String>
+    <sys:String x:Key="Projects_Status_Completed">Completed</sys:String>
+    <sys:String x:Key="Projects_Label_Title">Title</sys:String>
+    <sys:String x:Key="Projects_Label_Description">Description</sys:String>
+    <sys:String x:Key="Projects_Label_Status">Status</sys:String>
+    <sys:String x:Key="Projects_Label_Image">Image</sys:String>
+    <sys:String x:Key="Projects_Button_SelectFile">Choose file...</sys:String>
+    <sys:String x:Key="Projects_Button_RemoveImage">Remove image</sys:String>
+    <sys:String x:Key="Projects_Button_Save">Save</sys:String>
+    <sys:String x:Key="Projects_Button_Cancel">Cancel</sys:String>
+    <sys:String x:Key="Projects_Card_StatusPrefix">Status: </sys:String>
+    <sys:String x:Key="Projects_Card_DescriptionHeader">Description:</sys:String>
+    <sys:String x:Key="Projects_Button_Respond">Respond</sys:String>
+    <sys:String x:Key="Projects_Button_Edit">Edit</sys:String>
+    <sys:String x:Key="Projects_Toggle_ShowAll">Show all</sys:String>
+    <sys:String x:Key="Projects_Toggle_ShowMine">Show only mine</sys:String>
+    <!--#endregion-->
+
+    <!--#region User/ReviewsControl-->
+    <sys:String x:Key="Reviews_Mode_Label">Show orders where I am:</sys:String>
+    <sys:String x:Key="Reviews_Mode_AsCustomer">Customer</sys:String>
+    <sys:String x:Key="Reviews_Mode_AsFreelancer">Freelancer</sys:String>
+    <sys:String x:Key="Reviews_Label_OtherSide">Other side: </sys:String>
+    <sys:String x:Key="Reviews_Label_MyReview">Your review:</sys:String>
+    <sys:String x:Key="Reviews_Label_OpponentReview">Opponent's review:</sys:String>
+    <sys:String x:Key="Reviews_Edit_Label_Rating">Rating:</sys:String>
+    <sys:String x:Key="Reviews_Edit_Label_Comment">Comment:</sys:String>
+    <sys:String x:Key="Reviews_Edit_Label_Image">Image:</sys:String>
+    <sys:String x:Key="Reviews_Edit_Button_SelectFile">Choose file...</sys:String>
+    <sys:String x:Key="Reviews_Edit_Button_RemoveImage">Remove image</sys:String>
+    <sys:String x:Key="Reviews_Edit_Button_Save">Save</sys:String>
+    <sys:String x:Key="Reviews_Edit_Button_Cancel">Cancel</sys:String>
+    <sys:String x:Key="Reviews_Button_Delete">Delete</sys:String>
+    <!--#endregion-->
+
+    <!--#region User/ComplaintsControl-->
+    <sys:String x:Key="Complaints_Mode_Header">Mode:</sys:String>
+    <sys:String x:Key="Complaints_Mode_Create">Submit complaint</sys:String>
+    <sys:String x:Key="Complaints_Mode_MyComplaints">My complaints</sys:String>
+    <sys:String x:Key="Complaints_Group_Counterparts">Counterparties</sys:String>
+    <sys:String x:Key="Complaints_Group_CounterpartOrders">Orders with selected counterparty</sys:String>
+    <sys:String x:Key="Complaints_Order_ProjectPrefix">Project: </sys:String>
+    <sys:String x:Key="Complaints_Order_OrderPrefix"> (Order №</sys:String>
+    <sys:String x:Key="Complaints_Order_DeadlinePrefix">Deadline: </sys:String>
+    <sys:String x:Key="Complaints_Order_CustomerPrefix">Customer: </sys:String>
+    <sys:String x:Key="Complaints_Order_FreelancerPrefix">Freelancer: </sys:String>
+    <sys:String x:Key="Complaints_Order_CreatedPrefix">Created: </sys:String>
+    <sys:String x:Key="Complaints_Button_ComplainOrder">Complain about order</sys:String>
+    <sys:String x:Key="Complaints_Group_MyComplaints">My complaints</sys:String>
+    <sys:String x:Key="Complaints_My_TargetPrefix">Target: </sys:String>
+    <sys:String x:Key="Complaints_My_EditLimitPrefix">| Can be edited</sys:String>
+    <sys:String x:Key="Complaints_My_EditLimitSuffix">times.</sys:String>
+    <sys:String x:Key="Complaints_Text_NoMedia">No media</sys:String>
+    <sys:String x:Key="Complaints_Button_Edit">Edit</sys:String>
+    <sys:String x:Key="Complaints_Button_Delete">Delete</sys:String>
+    <sys:String x:Key="Complaints_Edit_Label_Text">Complaint text:</sys:String>
+    <sys:String x:Key="Complaints_Edit_Label_Image">Image:</sys:String>
+    <sys:String x:Key="Complaints_Edit_Button_SelectFile">Choose file...</sys:String>
+    <sys:String x:Key="Complaints_Edit_Button_RemoveImage">Remove image</sys:String>
+    <sys:String x:Key="Complaints_Edit_Button_Save">Save</sys:String>
+    <sys:String x:Key="Complaints_Edit_Button_Cancel">Cancel</sys:String>
+    <!--#endregion-->
+
+    <!--#region User/FreelancerSearchControl-->
+    <sys:String x:Key="FreelancerSearch_Button_Search">Search</sys:String>
+    <sys:String x:Key="FreelancerSearch_SkillsPrefix">Skills: </sys:String>
+    <sys:String x:Key="FreelancerSearch_Button_SelectProject">Select project</sys:String>
+    <sys:String x:Key="FreelancerSearch_Label_SelectProject">Select project: </sys:String>
+    <sys:String x:Key="FreelancerSearch_Button_Send">Send</sys:String>
+    <sys:String x:Key="FreelancerSearch_Button_Cancel">Cancel</sys:String>
+    <!--#endregion-->
+
+    <!--#region Admin/UserManagementControl-->
+    <sys:String x:Key="AdminUsers_Button_Add">Add</sys:String>
+    <sys:String x:Key="AdminUsers_Button_Edit">Edit</sys:String>
+    <sys:String x:Key="AdminUsers_Button_Delete">Delete</sys:String>
+    <sys:String x:Key="AdminUsers_Label_UserId">User ID</sys:String>
+    <sys:String x:Key="AdminUsers_Label_Password">Password</sys:String>
+    <sys:String x:Key="AdminUsers_Button_Save">Save</sys:String>
+    <sys:String x:Key="AdminUsers_Button_Cancel">Cancel</sys:String>
+    <sys:String x:Key="AdminUsers_Card_RatingPrefix">Rating: </sys:String>
+    <sys:String x:Key="AdminUsers_Card_GenderPrefix">Gender: </sys:String>
+    <sys:String x:Key="AdminUsers_Card_PhonePrefix">Phone: </sys:String>
+    <sys:String x:Key="AdminUsers_Card_RegisteredPrefix">Registered: </sys:String>
+    <sys:String x:Key="AdminUsers_Card_LastOnlinePrefix">Last online: </sys:String>
+    <!--#endregion-->
+
+    <!--#region Admin/AuditLogsControl-->
+    <sys:String x:Key="AdminAudit_Label_DateFilter">Date filter</sys:String>
+    <sys:String x:Key="AdminAudit_Label_Since">From (since):</sys:String>
+    <sys:String x:Key="AdminAudit_Label_Until">To (until):</sys:String>
+    <sys:String x:Key="AdminAudit_Button_Load">Load</sys:String>
+    <sys:String x:Key="AdminAudit_Label_ImportExport">Export/Import</sys:String>
+    <sys:String x:Key="AdminAudit_Button_ExportJson">Export to JSON</sys:String>
+    <sys:String x:Key="AdminAudit_Button_ImportJson">Import from JSON</sys:String>
+    <sys:String x:Key="AdminAudit_Label_Loading">Loading...</sys:String>
+    <!--#endregion-->
+
+    <!--#region Admin/ComplaintsModerationControl-->
+    <sys:String x:Key="AdminComplaints_Filter_Header">Filters</sys:String>
+    <sys:String x:Key="AdminComplaints_Filter_StatusLabel">Status:</sys:String>
+    <sys:String x:Key="AdminComplaints_Button_Find">Find</sys:String>
+    <sys:String x:Key="AdminComplaints_Button_Refresh">Refresh</sys:String>
+    <sys:String x:Key="AdminComplaints_Group_Complaints">Complaints</sys:String>
+    <sys:String x:Key="AdminComplaints_Row_FromPrefix">From: </sys:String>
+    <sys:String x:Key="AdminComplaints_Row_ToPrefix"> → To: </sys:String>
+    <sys:String x:Key="AdminComplaints_Row_StatusPrefix">Status: </sys:String>
+    <sys:String x:Key="AdminComplaints_Row_OrderPrefix">  •  Order: </sys:String>
+    <sys:String x:Key="AdminComplaints_Row_ArchivePrefix"> / Archive: </sys:String>
+    <sys:String x:Key="AdminComplaints_Group_Details">Details</sys:String>
+    <sys:String x:Key="AdminComplaints_Details_ComplaintNo">Complaint №{0}</sys:String>
+    <sys:String x:Key="AdminComplaints_Details_FromPrefix">From: </sys:String>
+    <sys:String x:Key="AdminComplaints_Details_ToPrefix">  → To: </sys:String>
+    <sys:String x:Key="AdminComplaints_Details_StatusLabel">Status:</sys:String>
+    <sys:String x:Key="AdminComplaints_Button_SaveStatus">Save status</sys:String>
+    <sys:String x:Key="AdminComplaints_Button_TakeInWork">Take in work</sys:String>
+    <sys:String x:Key="AdminComplaints_Details_ComplaintText">Complaint text:</sys:String>
+    <sys:String x:Key="AdminComplaints_Details_MediaJson">Media (JSON):</sys:String>
+    <sys:String x:Key="AdminComplaints_Warning_Header">User warning</sys:String>
+    <sys:String x:Key="AdminComplaints_Button_IssueWarning">Issue warning</sys:String>
+    <sys:String x:Key="AdminComplaints_Footer_Reject">Reject</sys:String>
+    <sys:String x:Key="AdminComplaints_Footer_Close">Close (resolved)</sys:String>
+    <!-- Captions for complaint status codes (moderation) -->
+    <sys:String x:Key="AdminComplaints_Filter_Status_New">New</sys:String>
+    <sys:String x:Key="AdminComplaints_Filter_Status_InProgress">In progress</sys:String>
+    <sys:String x:Key="AdminComplaints_Filter_Status_Resolved">Resolved</sys:String>
+    <sys:String x:Key="AdminComplaints_Filter_Status_Dismissed">Dismissed</sys:String>
+    <sys:String x:Key="AdminComplaints_Filter_Status_All">All</sys:String>
+    <sys:String x:Key="AdminComplaints_Status_New">New</sys:String>
+    <sys:String x:Key="AdminComplaints_Status_InProgress">In progress</sys:String>
+    <sys:String x:Key="AdminComplaints_Status_Resolved">Resolved</sys:String>
+    <sys:String x:Key="AdminComplaints_Status_Dismissed">Dismissed</sys:String>
+    <!--#endregion-->
+
+    <!--#region User/OrdersControl-->
+    <sys:String x:Key="Orders_Filter_Show">Show:</sys:String>
+    <sys:String x:Key="Orders_Filter_Customer">My orders (as customer)</sys:String>
+    <sys:String x:Key="Orders_Filter_Freelancer">My orders (as freelancer)</sys:String>
+    <sys:String x:Key="Orders_Filter_Archive">Archive</sys:String>
+    <sys:String x:Key="Orders_Action_Edit">Change status / deadline</sys:String>
+    <sys:String x:Key="Orders_Action_Delete">Cancel/Delete</sys:String>
+
+    <sys:String x:Key="Orders_Card_DeadlinePrefix">Deadline: </sys:String>
+    <sys:String x:Key="Orders_Card_DeadlineNotSet">Not set</sys:String>
+    <sys:String x:Key="Orders_Card_CustomerPrefix">Customer: </sys:String>
+    <sys:String x:Key="Orders_Card_FreelancerPrefix">Freelancer: </sys:String>
+    <sys:String x:Key="Orders_Card_CreatedPrefix">Created: </sys:String>
+    <sys:String x:Key="Orders_Card_ProjectPrefix">Project: </sys:String>
+    <sys:String x:Key="Orders_Card_OrderPrefix"> (Order #</sys:String>
+
+    <sys:String x:Key="Orders_Edit_Header">Order editing</sys:String>
+    <sys:String x:Key="Orders_Edit_Label_Status">Status:</sys:String>
+    <sys:String x:Key="Orders_Edit_Status_Pending">Pending</sys:String>
+    <sys:String x:Key="Orders_Edit_Status_Active">Active</sys:String>
+    <sys:String x:Key="Orders_Edit_Status_Completed">Completed</sys:String>
+    <sys:String x:Key="Orders_Edit_Status_Cancelled">Cancelled</sys:String>
+    <sys:String x:Key="Orders_Edit_Status_Disputed">Disputed</sys:String>
+    <sys:String x:Key="Orders_Edit_Label_Deadline">Deadline:</sys:String>
+    <sys:String x:Key="Orders_Edit_Button_Save">Save</sys:String>
+    <sys:String x:Key="Orders_Edit_Button_Cancel">Cancel</sys:String>
+
+    <!-- MessageBox -->
+    <sys:String x:Key="Orders_Error_Load">Error while loading orders:</sys:String>
+    <sys:String x:Key="Orders_Error_Load_Caption">Error</sys:String>
+    <sys:String x:Key="Orders_Error_EditArchive">Editing is not available for archive.</sys:String>
+    <sys:String x:Key="Orders_Error_SelectOrderInList">Select an order in the list.</sys:String>
+    <sys:String x:Key="Orders_Error_DeleteArchive">Deleting is not available for archive.</sys:String>
+    <sys:String x:Key="Orders_Error_SelectOrder">Select an order.</sys:String>
+    <sys:String x:Key="Orders_Confirm_DeleteOrder">Delete order №{0}?</sys:String>
+    <sys:String x:Key="Orders_Confirm_Caption">Confirmation</sys:String>
+    <sys:String x:Key="Orders_Error_Delete">Error while deleting:</sys:String>
+    <sys:String x:Key="Orders_Error_NoOrderForSave">No order selected.</sys:String>
+    <sys:String x:Key="Orders_Error_Save">Error while saving:</sys:String>
+    <sys:String x:Key="Common_Warning">Warning</sys:String>
+    <!--#endregion-->
+
+    <!--#region User/PortfolioViewModel-->
+    <sys:String x:Key="Portfolio_Error_Load">Error while loading portfolio:</sys:String>
+    <sys:String x:Key="Portfolio_Error_Save">Error while saving portfolio:</sys:String>
+    <sys:String x:Key="Portfolio_Error_Delete">Error while deleting portfolio:</sys:String>
+    <sys:String x:Key="Portfolio_Info_Added">Portfolio added.</sys:String>
+    <sys:String x:Key="Portfolio_Info_Updated">Portfolio updated.</sys:String>
+    <sys:String x:Key="Portfolio_Info_Deleted">Portfolio deleted.</sys:String>
+    <sys:String x:Key="Portfolio_Error_SelectForDelete">Select a portfolio to delete.</sys:String>
+    <sys:String x:Key="Portfolio_Confirm_Delete">Delete portfolio #{0}?\n{1}</sys:String>
+    <sys:String x:Key="Portfolio_Confirm_Caption">Confirm deletion</sys:String>
+    <sys:String x:Key="Portfolio_Warn_Experience">The \"Experience\" field must contain a number with a unit (for example, \"3 years\", \"6 months\" or \"1 year 6 months\").</sys:String>
+    <sys:String x:Key="Portfolio_Warn_Experience_Caption">Check data</sys:String>
+    <sys:String x:Key="Portfolio_Error_ReadFile">Could not read file:</sys:String>
+    <!--#endregion-->
+
+    <!--#region User/ProjectsViewModel-->
+    <sys:String x:Key="Projects_Error_Load">Error while loading projects:</sys:String>
+    <sys:String x:Key="Projects_Error_Save">Error while saving project:</sys:String>
+    <sys:String x:Key="Projects_Error_Delete">Error while deleting project:</sys:String>
+    <sys:String x:Key="Projects_Error_LoadCaption">Error</sys:String>
+    <sys:String x:Key="Projects_Warn_SelectForEdit">Select a project to edit.</sys:String>
+    <sys:String x:Key="Projects_Warn_EditNotMine">You can edit only your own projects.</sys:String>
+    <sys:String x:Key="Projects_Warn_SelectForDelete">Select a project.</sys:String>
+    <sys:String x:Key="Projects_Confirm_Delete">Delete project #{0}?</sys:String>
+    <sys:String x:Key="Projects_Confirm_Caption">Confirmation</sys:String>
+    <sys:String x:Key="Projects_Info_Deleted">Project deleted.</sys:String>
+    <sys:String x:Key="Projects_Info_Created">Project created.</sys:String>
+    <sys:String x:Key="Projects_Info_Updated">Project updated.</sys:String>
+    <sys:String x:Key="Projects_Warn_SelfResponse">You cannot respond to your own project.</sys:String>
+    <sys:String x:Key="Projects_Info_Responded">You responded to the project!</sys:String>
+    <sys:String x:Key="Projects_Error_ReadFile">Could not read file:</sys:String>
+    <sys:String x:Key="Projects_Error_Respond">Error while responding:</sys:String>
+    <!--#endregion-->
+
+    <!--#region User/ReviewsViewModel-->
+    <sys:String x:Key="Reviews_Error_Load">Error while loading reviews:</sys:String>
+    <sys:String x:Key="Reviews_Error_Load_Caption">Error</sys:String>
+    <sys:String x:Key="Reviews_Warn_EmptyComment">Comment cannot be empty.</sys:String>
+    <sys:String x:Key="Reviews_Warn_Caption">Check data</sys:String>
+    <sys:String x:Key="Reviews_Error_Save">Error while saving:</sys:String>
+    <sys:String x:Key="Reviews_Confirm_Delete">Delete review for order #{0}?</sys:String>
+    <sys:String x:Key="Reviews_Confirm_Caption">Confirmation</sys:String>
+    <sys:String x:Key="Reviews_Error_Delete">Error while deleting:</sys:String>
+    <sys:String x:Key="Reviews_Error_ReadFile">Could not read file:</sys:String>
+    <sys:String x:Key="Reviews_Button_Add">Add</sys:String>
+    <sys:String x:Key="Reviews_Button_Edit">Edit</sys:String>
+    <sys:String x:Key="Reviews_Edit_Title_New">New review</sys:String>
+    <sys:String x:Key="Reviews_Edit_Title_Edit">Edit review</sys:String>
+    <sys:String x:Key="Reviews_Text_None">[none]</sys:String>
+    <sys:String x:Key="Reviews_Text_DeletedUser">[deleted]</sys:String>
+    <!--#endregion-->
+
+    <!--#region User/ComplaintsViewModel-->
+    <sys:String x:Key="ComplaintsVM_Error_Load">Error while loading data:</sys:String>
+    <sys:String x:Key="ComplaintsVM_Error_LoadOrders">Error while loading counterpart orders:</sys:String>
+    <sys:String x:Key="ComplaintsVM_Warn_SelectOrder">Select an order.</sys:String>
+    <sys:String x:Key="ComplaintsVM_Warn_SelectCounterpart">Select a counterpart.</sys:String>
+    <sys:String x:Key="ComplaintsVM_Warn_TextRequired">Complaint text cannot be empty.</sys:String>
+    <sys:String x:Key="ComplaintsVM_Warn_SelectBoth">Select a counterpart and an order.</sys:String>
+    <sys:String x:Key="ComplaintsVM_Error_Save">Error while saving complaint:</sys:String>
+    <sys:String x:Key="ComplaintsVM_Info_EditOnlyNew">Only new complaints can be edited.</sys:String>
+    <sys:String x:Key="ComplaintsVM_Edit_Title">Edit complaint</sys:String>
+    <sys:String x:Key="ComplaintsVM_Create_Title">Complaint against: {0}, order #{1}</sys:String>
+    <sys:String x:Key="ComplaintsVM_Confirm_Delete">Delete complaint?</sys:String>
+    <sys:String x:Key="ComplaintsVM_Confirm_Caption">Confirmation</sys:String>
+    <sys:String x:Key="ComplaintsVM_Error_Delete">Error while deleting complaint:</sys:String>
+    <sys:String x:Key="ComplaintsVM_Error_ReadFile">Could not read file:</sys:String>
+    <!--#endregion-->
+
+    <!--#region User/FreelancerSearchViewModel-->
+    <sys:String x:Key="FreelancerSearch_Error_Search">Search error:</sys:String>
+    <sys:String x:Key="FreelancerSearch_Error_LoadProjects">Error while loading projects:</sys:String>
+    <sys:String x:Key="FreelancerSearch_Info_NoProjects">No projects available for invitation.</sys:String>
+    <sys:String x:Key="FreelancerSearch_Info_InviteSent">Invitation sent</sys:String>
+    <sys:String x:Key="FreelancerSearch_Error_SendInvite">Error while sending invitation:</sys:String>
+    <sys:String x:Key="FreelancerSearch_Error_ClosePicker">Error while closing the window:</sys:String>
+    <sys:String x:Key="Common_Info">Information</sys:String>
+    <sys:String x:Key="Common_Success">Success</sys:String>
+    <!--#endregion-->
+
+    <!--#region User/ProfileViewModel-->
+    <sys:String x:Key="Profile_Info_Saved">Profile data updated</sys:String>
+    <sys:String x:Key="Profile_Info_Saved_Caption">Success</sys:String>
+    <sys:String x:Key="Profile_Error_Save">Error while saving profile:</sys:String>
+    <sys:String x:Key="Profile_Info_InviteAccepted">Invitation accepted!</sys:String>
+    <sys:String x:Key="Profile_Info_InviteAccepted_Caption">Done</sys:String>
+    <sys:String x:Key="Profile_Info_InviteDeclined">Invitation declined.</sys:String>
+    <sys:String x:Key="Profile_Error_Generic">Error:</sys:String>
+    <sys:String x:Key="Profile_Error_LoadNotifications">Error while loading notifications:</sys:String>
+    <sys:String x:Key="Profile_Error_LoadWarnings">Error while loading warnings:</sys:String>
+    <!--#endregion-->
+
+    <!--#region Admin/AuditLogsViewModel-->
+    <sys:String x:Key="Audit_Error_InvalidRange">The 'From' date is greater than the 'To' date.</sys:String>
+    <sys:String x:Key="Audit_Error_Load">Error while loading logs:</sys:String>
+    <sys:String x:Key="Audit_Warn_PathCyrillicDir">Path contains Cyrillic characters. Choose another directory.</sys:String>
+    <sys:String x:Key="Audit_Info_ExportDone">Export completed. Open folder?</sys:String>
+    <sys:String x:Key="Audit_Error_Export">Export error:</sys:String>
+    <sys:String x:Key="Audit_Warn_PathCyrillicFile">Path contains Cyrillic characters. Choose another file.</sys:String>
+    <sys:String x:Key="Audit_Info_ImportDone">Import completed.</sys:String>
+    <sys:String x:Key="Audit_Error_Import">Import error:</sys:String>
+    <!--#endregion-->
+
+    <!--#region Admin/ComplaintsModerationViewModel-->
+    <sys:String x:Key="AdminComplaintsVM_Error_Load">Error while loading complaints:</sys:String>
+    <sys:String x:Key="AdminComplaintsVM_Error_SaveStatus">Error while changing status:</sys:String>
+    <sys:String x:Key="AdminComplaintsVM_Error_Resolve">Error while closing complaint:</sys:String>
+    <sys:String x:Key="AdminComplaintsVM_Warn_ReasonRequired">Specify a reason for the warning.</sys:String>
+    <sys:String x:Key="AdminComplaintsVM_Warn_ReasonCaption">Warning</sys:String>
+    <sys:String x:Key="AdminComplaintsVM_Error_IssueWarning">Error while issuing warning:</sys:String>
+    <!--#endregion-->
+
+    <!--#region Admin/UserManagementViewModel-->
+    <sys:String x:Key="AdminUsers_Error_Load">Error while loading users:</sys:String>
+    <sys:String x:Key="AdminUsers_Warn_SelectUser">Select a user.</sys:String>
+    <sys:String x:Key="AdminUsers_Error_NoUserId">User ID is not specified.</sys:String>
+    <sys:String x:Key="AdminUsers_Confirm_DeleteUser">Delete user {0}?</sys:String>
+    <sys:String x:Key="AdminUsers_Confirm_Caption">Confirmation</sys:String>
+    <sys:String x:Key="AdminUsers_Info_OperationDone">Operation completed</sys:String>
+    <sys:String x:Key="AdminUsers_Error_Generic">Error:</sys:String>
     <!--#endregion-->
 </ResourceDictionary>

@@ -8,8 +8,22 @@ namespace DAL.Repository.UserRepositories
     {
         Task<List<Counterpart>> GetCounterpartsAsync(int userId);
         Task<List<MyComplaint>> GetComplaintsAsync(int userId);
-        Task CreateComplaintAsync(int actorId, int filedById, int targetUserId, string description, int? orderId = null, int? orderArchiveId = null);
-        Task UpdateComplaintAsync(int actorId, int complaintId, string description, string? mediaJson = null);
+
+        Task CreateComplaintAsync(
+            int actorId,
+            int filedById,
+            int targetUserId,
+            string description,
+            string? mediaJson = null,
+            int? orderId = null,
+            int? orderArchiveId = null);
+
+        Task UpdateComplaintAsync(
+            int actorId,
+            int complaintId,
+            string description,
+            string? mediaJson = null);
+
         Task DeleteComplaintAsync(int actorId, int complaintId);
     }
 
@@ -37,19 +51,28 @@ namespace DAL.Repository.UserRepositories
                 .ToListAsync();
         }
 
-        public Task CreateComplaintAsync(int actorId, int filedById, int targetUserId, string description, int? orderId = null, int? orderArchiveId = null)
+        public Task CreateComplaintAsync(
+            int actorId,
+            int filedById,
+            int targetUserId,
+            string description,
+            string? mediaJson = null,
+            int? orderId = null,
+            int? orderArchiveId = null)
         {
+            // как в проектах/портфолио: всегда передаём json-массив, даже если он пустой ("[]")
+            var json = string.IsNullOrWhiteSpace(mediaJson) ? "[]" : mediaJson;
+
             return _context.Database.ExecuteSqlInterpolatedAsync($@"
                 CALL core.user_create_complaint(
                     {actorId},
                     {filedById},
                     {targetUserId},
                     {description},
-                    CAST(NULL AS jsonb),
+                    CAST({json} AS jsonb),
                     {orderId},
                     {orderArchiveId}
-                )
-            ");
+                )");
         }
 
         public Task UpdateComplaintAsync(int actorId, int complaintId, string description, string? mediaJson = null)

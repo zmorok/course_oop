@@ -16,14 +16,11 @@ namespace FreelanceApp.Windows.ViewModels
     {
         private readonly User _currentUser;
 
-        // Список и выбор
         [ObservableProperty] private ObservableCollection<LocalOrderDisplay> orders = [];
         [ObservableProperty] private LocalOrderDisplay? selectedRow;
 
-        // Какая вкладка выбрана (радиокнопки)
         [ObservableProperty] private OrderViewType selectedView = OrderViewType.Customer;
 
-        // Панель редактирования
         [ObservableProperty] private bool isEditOpen;
         [ObservableProperty] private string? editStatus;     // "pending","active","completed","cancelled","disputed"
         [ObservableProperty] private DateTime? editDeadline;
@@ -32,7 +29,6 @@ namespace FreelanceApp.Windows.ViewModels
 
         public async Task InitializeAsync() => await LoadAsync();
 
-        // ---- Вычислимые свойства для XAML ----
         public bool IsCustomerView
         {
             get => SelectedView == OrderViewType.Customer;
@@ -50,7 +46,6 @@ namespace FreelanceApp.Windows.ViewModels
         }
         public bool ShowEditActions => !IsArchiveView;
 
-        // При смене вида — перегружаем список и обновляем зависимые пропы
         partial void OnSelectedViewChanged(OrderViewType value)
         {
             IsEditOpen = false;
@@ -58,10 +53,9 @@ namespace FreelanceApp.Windows.ViewModels
             OnPropertyChanged(nameof(IsFreelancerView));
             OnPropertyChanged(nameof(IsArchiveView));
             OnPropertyChanged(nameof(ShowEditActions));
-            _ = LoadAsync(); // fire & forget
+            _ = LoadAsync();
         }
 
-        // ---- Загрузка ----
         private async Task LoadAsync()
         {
             Orders.Clear();
@@ -79,30 +73,35 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при загрузке заказов:\n{ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Orders_Error_Load") as string ?? "Ошибка при загрузке заказов:") +
+                          "\n" + ex.Message;
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        // ---- Команды верхних кнопок ----
         [RelayCommand]
         private void EditSelected()
         {
             if (IsArchiveView)
             {
-                MessageBox.Show("Изменение недоступно для архива.", "Внимание",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                var text = Application.Current.TryFindResource("Orders_Error_EditArchive") as string
+                           ?? "Изменение недоступно для архива.";
+                var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
             if (SelectedRow is null)
             {
-                MessageBox.Show("Выберите заказ в списке.", "Внимание",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                var text = Application.Current.TryFindResource("Orders_Error_SelectOrderInList") as string
+                           ?? "Выберите заказ в списке.";
+                var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            EditStatus = SelectedRow.OrderStatus;      // свяжется с ComboBox.SelectedValue(Tag)
-            EditDeadline = SelectedRow.OrderDeadline;    // свяжется с DatePicker.SelectedDate
+            EditStatus = SelectedRow.OrderStatus;       // с ComboBox.SelectedValue(Tag)
+            EditDeadline = SelectedRow.OrderDeadline;   // с DatePicker.SelectedDate
             IsEditOpen = true;
         }
 
@@ -111,20 +110,30 @@ namespace FreelanceApp.Windows.ViewModels
         {
             if (IsArchiveView)
             {
-                MessageBox.Show("Удаление недоступно для архива.", "Внимание",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                var text = Application.Current.TryFindResource("Orders_Error_DeleteArchive") as string
+                           ?? "Удаление недоступно для архива.";
+                var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
             if (SelectedRow is null)
             {
-                MessageBox.Show("Выберите заказ.", "Внимание",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                var text = Application.Current.TryFindResource("Orders_Error_SelectOrder") as string
+                           ?? "Выберите заказ.";
+                var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
+            var confirmTextTemplate = Application.Current.TryFindResource("Orders_Confirm_DeleteOrder") as string
+                                      ?? "Удалить заказ №{0}?";
+            var confirmCaption = Application.Current.TryFindResource("Orders_Confirm_Caption") as string
+                                 ?? "Подтверждение";
+            var confirmText = string.Format(confirmTextTemplate, SelectedRow.OrderId);
+
             var confirm = MessageBox.Show(
-                $"Удалить заказ №{SelectedRow.OrderId}?",
-                "Подтверждение",
+                confirmText,
+                confirmCaption,
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
 
@@ -138,12 +147,13 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при удалении:\n{ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Orders_Error_Delete") as string ?? "Ошибка при удалении:") +
+                          "\n" + ex.Message;
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        // ---- Команды формы ----
         [RelayCommand]
         private void CancelEdit()
         {
@@ -157,29 +167,32 @@ namespace FreelanceApp.Windows.ViewModels
         {
             if (SelectedRow is null)
             {
-                MessageBox.Show("Не выбран заказ.", "Внимание",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                var text = Application.Current.TryFindResource("Orders_Error_NoOrderForSave") as string
+                           ?? "Не выбран заказ.";
+                var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             var status = string.IsNullOrWhiteSpace(EditStatus) ? SelectedRow.OrderStatus : EditStatus!;
-            var deadline = EditDeadline;
+            DateTime? sDeadline = EditDeadline is null ? null : DateTime.SpecifyKind(EditDeadline.Value, DateTimeKind.Utc);
 
             await using var uow = new UnitOfWork(DbContextFactory.CreateDbContext(_currentUser));
             try
             {
-                await uow.Orders.UpdateOrderAsync(_currentUser.Id, SelectedRow.OrderId, status, deadline);
+                await uow.Orders.UpdateOrderAsync(_currentUser.Id, SelectedRow.OrderId, status, sDeadline);
                 CancelEdit();
                 await LoadAsync();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при сохранении:\n{ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Orders_Error_Save") as string ?? "Ошибка при сохранении:") +
+                          "\n" + ex.Message;
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        // Дополнительно — открыть редактирование по двойному клику на элемент
         [RelayCommand]
         private void OpenEditFor(LocalOrderDisplay? row)
         {

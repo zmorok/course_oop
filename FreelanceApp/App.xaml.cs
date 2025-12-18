@@ -1,5 +1,7 @@
-﻿using System.Windows;
+using System;
+using System.Windows;
 using Microsoft.Extensions.Configuration;
+using FreelanceApp.Services;
 
 namespace FreelanceApp
 {
@@ -9,8 +11,6 @@ namespace FreelanceApp
 
         // начальное подключение (svc_app)
         public static string? DefaultConnection => Configuration.GetConnectionString("DefaultConnection");
-
-        // текущее подключение, используемое в контексте
         public static string? ConnectionString { get; private set; }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -22,8 +22,9 @@ namespace FreelanceApp
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            // по умолчанию — подключение svc_app
             ConnectionString = DefaultConnection;
+            ThemeManager.Apply(ThemeManager.CurrentTheme);
+            LocalizationManager.SetLanguage(AppLanguage.Ru);
         }
 
         public static string GetConnectionForRole(string pgRole)

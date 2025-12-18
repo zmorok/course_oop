@@ -69,12 +69,11 @@ namespace FreelanceApp.Windows.ViewModels
                     photoBytes: _newPhotoBytes
                 );
 
-                MessageBox.Show(
-                    "Данные профиля обновлены",
-                    "Успешно",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information
-                );
+                var text = Application.Current.TryFindResource("Profile_Info_Saved") as string
+                           ?? "Данные профиля обновлены";
+                var caption = Application.Current.TryFindResource("Profile_Info_Saved_Caption") as string
+                              ?? "Успешно";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Information);
 
                 _currentUser.FirstName = FirstName;
                 _currentUser.LastName = LastName;
@@ -91,12 +90,11 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Ошибка при сохранении профиля: {ex.Message}",
-                    "Ошибка",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                var msg = (Application.Current.TryFindResource("Profile_Error_Save") as string
+                           ?? "Ошибка при сохранении профиля:") + " " + ex.Message;
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -129,21 +127,19 @@ namespace FreelanceApp.Windows.ViewModels
                     userId: _currentUser.Id
                 );
                 await LoadNotificationsAsync();
-                MessageBox.Show(
-                    "Приглашение принято!",
-                    "Готово",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information
-                );
+                var text = Application.Current.TryFindResource("Profile_Info_InviteAccepted") as string
+                           ?? "Приглашение принято!";
+                var caption = Application.Current.TryFindResource("Profile_Info_InviteAccepted_Caption") as string
+                              ?? "Готово";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Ошибка: {ex.Message}",
-                    "Ошибка",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                var msg = (Application.Current.TryFindResource("Profile_Error_Generic") as string
+                           ?? "Ошибка:") + " " + ex.Message;
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -159,21 +155,19 @@ namespace FreelanceApp.Windows.ViewModels
                     userId: _currentUser.Id
                 );
                 await LoadNotificationsAsync();
-                MessageBox.Show(
-                    "Приглашение отклонено.",
-                    "Готово",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information
-                );
+                var text = Application.Current.TryFindResource("Profile_Info_InviteDeclined") as string
+                           ?? "Приглашение отклонено.";
+                var caption = Application.Current.TryFindResource("Profile_Info_InviteAccepted_Caption") as string
+                              ?? "Готово";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Ошибка: {ex.Message}",
-                    "Ошибка",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                var msg = (Application.Current.TryFindResource("Profile_Error_Generic") as string
+                           ?? "Ошибка:") + " " + ex.Message;
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -201,12 +195,11 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Ошибка при загрузке уведомлений: {ex.Message}",
-                    "Ошибка",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                var msg = (Application.Current.TryFindResource("Profile_Error_LoadNotifications") as string
+                           ?? "Ошибка при загрузке уведомлений:") + " " + ex.Message;
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -220,12 +213,11 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Ошибка при загрузке предупреждений: {ex.Message}",
-                    "Ошибка",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                var msg = (Application.Current.TryFindResource("Profile_Error_LoadWarnings") as string
+                           ?? "Ошибка при загрузке предупреждений:") + " " + ex.Message;
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

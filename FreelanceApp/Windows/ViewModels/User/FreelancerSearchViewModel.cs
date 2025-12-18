@@ -21,17 +21,15 @@ namespace FreelanceApp.Windows.ViewModels
         [ObservableProperty] private Project? selectedProject;
         [ObservableProperty] private bool isProjectPickerVisible;   // видимость нижней панели
 
-        // хранить Id выбранного приглашённого (когда открываем панель)
         [ObservableProperty] private int inviteeId;
 
         public FreelancerSearchViewModel(User currentUser) => _currentUser = currentUser;
 
         public async Task InitializeAsync()
         {
-            await SearchAsync(); // начальный поиск (пустой запрос)
+            await SearchAsync();
         }
 
-        // Поиск
         [RelayCommand]
         private async Task SearchAsync()
         {
@@ -50,12 +48,15 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка поиска: {ex.InnerException?.Message ?? ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("FreelancerSearch_Error_Search") as string
+                           ?? "Ошибка поиска:") + " " +
+                          (ex.InnerException?.Message ?? ex.Message);
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        // Открыть выбор проекта для фрилансера
         [RelayCommand]
         private async Task OpenProjectPickerAsync(FreelancerRow? row)
         {
@@ -72,17 +73,24 @@ namespace FreelanceApp.Windows.ViewModels
                 IsProjectPickerVisible = OpenProjects.Count > 0;
 
                 if (OpenProjects.Count == 0)
-                    MessageBox.Show("Нет доступных проектов для приглашения.", "Информация",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                {
+                    var text = Application.Current.TryFindResource("FreelancerSearch_Info_NoProjects") as string
+                               ?? "Нет доступных проектов для приглашения.";
+                    var caption = Application.Current.TryFindResource("Common_Info") as string ?? "Информация";
+                    MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки проектов: {ex.InnerException?.Message ?? ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("FreelancerSearch_Error_LoadProjects") as string
+                           ?? "Ошибка загрузки проектов:") + " " +
+                          (ex.InnerException?.Message ?? ex.Message);
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        // Отправить приглашение
         [RelayCommand]
         private async Task SendInviteAsync()
         {
@@ -97,10 +105,11 @@ namespace FreelanceApp.Windows.ViewModels
                     inviteeId: InviteeId,
                     projectId: SelectedProject.Id);
 
-                MessageBox.Show("Приглашение отправлено", "Успех",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                var text = Application.Current.TryFindResource("FreelancerSearch_Info_InviteSent") as string
+                           ?? "Приглашение отправлено";
+                var caption = Application.Current.TryFindResource("Common_Success") as string ?? "Успех";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Information);
 
-                // очистим панель, перезагрузим список
                 IsProjectPickerVisible = false;
                 OpenProjects.Clear();
                 SelectedProject = null;
@@ -109,8 +118,34 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка отправки приглашения: {ex.InnerException?.Message ?? ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("FreelancerSearch_Error_SendInvite") as string
+                           ?? "Ошибка отправки приглашения:") + " " +
+                          (ex.InnerException?.Message ?? ex.Message);
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        [RelayCommand]
+        private async Task CloseProjectPickerAsync()
+        {
+            try
+            {
+                IsProjectPickerVisible = false;
+                OpenProjects.Clear();
+                SelectedProject = null;
+                InviteeId = 0;
+                await SearchAsync();
+            }
+            catch (Exception ex)
+            {
+                var msg = (Application.Current.TryFindResource("FreelancerSearch_Error_ClosePicker") as string
+                           ?? "Ошибка закрытия окна:") + " " +
+                          (ex.InnerException?.Message ?? ex.Message);
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

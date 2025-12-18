@@ -1,4 +1,5 @@
-﻿using DAL.Context;
+using DAL.Context;
+using DAL.Models.Tables;
 using DAL.Models.Views;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -8,20 +9,25 @@ namespace DAL.Repository.UserRepositories
     public interface IUserReviewsRepository
     {
         Task<List<OrderReviewsRow>> GetOrderReviewsAsync(int userId, bool asCustomer);
+
         Task CreateReviewAsync(
             int actorId,
             int orderId,
             int reviewerId,
             string comment,
-            int rating
+            int rating,
+            string? mediaJson = null
         );
+
         Task UpdateReviewAsync(
             int actorId,
             int reviewId,
             int reviewerId,
             string comment,
-            int rating
+            int rating,
+            string? mediaJson = null
         );
+
         Task DeleteReviewAsync(int actorId, int reviewId, int reviewerId);
     }
 
@@ -53,10 +59,14 @@ namespace DAL.Repository.UserRepositories
             int orderId,
             int reviewerId,
             string comment,
-            int rating
-        ) =>
-            _context.Database.ExecuteSqlInterpolatedAsync(
-                $@"CALL core.user_create_review(
+            int rating,
+            string? mediaJson = null
+        )
+        {
+            if (string.IsNullOrWhiteSpace(mediaJson))
+            {
+                return _context.Database.ExecuteSqlInterpolatedAsync(
+                    $@"CALL core.user_create_review(
                         {actorId},
                         {orderId},
                         {reviewerId},
@@ -64,17 +74,34 @@ namespace DAL.Repository.UserRepositories
                         {rating},
                         CAST(NULL AS JSONB)
                     )"
+                );
+            }
+
+            return _context.Database.ExecuteSqlInterpolatedAsync(
+                $@"CALL core.user_create_review(
+                        {actorId},
+                        {orderId},
+                        {reviewerId},
+                        {comment},
+                        {rating},
+                        CAST({mediaJson} AS JSONB)
+                    )"
             );
+        }
 
         public Task UpdateReviewAsync(
             int actorId,
             int reviewId,
             int reviewerId,
             string comment,
-            int rating
-        ) =>
-            _context.Database.ExecuteSqlInterpolatedAsync(
-                $@"CALL core.user_update_review(
+            int rating,
+            string? mediaJson = null
+        )
+        {
+            if (string.IsNullOrWhiteSpace(mediaJson))
+            {
+                return _context.Database.ExecuteSqlInterpolatedAsync(
+                    $@"CALL core.user_update_review(
                     {actorId},
                     {reviewId},
                     {reviewerId},
@@ -82,7 +109,20 @@ namespace DAL.Repository.UserRepositories
                     {rating},
                     NULL
                 )"
+                );
+            }
+
+            return _context.Database.ExecuteSqlInterpolatedAsync(
+                $@"CALL core.user_update_review(
+                    {actorId},
+                    {reviewId},
+                    {reviewerId},
+                    {comment},
+                    {rating},
+                    CAST({mediaJson} AS JSONB)
+                )"
             );
+        }
 
         public Task DeleteReviewAsync(int actorId, int reviewId, int reviewerId) =>
             _context.Database.ExecuteSqlInterpolatedAsync(

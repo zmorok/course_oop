@@ -1,12 +1,12 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-using System.Windows;
-using System.Windows.Input;
+﻿using DAL.Context;
 using DAL.Models.Tables;
-using DAL.Context;
 using FreelanceApp.Services;
 using FreelanceApp.Windows;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using System.Text;
+using System.Windows;
+using System.Windows.Input;
 
 namespace FreelanceApp.Authentication
 {
@@ -21,7 +21,18 @@ namespace FreelanceApp.Authentication
         public ICommand LoginCommand =>
             new RelayCommand(async () =>
             {
-                string email = UsernameBox.Text;
+                string text = string.Empty, caption = string.Empty;
+
+                if (string.IsNullOrEmpty(LoginBox.Text) || string.IsNullOrEmpty(PasswordBox.Password))
+                {
+                    text = Application.Current.TryFindResource("LoginWindow_Info_ErrorText") as string ?? "Пожалуйста, заполните все обязательные поля.";
+                    caption = Application.Current.TryFindResource("LoginWindow_Info_ErrorText_Caption") as string ?? "Ошибка";
+
+                    MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                string email = LoginBox.Text;
                 string password = PasswordBox.Password;
                 string hash = HashPassword(password);
 
@@ -33,12 +44,10 @@ namespace FreelanceApp.Authentication
 
                 if (user == null)
                 {
-                    MessageBox.Show(
-                        "Неверные данные",
-                        "Ошибка",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error
-                    );
+                    text = Application.Current.TryFindResource("LoginWindow_Info_ErrorPassword") as string ?? "Неверный логин или пароль!";
+                    caption = Application.Current.TryFindResource("LoginWindow_Info_ErrorPassword_Caption") as string ?? "Ошибка";
+
+                    MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
@@ -47,6 +56,11 @@ namespace FreelanceApp.Authentication
                     "admin" => new AdminDashboardWindow(user),
                     _ => new UserDashboardWindow(user),
                 };
+
+                text = Application.Current.TryFindResource("LoginWindow_Info_Greetings") as string ?? "Добро пожаловать!";
+                caption = Application.Current.TryFindResource("LoginWindow_Info_Greetings_Caption") as string ?? "Успех";
+
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Information);
 
                 nextWindow.Show();
                 Close();

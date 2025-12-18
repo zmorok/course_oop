@@ -1,12 +1,10 @@
-﻿using System.ComponentModel;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
+﻿using DAL.Models.Tables;
 using FreelanceApp.Authentication;
-using DAL.Models.Tables;
 using FreelanceApp.Services;
 using FreelanceApp.Windows.UserControls;
 using Microsoft.EntityFrameworkCore;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace FreelanceApp.Windows
 {
@@ -16,14 +14,15 @@ namespace FreelanceApp.Windows
 
         public UserDashboardWindow(User user)
         {
-            InitializeComponent();
             _currentUser = user;
-            Title = "Панель пользователя: " + user.FirstName + " " + user.LastName;
+
             Loaded += (_, __) =>
             {
                 if (TabControlMain.SelectedItem is TabItem t) InitTab(t);
+                UpdateThemeButtons(); UpdateLocaleButtons(); SetTitle();
             };
             Closing += async (_, _) => await UpdateLastOnlineAsync();
+            InitializeComponent();
         }
 
         private readonly HashSet<string> _initializedTabs = [];
@@ -35,17 +34,31 @@ namespace FreelanceApp.Windows
 
         private async void InitTab(TabItem tab)
         {
-            if (tab.Header is not string header || !_initializedTabs.Add(header)) return;
+            if (tab.Tag is not string key || !_initializedTabs.Add(key)) return;
 
-            switch (header)
+            switch (key)
             {
-                case "Профиль": await ProfileControl.InitializeAsync(_currentUser); break;
-                case "Портфолио": await PortfolioControl.InitializeAsync(_currentUser); break;
-                case "Мои заказы": await OrdersControl.InitializeAsync(_currentUser); break;
-                case "Проекты": await ProjectsControl.InitializeAsync(_currentUser); break;
-                case "Отзывы": await ReviewsControl.InitializeAsync(_currentUser); break;
-                case "Жалобы": await ComplaintsControl.InitializeAsync(_currentUser); break;
-                case "Поиск исполнителя": await FreelancerSearchControl.InitializeAsync(_currentUser); break;
+                case "Profile":
+                    await ProfileControl.InitializeAsync(_currentUser);
+                    break;
+                case "Portfolio":
+                    await PortfolioControl.InitializeAsync(_currentUser);
+                    break;
+                case "Orders":
+                    await OrdersControl.InitializeAsync(_currentUser);
+                    break;
+                case "Projects":
+                    await ProjectsControl.InitializeAsync(_currentUser);
+                    break;
+                case "Reviews":
+                    await ReviewsControl.InitializeAsync(_currentUser);
+                    break;
+                case "Complaints":
+                    await ComplaintsControl.InitializeAsync(_currentUser);
+                    break;
+                case "FreelancerSearch":
+                    await FreelancerSearchControl.InitializeAsync(_currentUser);
+                    break;
             }
         }
 
@@ -60,13 +73,10 @@ namespace FreelanceApp.Windows
             }
             catch (Exception ex)
             {
+                var text = Application.Current.TryFindResource("_Info_OnlineStatus") as string ?? "Ошибка обновления статуса онлайн";
+
                 ex = ex.InnerException ?? ex;
-                MessageBox.Show(
-                    "Ошибка обновления статуса онлайн:\n\n" + $"{ex.Message}\n\n",
-                    "Ошибка обновления статуса онлайн",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning
-                );
+                MessageBox.Show($"{text}\n\n{ex.Message}\n\n", text, MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -77,6 +87,44 @@ namespace FreelanceApp.Windows
             Close();
         }
 
-        private void TabItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) { }
+        // переключение тем
+        private void LightThemeButton_Click(object sender, RoutedEventArgs e) => ApplyTheme(AppTheme.Light);
+        
+        private void DarkThemeButton_Click(object sender, RoutedEventArgs e) => ApplyTheme(AppTheme.Dark);
+        
+        private void ApplyTheme(AppTheme theme)
+        {
+            ThemeManager.Apply(theme);
+            UpdateThemeButtons();
+        }
+
+        private void UpdateThemeButtons()
+        {
+            if (LightThemeButton == null || DarkThemeButton == null) return;
+
+            LightThemeButton.IsEnabled = ThemeManager.CurrentTheme != AppTheme.Light;
+            DarkThemeButton.IsEnabled = ThemeManager.CurrentTheme != AppTheme.Dark;
+        }
+
+        // переключение языков
+        private void SetRu_Click(object sender, RoutedEventArgs e) => ApplyLang(AppLanguage.Ru);
+
+        private void SetEn_Click(object sender, RoutedEventArgs e) => ApplyLang(AppLanguage.En);
+
+        private void ApplyLang(AppLanguage lang) { LocalizationManager.SetLanguage(lang); UpdateLocaleButtons(); SetTitle(); }
+
+        private void UpdateLocaleButtons()
+        {
+            if (RuLangButton == null || EnLangButton == null) return;
+
+            RuLangButton.IsEnabled = LocalizationManager.CurrentLanguage != AppLanguage.Ru;
+            EnLangButton.IsEnabled = LocalizationManager.CurrentLanguage != AppLanguage.En;
+        }
+
+        private void SetTitle()
+        {
+            var baseTitle = Application.Current.TryFindResource("UserDashboard_Title") as string ?? "Панель пользователя";
+            Title = $"{baseTitle}: {_currentUser.Email}";
+        }
     }
 }

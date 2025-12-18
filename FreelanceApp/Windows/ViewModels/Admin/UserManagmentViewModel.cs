@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DAL;
-using DAL.Models.Tables; // User, Role
+using DAL.Models.Tables;
 using FreelanceApp.Services;
 using Microsoft.SqlServer.Server;
 using System.Collections.ObjectModel;
@@ -19,18 +19,15 @@ namespace FreelanceApp.Windows.ViewModels
     {
         private readonly User _currentUser;
 
-        // ===== Коллекции / выбор =====
         [ObservableProperty] private ObservableCollection<User> users = [];
         [ObservableProperty] private ObservableCollection<Role> roles = [];
         [ObservableProperty] private User? selectedUser;
 
-        // ===== Состояние формы =====
         [ObservableProperty] private bool isFormOpen;
         [ObservableProperty] private bool isAddMode;
         [ObservableProperty] private bool isEditMode;
         [ObservableProperty] private bool isDeleteMode;
 
-        // ===== Поля формы =====
         [ObservableProperty] private int? formId;
         [ObservableProperty] private string lastName = "";
         [ObservableProperty] private string firstName = "";
@@ -42,12 +39,10 @@ namespace FreelanceApp.Windows.ViewModels
         [ObservableProperty] private int? selectedRoleId;
         [ObservableProperty] private decimal? rating;
 
-        public UserManagementViewModel() : this(new User { Id = 0, RoleId = 1, FirstName = "Design" }) { } // для дизайна
         public UserManagementViewModel(User currentUser) => _currentUser = currentUser;
 
         public async Task InitializeAsync() => await ReloadAsync();
 
-        // ==== Загрузка данных
         [RelayCommand]
         private async Task ReloadAsync()
         {
@@ -62,12 +57,14 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при загрузке пользователей: {ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("AdminUsers_Error_Load") as string
+                           ?? "Ошибка при загрузке пользователей:") + " " + ex.Message;
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        // ==== Режимы
         [RelayCommand]
         private void Add()
         {
@@ -81,8 +78,10 @@ namespace FreelanceApp.Windows.ViewModels
         {
             if (SelectedUser is null)
             {
-                MessageBox.Show("Выберите пользователя", "Внимание",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                var text = Application.Current.TryFindResource("AdminUsers_Warn_SelectUser") as string
+                           ?? "Выберите пользователя.";
+                var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -96,14 +95,15 @@ namespace FreelanceApp.Windows.ViewModels
         {
             if (SelectedUser is null)
             {
-                MessageBox.Show("Выберите пользователя", "Внимание",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                var text = Application.Current.TryFindResource("AdminUsers_Warn_SelectUser") as string
+                           ?? "Выберите пользователя.";
+                var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             else
             {
                 IsAddMode = false; IsEditMode = false; IsDeleteMode = true;
                 FormId = SelectedUser.Id;
-                // остальные поля не нужны
                 IsFormOpen = true;
             }
         }
@@ -118,21 +118,8 @@ namespace FreelanceApp.Windows.ViewModels
             {
                 await using var uow = new UnitOfWork(DbContextFactory.CreateDbContext(_currentUser));
 
-                
-
-
                 if (IsAddMode)
                 {
-                    MessageBox.Show($"\tCREATE:\n" +
-                    $"actorId:\t{_currentUser.Id}\n" +
-                    $"password:\t{Password}\n" +
-                    $"roleId:\t{SelectedRoleId}\n" +
-                    $"lastName: {LastName}, firstName: {FirstName}, middleName: {MiddleName}\n" +
-                    $"gender: {Gender}\n" +
-                    $"phoneNumber:\t{PhoneNumber}\n" +
-                    $"email:\t{Email}\n" +
-                    $"rating: {Rating}");
-
                     await uow.AdminUsers.CreateUserAsync(
                         actorId: _currentUser.Id,
                         passwordHash: HashOrNull(Password),
@@ -149,21 +136,13 @@ namespace FreelanceApp.Windows.ViewModels
                 {
                     if (FormId is null)
                     {
-                        MessageBox.Show("Не указан ID пользователя.", "Ошибка",
-                            MessageBoxButton.OK, MessageBoxImage.Error);
+                        var text = Application.Current.TryFindResource("AdminUsers_Error_NoUserId") as string
+                                   ?? "Не указан ID пользователя.";
+                        var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                                      ?? "Ошибка";
+                        MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
-
-                    MessageBox.Show($"\tEDIT:\n" +
-                        $"actorId:\t{_currentUser.Id}\n" +
-                        $"userId edited:\t {FormId.Value}\n" +
-                        $"password:\t{Password}\n" +
-                        $"roleId:\t{SelectedRoleId}\n" +
-                        $"lastName: {LastName}, firstName: {FirstName}, middleName: {MiddleName}\n" +
-                        $"gender: {Gender}\n" +
-                        $"phoneNumber:\t{PhoneNumber}\n" +
-                        $"email:\t{Email}\n" +
-                        $"rating: {Rating}");
 
                     await uow.AdminUsers.UpdateUserAsync(
                         actorId: _currentUser.Id,
@@ -182,13 +161,22 @@ namespace FreelanceApp.Windows.ViewModels
                 {
                     if (FormId is null)
                     {
-                        MessageBox.Show("Не указан ID пользователя.", "Ошибка",
-                            MessageBoxButton.OK, MessageBoxImage.Error);
+                        var text = Application.Current.TryFindResource("AdminUsers_Error_NoUserId") as string
+                                   ?? "Не указан ID пользователя.";
+                        var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                                      ?? "Ошибка";
+                        MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
 
-                    if (MessageBox.Show($"Удалить пользователя {FormId}?", "Подтверждение",
-                        MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
+                    var confirmTemplate = Application.Current.TryFindResource("AdminUsers_Confirm_DeleteUser") as string
+                                          ?? "Удалить пользователя {0}?";
+                    var confirmCaption = Application.Current.TryFindResource("AdminUsers_Confirm_Caption") as string
+                                         ?? "Подтверждение";
+                    var confirmText = string.Format(confirmTemplate, FormId);
+
+                    if (MessageBox.Show(confirmText, confirmCaption,
+                            MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
                         return;
 
                     await uow.AdminUsers.DeleteUserAsync(
@@ -196,19 +184,23 @@ namespace FreelanceApp.Windows.ViewModels
                         userId: FormId.Value);
                 }
 
-                MessageBox.Show("Операция выполнена", "Успех",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                var okText = Application.Current.TryFindResource("AdminUsers_Info_OperationDone") as string
+                             ?? "Операция выполнена";
+                var okCaption = Application.Current.TryFindResource("Common_Success") as string ?? "Успех";
+                MessageBox.Show(okText, okCaption, MessageBoxButton.OK, MessageBoxImage.Information);
 
                 await ReloadAsync();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("AdminUsers_Error_Generic") as string ?? "Ошибка:")
+                           + " " + ex.Message;
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        // ==== Вспомогательные
         private void FillForm(User u)
         {
             FormId = u.Id;
@@ -220,7 +212,7 @@ namespace FreelanceApp.Windows.ViewModels
             Email = u.Email ?? "";
             SelectedRoleId = u.RoleId;
             Rating = u.Rating;
-            Password = null; // при редактировании пароль не подставляем
+            Password = null;
         }
 
         private void ClearForm()

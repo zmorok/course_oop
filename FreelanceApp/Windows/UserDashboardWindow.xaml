@@ -1,62 +1,139 @@
-﻿<Window
+<Window
     x:Class="FreelanceApp.Windows.UserDashboardWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:FreelanceApp.Windows.UserControls"
+    Title="{DynamicResource UserDashboard_Title}"
     Width="1000"
     Height="650"
-    WindowStartupLocation="CenterScreen">
+    MinWidth="900"
+    MinHeight="600"
+    WindowStartupLocation="CenterScreen"
+    Icon="/app.ico">
 
-    <Grid Margin="10">
+    <Grid Background="{DynamicResource BackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!--  Верхняя панель с приветствием и выходом  -->
-        <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <TextBlock
-                Grid.Column="0"
-                FontSize="18"
-                FontWeight="Bold"
-                Text="Добро пожаловать!" />
-            <Button
-                Grid.Column="1"
-                Width="100"
-                Margin="10"
-                HorizontalAlignment="Right"
-                Click="Logout_Click"
-                Content="Logout" />
-        </Grid>
+        <!--  Верхняя панель  -->
+        <Border Grid.Row="0" Style="{DynamicResource TopPanelStyle}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-        <!--  Нижняя панель с табами  -->
-        <TabControl x:Name="TabControlMain" Grid.Row="1" SelectionChanged="TabControl_SelectionChanged">
-            <TabItem Header="Профиль">
-                <local:ProfileControl x:Name="ProfileControl" />
-            </TabItem>
-            <TabItem Header="Портфолио">
-                <local:PortfolioControl x:Name="PortfolioControl" />
-            </TabItem>
-            <TabItem Header="Мои заказы">
-                <local:OrdersControl x:Name="OrdersControl" />
-            </TabItem>
-            <TabItem Header="Проекты">
-                <local:ProjectsControl x:Name="ProjectsControl" />
-            </TabItem>
-            <TabItem Header="Отзывы">
-                <local:ReviewsControl x:Name="ReviewsControl" />
-            </TabItem>
-            <TabItem Header="Жалобы">
-                <local:ComplaintsControl x:Name="ComplaintsControl" />
-            </TabItem>
-            <TabItem Header="Поиск исполнителя">
-                <local:FreelancerSearchControl x:Name="FreelancerSearchControl" />
-            </TabItem>
-        </TabControl>
+                <StackPanel Orientation="Vertical">
+                    <TextBlock
+                        HorizontalAlignment="Left"
+                        Style="{DynamicResource WelcomeTextStyle}"
+                        Text="{DynamicResource UserDashboard_Header_Title}" />
+                    <TextBlock
+                        Margin="2,2,0,0"
+                        Foreground="{DynamicResource SecondaryBrush}"
+                        FontSize="13"
+                        Text="{DynamicResource UserDashboard_Header_Subtitle}" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock
+                        Margin="0,0,6,0"
+                        VerticalAlignment="Center"
+                        FontSize="18"
+                        Foreground="{DynamicResource SecondaryBrush}"
+                        Text="{DynamicResource CurrentTheme}" />
+                    <Button
+                        x:Name="LightThemeButton"
+                        Style="{DynamicResource ThemeToggleButtonStyle}"
+                        Click="LightThemeButton_Click"
+                        Content="☀"
+                        ToolTip="{DynamicResource TopBar_Theme_Light_Tooltip}" />
+                    <Button
+                        x:Name="DarkThemeButton"
+                        Style="{DynamicResource ThemeToggleButtonStyle}"
+                        Click="DarkThemeButton_Click"
+                        Content="🌙"
+                        Margin="0"
+                        ToolTip="{DynamicResource TopBar_Theme_Dark_Tooltip}" />
+                    <Button
+                        x:Name="RuLangButton"
+                        Width="36"
+                        Margin="10,0,0,0"
+                        Style="{DynamicResource ThemeToggleButtonStyle}"
+                        Click="SetRu_Click"
+                        Content="RU"
+                        ToolTip="{DynamicResource TopBar_Language_Ru_Tooltip}" />
+                    <Button
+                        x:Name="EnLangButton"
+                        Width="36"
+                        Margin="4,0,0,0"
+                        Style="{DynamicResource ThemeToggleButtonStyle}"
+                        Click="SetEn_Click"
+                        Content="EN"
+                        ToolTip="{DynamicResource TopBar_Language_En_Tooltip}" />
+                    <Button
+                        Width="130"
+                        Margin="10,0,0,0"
+                        Click="Logout_Click"
+                        Content="{DynamicResource Common_Logout}"
+                        Style="{DynamicResource LogoutButtonStyle}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!--  Содержимое вкладок  -->
+        <Border Grid.Row="1" Style="{DynamicResource MainContentBorderStyle}">
+            <TabControl
+                x:Name="TabControlMain"
+                Style="{DynamicResource DashboardTabControlStyle}"
+                TabStripPlacement="Top"
+                SelectionChanged="TabControl_SelectionChanged">
+                <TabItem
+                    Tag="Profile"
+                    Header="{DynamicResource UserDashboard_Tab_Profile}"
+                    Style="{DynamicResource DashboardTabItemStyle}">
+                    <local:ProfileControl x:Name="ProfileControl" />
+                </TabItem>
+                <TabItem
+                    Tag="Portfolio"
+                    Header="{DynamicResource UserDashboard_Tab_Portfolio}"
+                    Style="{DynamicResource DashboardTabItemStyle}">
+                    <local:PortfolioControl x:Name="PortfolioControl" />
+                </TabItem>
+                <TabItem
+                    Tag="Orders"
+                    Header="{DynamicResource UserDashboard_Tab_Orders}"
+                    Style="{DynamicResource DashboardTabItemStyle}">
+                    <local:OrdersControl x:Name="OrdersControl" />
+                </TabItem>
+                <TabItem
+                    Tag="Projects"
+                    Header="{DynamicResource UserDashboard_Tab_Projects}"
+                    Style="{DynamicResource DashboardTabItemStyle}">
+                    <local:ProjectsControl x:Name="ProjectsControl" />
+                </TabItem>
+                <TabItem
+                    Tag="Reviews"
+                    Header="{DynamicResource UserDashboard_Tab_Reviews}"
+                    Style="{DynamicResource DashboardTabItemStyle}">
+                    <local:ReviewsControl x:Name="ReviewsControl" />
+                </TabItem>
+                <TabItem
+                    Tag="Complaints"
+                    Header="{DynamicResource UserDashboard_Tab_Complaints}"
+                    Style="{DynamicResource DashboardTabItemStyle}">
+                    <local:ComplaintsControl x:Name="ComplaintsControl" />
+                </TabItem>
+                <TabItem
+                    Tag="FreelancerSearch"
+                    Header="{DynamicResource UserDashboard_Tab_FreelancerSearch}"
+                    Style="{DynamicResource DashboardTabItemStyle}">
+                    <local:FreelancerSearchControl x:Name="FreelancerSearchControl" />
+                </TabItem>
+            </TabControl>
+        </Border>
 
     </Grid>
 </Window>
