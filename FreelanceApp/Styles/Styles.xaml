@@ -1,9 +1,24 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:conv="clr-namespace:FreelanceApp.Converters">
     <ResourceDictionary.MergedDictionaries>
+        <!--  ПЕРВЫЙ словарь — текущая тема. Меняется программно ThemeManager-ом  -->
+        <ResourceDictionary Source="/Styles/Brushes/Brushes_WHITE.xaml" />
+
+        <!--  Остальные словари стилей  -->
         <ResourceDictionary Source="/Styles/MainWindowStyles.xaml" />
         <ResourceDictionary Source="/Styles/ViewsStyles.xaml" />
         <ResourceDictionary Source="/Styles/DialogWindowsStyles.xaml" />
         <ResourceDictionary Source="/Styles/AuthenticationStyles.xaml" />
-        <ResourceDictionary Source="/Styles/Brushes/Brushes_WHITE.xaml" />
+        <ResourceDictionary Source="/Styles/ProfileStyles.xaml" />
+        <ResourceDictionary Source="/Styles/PortfolioStyles.xaml" />
+        <ResourceDictionary Source="/Styles/OrdersStyles.xaml" />
+        <ResourceDictionary Source="/Styles/ProjectsStyles.xaml" />
+        <ResourceDictionary Source="/Styles/ReviewsStyles.xaml" />
+        <ResourceDictionary Source="/Styles/ComplaintsStyles.xaml" />
     </ResourceDictionary.MergedDictionaries>
+
+    <!-- Глобальные конвертеры для медиа -->
+    <conv:MediaJsonToImageSourceConverter x:Key="MediaToImageConverter" />
+    <conv:ByteArrayToImageSourceConverter x:Key="BytesToImageConverter" />
 </ResourceDictionary>

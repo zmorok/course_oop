@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+    <sys:String x:Key="_Info_OnlineStatus">Ошибка обновления статуса онлайн</sys:String>
     <!--#region  Стартовое окно-->
     <sys:String x:Key="StartupWindow_Title">Добро пожаловать</sys:String>
     <sys:String x:Key="StartupWindow_Actions">Выберите действие</sys:String>
@@ -13,26 +14,45 @@
     <!--#region  Авторизация-->
     <sys:String x:Key="LoginWindow_Title">Авторизация</sys:String>
     <sys:String x:Key="LoginWindow_Header">Вход</sys:String>
-    <sys:String x:Key="LoginWindow_Login">Логин:</sys:String>
+    <sys:String x:Key="LoginWindow_Login">Почта:</sys:String>
     <sys:String x:Key="LoginWindow_Password">Пароль:</sys:String>
     <sys:String x:Key="LoginWindow_Btn_Login">Войти</sys:String>
     <sys:String x:Key="LoginWindow_Btn_Back">Назад</sys:String>
     <!--  Авторизация - MessageBox  -->
-    <sys:String x:Key="LoginWindow_Greetings">Добро пожаловать</sys:String>
-    <sys:String x:Key="LoginWindow_ErrorPassword">Неверный логин или пароль!</sys:String>
+    <sys:String x:Key="LoginWindow_Info_ErrorText">Пожалуйста, заполните все обязательные поля.</sys:String>
+    <sys:String x:Key="LoginWindow_Info_ErrorText_Caption">Ошибка</sys:String>
+    <sys:String x:Key="LoginWindow_Info_Greetings">Добро пожаловать!</sys:String>
+    <sys:String x:Key="LoginWindow_Info_Greetings_Caption">Успех</sys:String>
+    <sys:String x:Key="LoginWindow_Info_ErrorPassword">Неверная почта или пароль!</sys:String>
+    <sys:String x:Key="LoginWindow_Info_ErrorPassword_Caption">Ошибка</sys:String>
     <!--#endregion-->
 
     <!--#region  Регистрация-->
     <sys:String x:Key="RegisterWindow_Title">Регистрация</sys:String>
     <sys:String x:Key="RegisterWindow_Header">Регистрация</sys:String>
-    <sys:String x:Key="RegisterWindow_Login">Логин:</sys:String>
+
+    <sys:String x:Key="RegisterWindow_Name">Имя:</sys:String>
+    <sys:String x:Key="RegisterWindow_Surname">Фамилия:</sys:String>
+    <sys:String x:Key="RegisterWindow_Email">Электронная почта:</sys:String>
     <sys:String x:Key="RegisterWindow_Password">Пароль:</sys:String>
-    <sys:String x:Key="RegisterWindow_Role">Роль:</sys:String>
-    <!--  Регистрация - Роли  -->
-    <sys:String x:Key="RegisterWindow_Role_Client">Клиент</sys:String>
-    <sys:String x:Key="RegisterWindow_Role_Administrator">Администратор</sys:String>
+    <sys:String x:Key="RegisterWindow_Phone">Номер телефона:</sys:String>
+    <sys:String x:Key="RegisterWindow_Gender">Пол (Male / Female / Other):</sys:String>
     <sys:String x:Key="RegisterWindow_Btn_Register">Зарегистрироваться</sys:String>
     <sys:String x:Key="RegisterWindow_Btn_Back">Назад</sys:String>
+
+    <sys:String x:Key="RegisterWindow_Info_ErrorText">Пожалуйста, заполните все обязательные поля.</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_ErrorText_Caption">Ошибка</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_EmailExist">Email уже используется.</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_EmailExist_Caption">Ошибка</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_RegError">Ошибка при регистрации: </sys:String>
+    <sys:String x:Key="RegisterWindow_Info_RegError_Caption">Ошибка</sys:String>
+    <sys:String x:Key="RegisterWindow_Info_Success" xml:space="preserve">Вы успешно зарегистрированы!
+Ваши данные для входа:
+    
+    </sys:String>
+    <sys:String x:Key="RegisterWindow_Info_SuccessEmail">- Почта:   </sys:String>
+    <sys:String x:Key="RegisterWindow_Info_SuccessPassword">- Пароль:   </sys:String>
+    <sys:String x:Key="RegisterWindow_Info_Success_Caption">Регистрация завершена!</sys:String>
     <!--  Регистрация - MessageBox  -->
     <sys:String x:Key="RegisterWindow_Greetings">Регистрация успешна! Выполнен вход в систему.</sys:String>
     <sys:String x:Key="RegisterWindow_ErrorRegistration">Пользователь с таким логином уже существует!</sys:String>
@@ -162,5 +182,383 @@
     <sys:String x:Key="MainWindow_Profile_Theme">Тема оформления</sys:String>
     <sys:String x:Key="MainWindow_Profile_Save">Сохранить</sys:String>
     <sys:String x:Key="MainWindow_Profile_GoBack">Назад</sys:String>
+    <!--#endregion-->
+
+    <!--#region Панель пользователя (UserDashboard)-->
+    <sys:String x:Key="UserDashboard_Title">Панель пользователя</sys:String>
+    <sys:String x:Key="UserDashboard_Header_Title">Добро пожаловать!</sys:String>
+    <sys:String x:Key="UserDashboard_Header_Subtitle">Панель пользователя фрилансера</sys:String>
+    
+
+    <sys:String x:Key="TopBar_Theme_Light_Tooltip">Светлая тема</sys:String>
+    <sys:String x:Key="TopBar_Theme_Dark_Tooltip">Тёмная тема</sys:String>
+    <sys:String x:Key="TopBar_Language_Ru_Tooltip">Русский</sys:String>
+    <sys:String x:Key="TopBar_Language_En_Tooltip">Английский</sys:String>
+    <sys:String x:Key="Common_Logout">Выйти</sys:String>
+
+    <sys:String x:Key="UserDashboard_Tab_Profile">Профиль</sys:String>
+    <sys:String x:Key="UserDashboard_Tab_Portfolio">Портфолио</sys:String>
+    <sys:String x:Key="UserDashboard_Tab_Orders">Мои заказы</sys:String>
+    <sys:String x:Key="UserDashboard_Tab_Projects">Проекты</sys:String>
+    <sys:String x:Key="UserDashboard_Tab_Reviews">Отзывы</sys:String>
+    <sys:String x:Key="UserDashboard_Tab_Complaints">Жалобы</sys:String>
+    <sys:String x:Key="UserDashboard_Tab_FreelancerSearch">Поиск исполнителя</sys:String>
+    <!--#endregion-->
+
+    <!--#region Панель администратора (AdminDashboard)-->
+    <sys:String x:Key="AdminDashboard_Title">Панель администратора</sys:String>
+    <sys:String x:Key="AdminDashboard_Header_Title">Администрирование</sys:String>
+    <sys:String x:Key="AdminDashboard_Header_Subtitle">Контроль пользователей, ролей и жалоб</sys:String>
+
+    <sys:String x:Key="AdminDashboard_Navigation_Header">Навигация</sys:String>
+    <sys:String x:Key="AdminDashboard_Navigation_Users">Пользователи</sys:String>
+    <sys:String x:Key="AdminDashboard_Navigation_Audit">Аудит</sys:String>
+    <sys:String x:Key="AdminDashboard_Navigation_Complaints">Жалобы</sys:String>
+    <!--#endregion-->
+
+
+    <!--#region User/ProfileControl-->
+    <sys:String x:Key="Profile_Header_MyProfile">Мой профиль</sys:String>
+    <sys:String x:Key="Profile_Button_UploadPhoto">Загрузить…</sys:String>
+    <sys:String x:Key="Profile_Button_RemovePhoto">Удалить</sys:String>
+    <sys:String x:Key="Profile_Label_FirstName">Имя</sys:String>
+    <sys:String x:Key="Profile_Label_LastName">Фамилия</sys:String>
+    <sys:String x:Key="Profile_Label_MiddleName">Отчество</sys:String>
+    <sys:String x:Key="Profile_Label_Phone">Телефон</sys:String>
+    <sys:String x:Key="Profile_Label_Gender">Пол</sys:String>
+    <sys:String x:Key="Profile_Label_NewPassword">Новый пароль (опционально)</sys:String>
+    <sys:String x:Key="Profile_Button_SaveChanges">Сохранить изменения</sys:String>
+    <sys:String x:Key="Profile_Header_Invitations">Приглашения на выполнение проектов</sys:String>
+    <sys:String x:Key="Profile_Button_Accept">Принять</sys:String>
+    <sys:String x:Key="Profile_Button_Reject">Отклонить</sys:String>
+    <sys:String x:Key="Profile_Header_Warnings">Предупреждения пользователя</sys:String>
+    <sys:String x:Key="Profile_Warning_Prefix">Предупреждение №</sys:String>
+    <sys:String x:Key="Profile_Warning_ResolvedBy">, разобрал: </sys:String>
+    <sys:String x:Key="Profile_Warning_Text">Текст: </sys:String>
+    <sys:String x:Key="Profile_Warning_ValidUntil">Действительно до: </sys:String>
+    <!--#endregion-->
+
+    <!--#region User/PortfolioControl-->
+    <sys:String x:Key="Portfolio_Header_Manage">Управление портфолио</sys:String>
+    <sys:String x:Key="Portfolio_Button_Add">Добавить</sys:String>
+    <sys:String x:Key="Portfolio_Button_Delete">Удалить</sys:String>
+    <sys:String x:Key="Portfolio_Label_Description">Описание</sys:String>
+    <sys:String x:Key="Portfolio_Label_Experience">Опыт</sys:String>
+    <sys:String x:Key="Portfolio_Label_SkillsCsv">Навыки (через запятую)</sys:String>
+    <sys:String x:Key="Portfolio_Label_Image">Изображение</sys:String>
+    <sys:String x:Key="Portfolio_Button_SelectFile">Выбрать файл...</sys:String>
+    <sys:String x:Key="Portfolio_Button_RemoveImage">Убрать изображение</sys:String>
+    <sys:String x:Key="Portfolio_Button_Save">Сохранить</sys:String>
+    <sys:String x:Key="Portfolio_Button_Cancel">Отмена</sys:String>
+    <sys:String x:Key="Portfolio_Text_NoMedia">Медиа отсутствует</sys:String>
+    <sys:String x:Key="Portfolio_Button_Edit">Редактировать</sys:String>
+    <sys:String x:Key="Portfolio_Button_DeleteItem">Удалить</sys:String>
+    <!--#endregion-->
+
+    <!--#region User/ProjectsControl-->
+    <sys:String x:Key="Projects_Header_Manage">Управление проектами</sys:String>
+    <sys:String x:Key="Projects_Button_Add">Добавить</sys:String>
+    <sys:String x:Key="Projects_Button_Update">Обновить</sys:String>
+    <sys:String x:Key="Projects_Button_Delete">Удалить</sys:String>
+    <sys:String x:Key="Projects_Label_StatusFilter">Фильтр по статусу:</sys:String>
+    <sys:String x:Key="Projects_Status_All">Все</sys:String>
+    <sys:String x:Key="Projects_Status_Draft">Черновик</sys:String>
+    <sys:String x:Key="Projects_Status_Open">Открыт</sys:String>
+    <sys:String x:Key="Projects_Status_InProgress">В прогрессе</sys:String>
+    <sys:String x:Key="Projects_Status_Completed">Завершён</sys:String>
+    <sys:String x:Key="Projects_Label_Title">Название</sys:String>
+    <sys:String x:Key="Projects_Label_Description">Описание</sys:String>
+    <sys:String x:Key="Projects_Label_Status">Статус</sys:String>
+    <sys:String x:Key="Projects_Label_Image">Изображение</sys:String>
+    <sys:String x:Key="Projects_Button_SelectFile">Выбрать файл...</sys:String>
+    <sys:String x:Key="Projects_Button_RemoveImage">Убрать изображение</sys:String>
+    <sys:String x:Key="Projects_Button_Save">Сохранить</sys:String>
+    <sys:String x:Key="Projects_Button_Cancel">Отмена</sys:String>
+    <sys:String x:Key="Projects_Card_StatusPrefix">Статус: </sys:String>
+    <sys:String x:Key="Projects_Card_DescriptionHeader">Описание:</sys:String>
+    <sys:String x:Key="Projects_Button_Respond">Откликнуться</sys:String>
+    <sys:String x:Key="Projects_Button_Edit">Редактировать</sys:String>
+    <sys:String x:Key="Projects_Toggle_ShowAll">Показать все</sys:String>
+    <sys:String x:Key="Projects_Toggle_ShowMine">Показать только мои</sys:String>
+    <!--#endregion-->
+
+    <!--#region User/ReviewsControl-->
+    <sys:String x:Key="Reviews_Mode_Label">Показать заказы, где я:</sys:String>
+    <sys:String x:Key="Reviews_Mode_AsCustomer">Заказчик</sys:String>
+    <sys:String x:Key="Reviews_Mode_AsFreelancer">Исполнитель</sys:String>
+    <sys:String x:Key="Reviews_Label_OtherSide">Другой участник: </sys:String>
+    <sys:String x:Key="Reviews_Label_MyReview">Ваш отзыв:</sys:String>
+    <sys:String x:Key="Reviews_Label_OpponentReview">Отзыв оппонента:</sys:String>
+    <sys:String x:Key="Reviews_Edit_Label_Rating">Оценка:</sys:String>
+    <sys:String x:Key="Reviews_Edit_Label_Comment">Комментарий:</sys:String>
+    <sys:String x:Key="Reviews_Edit_Label_Image">Изображение:</sys:String>
+    <sys:String x:Key="Reviews_Edit_Button_SelectFile">Выбрать файл...</sys:String>
+    <sys:String x:Key="Reviews_Edit_Button_RemoveImage">Убрать изображение</sys:String>
+    <sys:String x:Key="Reviews_Edit_Button_Save">Сохранить</sys:String>
+    <sys:String x:Key="Reviews_Edit_Button_Cancel">Отмена</sys:String>
+    <sys:String x:Key="Reviews_Button_Delete">Удалить</sys:String>
+    <!--#endregion-->
+
+    <!--#region User/ComplaintsControl-->
+    <sys:String x:Key="Complaints_Mode_Header">Режим:</sys:String>
+    <sys:String x:Key="Complaints_Mode_Create">Подача жалобы</sys:String>
+    <sys:String x:Key="Complaints_Mode_MyComplaints">Мои жалобы</sys:String>
+    <sys:String x:Key="Complaints_Group_Counterparts">Контрагенты</sys:String>
+    <sys:String x:Key="Complaints_Group_CounterpartOrders">Заказы с выбранным контрагентом</sys:String>
+    <sys:String x:Key="Complaints_Order_ProjectPrefix">Проект: </sys:String>
+    <sys:String x:Key="Complaints_Order_OrderPrefix"> (Заказ №</sys:String>
+    <sys:String x:Key="Complaints_Order_DeadlinePrefix">Дедлайн: </sys:String>
+    <sys:String x:Key="Complaints_Order_CustomerPrefix">Заказчик: </sys:String>
+    <sys:String x:Key="Complaints_Order_FreelancerPrefix">Исполнитель: </sys:String>
+    <sys:String x:Key="Complaints_Order_CreatedPrefix">Создан: </sys:String>
+    <sys:String x:Key="Complaints_Button_ComplainOrder">Пожаловаться на заказ</sys:String>
+    <sys:String x:Key="Complaints_Group_MyComplaints">Мои жалобы</sys:String>
+    <sys:String x:Key="Complaints_My_TargetPrefix">Адресат: </sys:String>
+    <sys:String x:Key="Complaints_My_EditLimitPrefix">| Жалобу можно изменить</sys:String>
+    <sys:String x:Key="Complaints_My_EditLimitSuffix">раз.</sys:String>
+    <sys:String x:Key="Complaints_Text_NoMedia">Медиа отсутствует</sys:String>
+    <sys:String x:Key="Complaints_Button_Edit">Изменить</sys:String>
+    <sys:String x:Key="Complaints_Button_Delete">Удалить</sys:String>
+    <sys:String x:Key="Complaints_Edit_Label_Text">Текст жалобы:</sys:String>
+    <sys:String x:Key="Complaints_Edit_Label_Image">Изображение:</sys:String>
+    <sys:String x:Key="Complaints_Edit_Button_SelectFile">Выбрать файл...</sys:String>
+    <sys:String x:Key="Complaints_Edit_Button_RemoveImage">Убрать изображение</sys:String>
+    <sys:String x:Key="Complaints_Edit_Button_Save">Сохранить</sys:String>
+    <sys:String x:Key="Complaints_Edit_Button_Cancel">Отмена</sys:String>
+    <!--#endregion-->
+
+    <!--#region User/FreelancerSearchControl-->
+    <sys:String x:Key="FreelancerSearch_Button_Search">Найти</sys:String>
+    <sys:String x:Key="FreelancerSearch_SkillsPrefix">Скиллы: </sys:String>
+    <sys:String x:Key="FreelancerSearch_Button_SelectProject">Выберите проект</sys:String>
+    <sys:String x:Key="FreelancerSearch_Label_SelectProject">Выберите проект: </sys:String>
+    <sys:String x:Key="FreelancerSearch_Button_Send">Отправить</sys:String>
+    <sys:String x:Key="FreelancerSearch_Button_Cancel">Отмена</sys:String>
+    <!--#endregion-->
+
+    <!--#region Admin/UserManagementControl-->
+    <sys:String x:Key="AdminUsers_Button_Add">Добавить</sys:String>
+    <sys:String x:Key="AdminUsers_Button_Edit">Редактировать</sys:String>
+    <sys:String x:Key="AdminUsers_Button_Delete">Удалить</sys:String>
+    <sys:String x:Key="AdminUsers_Label_UserId">ID пользователя</sys:String>
+    <sys:String x:Key="AdminUsers_Label_Password">Пароль</sys:String>
+    <sys:String x:Key="AdminUsers_Button_Save">Сохранить</sys:String>
+    <sys:String x:Key="AdminUsers_Button_Cancel">Отмена</sys:String>
+    <sys:String x:Key="AdminUsers_Card_RatingPrefix">Рейтинг: </sys:String>
+    <sys:String x:Key="AdminUsers_Card_GenderPrefix">Пол: </sys:String>
+    <sys:String x:Key="AdminUsers_Card_PhonePrefix">Телефон: </sys:String>
+    <sys:String x:Key="AdminUsers_Card_RegisteredPrefix">Зарегистрирован: </sys:String>
+    <sys:String x:Key="AdminUsers_Card_LastOnlinePrefix">Последний онлайн: </sys:String>
+    <!--#endregion-->
+
+    <!--#region Admin/AuditLogsControl-->
+    <sys:String x:Key="AdminAudit_Label_DateFilter">Фильтр по дате</sys:String>
+    <sys:String x:Key="AdminAudit_Label_Since">С (since):</sys:String>
+    <sys:String x:Key="AdminAudit_Label_Until">По (until):</sys:String>
+    <sys:String x:Key="AdminAudit_Button_Load">Загрузить</sys:String>
+    <sys:String x:Key="AdminAudit_Label_ImportExport">Экспорт/Импорт</sys:String>
+    <sys:String x:Key="AdminAudit_Button_ExportJson">Экспорт в JSON</sys:String>
+    <sys:String x:Key="AdminAudit_Button_ImportJson">Импорт из JSON</sys:String>
+    <sys:String x:Key="AdminAudit_Label_Loading">Загрузка...</sys:String>
+    <!--#endregion-->
+
+    <!--#region Admin/ComplaintsModerationControl-->
+    <sys:String x:Key="AdminComplaints_Filter_Header">Фильтры</sys:String>
+    <sys:String x:Key="AdminComplaints_Filter_StatusLabel">Статус:</sys:String>
+    <sys:String x:Key="AdminComplaints_Button_Find">Найти</sys:String>
+    <sys:String x:Key="AdminComplaints_Button_Refresh">Обновить</sys:String>
+    <sys:String x:Key="AdminComplaints_Group_Complaints">Жалобы</sys:String>
+    <sys:String x:Key="AdminComplaints_Row_FromPrefix">От: </sys:String>
+    <sys:String x:Key="AdminComplaints_Row_ToPrefix"> → На: </sys:String>
+    <sys:String x:Key="AdminComplaints_Row_StatusPrefix">Статус: </sys:String>
+    <sys:String x:Key="AdminComplaints_Row_OrderPrefix">  •  Заказ: </sys:String>
+    <sys:String x:Key="AdminComplaints_Row_ArchivePrefix"> / Архив: </sys:String>
+    <sys:String x:Key="AdminComplaints_Group_Details">Детали</sys:String>
+    <sys:String x:Key="AdminComplaints_Details_ComplaintNo">Жалоба №{0}</sys:String>
+    <sys:String x:Key="AdminComplaints_Details_FromPrefix">От: </sys:String>
+    <sys:String x:Key="AdminComplaints_Details_ToPrefix">  →  На: </sys:String>
+    <sys:String x:Key="AdminComplaints_Details_StatusLabel">Статус:</sys:String>
+    <sys:String x:Key="AdminComplaints_Button_SaveStatus">Сохранить статус</sys:String>
+    <sys:String x:Key="AdminComplaints_Button_TakeInWork">Взять в работу</sys:String>
+    <sys:String x:Key="AdminComplaints_Details_ComplaintText">Текст жалобы:</sys:String>
+    <sys:String x:Key="AdminComplaints_Details_MediaJson">Медиа (JSON):</sys:String>
+    <sys:String x:Key="AdminComplaints_Warning_Header">Предупреждение пользователю</sys:String>
+    <sys:String x:Key="AdminComplaints_Button_IssueWarning">Выдать предупреждение</sys:String>
+    <sys:String x:Key="AdminComplaints_Footer_Reject">Отклонить</sys:String>
+    <sys:String x:Key="AdminComplaints_Footer_Close">Закрыть (решено)</sys:String>
+    <!-- Подписи для кодов статусов (модерирование жалоб) -->
+    <sys:String x:Key="AdminComplaints_Filter_Status_New">Новые</sys:String>
+    <sys:String x:Key="AdminComplaints_Filter_Status_InProgress">В работе</sys:String>
+    <sys:String x:Key="AdminComplaints_Filter_Status_Resolved">Решённые</sys:String>
+    <sys:String x:Key="AdminComplaints_Filter_Status_Dismissed">Отклонённые</sys:String>
+    <sys:String x:Key="AdminComplaints_Filter_Status_All">Все</sys:String>
+    <sys:String x:Key="AdminComplaints_Status_New">Новая</sys:String>
+    <sys:String x:Key="AdminComplaints_Status_InProgress">В работе</sys:String>
+    <sys:String x:Key="AdminComplaints_Status_Resolved">Решена</sys:String>
+    <sys:String x:Key="AdminComplaints_Status_Dismissed">Отклонена</sys:String>
+    <!--#endregion-->
+
+    <!--#region User/OrdersControl-->
+    <sys:String x:Key="Orders_Filter_Show">Показать:</sys:String>
+    <sys:String x:Key="Orders_Filter_Customer">Мои заказы (я заказчик)</sys:String>
+    <sys:String x:Key="Orders_Filter_Freelancer">Мои заказы (я исполнитель)</sys:String>
+    <sys:String x:Key="Orders_Filter_Archive">Архив</sys:String>
+    <sys:String x:Key="Orders_Action_Edit">Изменить статус/дедлайн</sys:String>
+    <sys:String x:Key="Orders_Action_Delete">Отменить/Удалить</sys:String>
+
+    <sys:String x:Key="Orders_Card_DeadlinePrefix">Дедлайн: </sys:String>
+    <sys:String x:Key="Orders_Card_DeadlineNotSet">Не указан</sys:String>
+    <sys:String x:Key="Orders_Card_CustomerPrefix">Заказчик: </sys:String>
+    <sys:String x:Key="Orders_Card_FreelancerPrefix">Исполнитель: </sys:String>
+    <sys:String x:Key="Orders_Card_CreatedPrefix">Создан: </sys:String>
+    <sys:String x:Key="Orders_Card_ProjectPrefix">Проект: </sys:String>
+    <sys:String x:Key="Orders_Card_OrderPrefix"> (Заказ №</sys:String>
+
+    <sys:String x:Key="Orders_Edit_Header">Изменение заказа</sys:String>
+    <sys:String x:Key="Orders_Edit_Label_Status">Статус:</sys:String>
+    <sys:String x:Key="Orders_Edit_Status_Pending">Ожидает</sys:String>
+    <sys:String x:Key="Orders_Edit_Status_Active">В работе</sys:String>
+    <sys:String x:Key="Orders_Edit_Status_Completed">Завершен</sys:String>
+    <sys:String x:Key="Orders_Edit_Status_Cancelled">Отменён</sys:String>
+    <sys:String x:Key="Orders_Edit_Status_Disputed">Спор</sys:String>
+    <sys:String x:Key="Orders_Edit_Label_Deadline">Дедлайн:</sys:String>
+    <sys:String x:Key="Orders_Edit_Button_Save">Сохранить</sys:String>
+    <sys:String x:Key="Orders_Edit_Button_Cancel">Отмена</sys:String>
+
+    <!-- MessageBox -->
+    <sys:String x:Key="Orders_Error_Load">Ошибка при загрузке заказов:</sys:String>
+    <sys:String x:Key="Orders_Error_Load_Caption">Ошибка</sys:String>
+    <sys:String x:Key="Orders_Error_EditArchive">Изменение недоступно для архива.</sys:String>
+    <sys:String x:Key="Orders_Error_SelectOrderInList">Выберите заказ в списке.</sys:String>
+    <sys:String x:Key="Orders_Error_DeleteArchive">Удаление недоступно для архива.</sys:String>
+    <sys:String x:Key="Orders_Error_SelectOrder">Выберите заказ.</sys:String>
+    <sys:String x:Key="Orders_Confirm_DeleteOrder">Удалить заказ №{0}?</sys:String>
+    <sys:String x:Key="Orders_Confirm_Caption">Подтверждение</sys:String>
+    <sys:String x:Key="Orders_Error_Delete">Ошибка при удалении:</sys:String>
+    <sys:String x:Key="Orders_Error_NoOrderForSave">Не выбран заказ.</sys:String>
+    <sys:String x:Key="Orders_Error_Save">Ошибка при сохранении:</sys:String>
+    <sys:String x:Key="Common_Warning">Внимание</sys:String>
+    <!--#endregion-->
+
+    <!--#region User/PortfolioViewModel-->
+    <sys:String x:Key="Portfolio_Error_Load">Ошибка при загрузке портфолио:</sys:String>
+    <sys:String x:Key="Portfolio_Error_Save">Ошибка при сохранении портфолио:</sys:String>
+    <sys:String x:Key="Portfolio_Error_Delete">Ошибка при удалении портфолио:</sys:String>
+    <sys:String x:Key="Portfolio_Info_Added">Портфолио добавлено.</sys:String>
+    <sys:String x:Key="Portfolio_Info_Updated">Портфолио обновлено.</sys:String>
+    <sys:String x:Key="Portfolio_Info_Deleted">Портфолио удалено.</sys:String>
+    <sys:String x:Key="Portfolio_Error_SelectForDelete">Выберите портфолио для удаления.</sys:String>
+    <sys:String x:Key="Portfolio_Confirm_Delete">Удалить портфолио №{0}?\n{1}</sys:String>
+    <sys:String x:Key="Portfolio_Confirm_Caption">Подтвердите удаление</sys:String>
+    <sys:String x:Key="Portfolio_Warn_Experience">Поле «Опыт» должно содержать число с указанием единицы (например, "3 года", "6 мес" или "1 год 6 месяцев").</sys:String>
+    <sys:String x:Key="Portfolio_Warn_Experience_Caption">Проверьте данные</sys:String>
+    <sys:String x:Key="Portfolio_Error_ReadFile">Не удалось прочитать файл:</sys:String>
+    <!--#endregion-->
+
+    <!--#region User/ProjectsViewModel-->
+    <sys:String x:Key="Projects_Error_Load">Ошибка при загрузке проектов:</sys:String>
+    <sys:String x:Key="Projects_Error_Save">Ошибка при сохранении проекта:</sys:String>
+    <sys:String x:Key="Projects_Error_Delete">Ошибка при удалении проекта:</sys:String>
+    <sys:String x:Key="Projects_Error_LoadCaption">Ошибка</sys:String>
+    <sys:String x:Key="Projects_Warn_SelectForEdit">Выберите проект для редактирования.</sys:String>
+    <sys:String x:Key="Projects_Warn_EditNotMine">Редактировать можно только свои проекты.</sys:String>
+    <sys:String x:Key="Projects_Warn_SelectForDelete">Выберите проект.</sys:String>
+    <sys:String x:Key="Projects_Confirm_Delete">Удалить проект №{0}?</sys:String>
+    <sys:String x:Key="Projects_Confirm_Caption">Подтверждение</sys:String>
+    <sys:String x:Key="Projects_Info_Deleted">Проект удалён.</sys:String>
+    <sys:String x:Key="Projects_Info_Created">Проект создан.</sys:String>
+    <sys:String x:Key="Projects_Info_Updated">Проект обновлён.</sys:String>
+    <sys:String x:Key="Projects_Warn_SelfResponse">Нельзя откликаться на собственный проект.</sys:String>
+    <sys:String x:Key="Projects_Info_Responded">Вы откликнулись на проект!</sys:String>
+    <sys:String x:Key="Projects_Error_ReadFile">Не удалось прочитать файл:</sys:String>
+    <sys:String x:Key="Projects_Error_Respond">Ошибка при отклике:</sys:String>
+    <!--#endregion-->
+
+    <!--#region User/ReviewsViewModel-->
+    <sys:String x:Key="Reviews_Error_Load">Ошибка загрузки отзывов:</sys:String>
+    <sys:String x:Key="Reviews_Error_Load_Caption">Ошибка</sys:String>
+    <sys:String x:Key="Reviews_Warn_EmptyComment">Комментарий не может быть пустым.</sys:String>
+    <sys:String x:Key="Reviews_Warn_Caption">Проверьте данные</sys:String>
+    <sys:String x:Key="Reviews_Error_Save">Ошибка сохранения:</sys:String>
+    <sys:String x:Key="Reviews_Confirm_Delete">Удалить отзыв для заказа №{0}?</sys:String>
+    <sys:String x:Key="Reviews_Confirm_Caption">Подтверждение</sys:String>
+    <sys:String x:Key="Reviews_Error_Delete">Ошибка удаления:</sys:String>
+    <sys:String x:Key="Reviews_Error_ReadFile">Не удалось прочитать файл:</sys:String>
+    <sys:String x:Key="Reviews_Button_Add">Добавить</sys:String>
+    <sys:String x:Key="Reviews_Button_Edit">Изменить</sys:String>
+    <sys:String x:Key="Reviews_Edit_Title_New">Новый отзыв</sys:String>
+    <sys:String x:Key="Reviews_Edit_Title_Edit">Изменить отзыв</sys:String>
+    <sys:String x:Key="Reviews_Text_None">[нет]</sys:String>
+    <sys:String x:Key="Reviews_Text_DeletedUser">[удалён]</sys:String>
+    <!--#endregion-->
+
+    <!--#region User/ComplaintsViewModel-->
+    <sys:String x:Key="ComplaintsVM_Error_Load">Ошибка загрузки данных:</sys:String>
+    <sys:String x:Key="ComplaintsVM_Error_LoadOrders">Ошибка загрузки заказов контрагента:</sys:String>
+    <sys:String x:Key="ComplaintsVM_Warn_SelectOrder">Выберите заказ.</sys:String>
+    <sys:String x:Key="ComplaintsVM_Warn_SelectCounterpart">Выберите контрагента.</sys:String>
+    <sys:String x:Key="ComplaintsVM_Warn_TextRequired">Текст жалобы не может быть пустым.</sys:String>
+    <sys:String x:Key="ComplaintsVM_Warn_SelectBoth">Выберите контрагента и заказ.</sys:String>
+    <sys:String x:Key="ComplaintsVM_Error_Save">Ошибка сохранения жалобы:</sys:String>
+    <sys:String x:Key="ComplaintsVM_Info_EditOnlyNew">Редактировать можно только новые жалобы.</sys:String>
+    <sys:String x:Key="ComplaintsVM_Edit_Title">Изменить жалобу</sys:String>
+    <sys:String x:Key="ComplaintsVM_Create_Title">Жалоба на: {0}, заказ №{1}</sys:String>
+    <sys:String x:Key="ComplaintsVM_Confirm_Delete">Удалить жалобу?</sys:String>
+    <sys:String x:Key="ComplaintsVM_Confirm_Caption">Подтверждение</sys:String>
+    <sys:String x:Key="ComplaintsVM_Error_Delete">Ошибка удаления жалобы:</sys:String>
+    <sys:String x:Key="ComplaintsVM_Error_ReadFile">Не удалось прочитать файл:</sys:String>
+    <!--#endregion-->
+
+    <!--#region User/FreelancerSearchViewModel-->
+    <sys:String x:Key="FreelancerSearch_Error_Search">Ошибка поиска:</sys:String>
+    <sys:String x:Key="FreelancerSearch_Error_LoadProjects">Ошибка загрузки проектов:</sys:String>
+    <sys:String x:Key="FreelancerSearch_Info_NoProjects">Нет доступных проектов для приглашения.</sys:String>
+    <sys:String x:Key="FreelancerSearch_Info_InviteSent">Приглашение отправлено</sys:String>
+    <sys:String x:Key="FreelancerSearch_Error_SendInvite">Ошибка отправки приглашения:</sys:String>
+    <sys:String x:Key="FreelancerSearch_Error_ClosePicker">Ошибка закрытия окна:</sys:String>
+    <sys:String x:Key="Common_Info">Информация</sys:String>
+    <sys:String x:Key="Common_Success">Успех</sys:String>
+    <!--#endregion-->
+
+    <!--#region User/ProfileViewModel-->
+    <sys:String x:Key="Profile_Info_Saved">Данные профиля обновлены</sys:String>
+    <sys:String x:Key="Profile_Info_Saved_Caption">Успешно</sys:String>
+    <sys:String x:Key="Profile_Error_Save">Ошибка при сохранении профиля:</sys:String>
+    <sys:String x:Key="Profile_Info_InviteAccepted">Приглашение принято!</sys:String>
+    <sys:String x:Key="Profile_Info_InviteAccepted_Caption">Готово</sys:String>
+    <sys:String x:Key="Profile_Info_InviteDeclined">Приглашение отклонено.</sys:String>
+    <sys:String x:Key="Profile_Error_Generic">Ошибка:</sys:String>
+    <sys:String x:Key="Profile_Error_LoadNotifications">Ошибка при загрузке уведомлений:</sys:String>
+    <sys:String x:Key="Profile_Error_LoadWarnings">Ошибка при загрузке предупреждений:</sys:String>
+    <!--#endregion-->
+
+    <!--#region Admin/AuditLogsViewModel-->
+    <sys:String x:Key="Audit_Error_InvalidRange">Дата 'С' больше даты 'По'.</sys:String>
+    <sys:String x:Key="Audit_Error_Load">Ошибка при загрузке логов:</sys:String>
+    <sys:String x:Key="Audit_Warn_PathCyrillicDir">Путь содержит кириллицу. Выберите другой каталог.</sys:String>
+    <sys:String x:Key="Audit_Info_ExportDone">Экспорт завершён. Открыть папку?</sys:String>
+    <sys:String x:Key="Audit_Error_Export">Ошибка экспорта:</sys:String>
+    <sys:String x:Key="Audit_Warn_PathCyrillicFile">Путь содержит кириллицу. Выберите другой файл.</sys:String>
+    <sys:String x:Key="Audit_Info_ImportDone">Импорт завершён.</sys:String>
+    <sys:String x:Key="Audit_Error_Import">Ошибка импорта:</sys:String>
+    <!--#endregion-->
+
+    <!--#region Admin/ComplaintsModerationViewModel-->
+    <sys:String x:Key="AdminComplaintsVM_Error_Load">Ошибка загрузки:</sys:String>
+    <sys:String x:Key="AdminComplaintsVM_Error_SaveStatus">Ошибка изменения статуса:</sys:String>
+    <sys:String x:Key="AdminComplaintsVM_Error_Resolve">Ошибка закрытия жалобы:</sys:String>
+    <sys:String x:Key="AdminComplaintsVM_Warn_ReasonRequired">Укажи причину предупреждения.</sys:String>
+    <sys:String x:Key="AdminComplaintsVM_Warn_ReasonCaption">Предупреждение</sys:String>
+    <sys:String x:Key="AdminComplaintsVM_Error_IssueWarning">Ошибка выдачи предупреждения:</sys:String>
+    <!--#endregion-->
+
+    <!--#region Admin/UserManagementViewModel-->
+    <sys:String x:Key="AdminUsers_Error_Load">Ошибка при загрузке пользователей:</sys:String>
+    <sys:String x:Key="AdminUsers_Warn_SelectUser">Выберите пользователя.</sys:String>
+    <sys:String x:Key="AdminUsers_Error_NoUserId">Не указан ID пользователя.</sys:String>
+    <sys:String x:Key="AdminUsers_Confirm_DeleteUser">Удалить пользователя {0}?</sys:String>
+    <sys:String x:Key="AdminUsers_Confirm_Caption">Подтверждение</sys:String>
+    <sys:String x:Key="AdminUsers_Info_OperationDone">Операция выполнена</sys:String>
+    <sys:String x:Key="AdminUsers_Error_Generic">Ошибка:</sys:String>
     <!--#endregion-->
 </ResourceDictionary>

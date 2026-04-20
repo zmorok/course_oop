@@ -9,7 +9,10 @@
     Style="{DynamicResource StartupWindowStyle}"
     WindowStartupLocation="CenterScreen"
     WindowStyle="SingleBorderWindow"
-    mc:Ignorable="d">
+    MinWidth="600"
+    MinHeight="400"
+    mc:Ignorable="d"
+    Icon="/app.ico">
     <Grid>
         <Border Style="{DynamicResource StartupBorderStyle}">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">

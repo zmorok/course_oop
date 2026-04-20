@@ -17,114 +17,158 @@
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- Верхняя панель: переключение представления + действия -->
-        <DockPanel Grid.Row="0" Margin="0,0,0,10">
+        <Border Grid.Row="0" Style="{DynamicResource OrdersTopPanelStyle}">
+            <DockPanel>
 
-            <!-- Переключение: заказчик / исполнитель / архив -->
-            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock Text="Показать:" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                <RadioButton Margin="5"
-                             Content="Мои заказы (я заказчик)"
-                             IsChecked="{Binding IsCustomerView}"/>
-                <RadioButton Margin="5"
-                             Content="Мои заказы (я исполнитель)"
-                             IsChecked="{Binding IsFreelancerView}"/>
-                <RadioButton Margin="5"
-                             Content="Архив"
-                             IsChecked="{Binding IsArchiveView}"/>
-            </StackPanel>
+                <!-- Переключение: заказчик / исполнитель / архив -->
+                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Style="{DynamicResource OrdersFilterLabelStyle}" Text="{DynamicResource Orders_Filter_Show}" />
+                    <RadioButton
+                        Content="{DynamicResource Orders_Filter_Customer}"
+                        IsChecked="{Binding IsCustomerView}"
+                        Style="{DynamicResource OrdersFilterRadioStyle}" />
+                    <RadioButton
+                        Content="{DynamicResource Orders_Filter_Freelancer}"
+                        IsChecked="{Binding IsFreelancerView}"
+                        Style="{DynamicResource OrdersFilterRadioStyle}" />
+                    <RadioButton
+                        Content="{DynamicResource Orders_Filter_Archive}"
+                        IsChecked="{Binding IsArchiveView}"
+                        Style="{DynamicResource OrdersFilterRadioStyle}" />
+                </StackPanel>
 
-            <!-- Действия: редактировать / удалить (скрыты в архиве) -->
-            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Width="180" Margin="5"
-                        Content="Изменить статус/дедлайн"
+                <!-- Действия: редактировать / удалить (скрыты в архиве) -->
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button
+                        Width="180"
+                        Margin="5"
+                        Content="{DynamicResource Orders_Action_Edit}"
+                        Style="{DynamicResource PanelButtonStyle}"
                         Command="{Binding EditSelectedCommand}"
                         Visibility="{Binding ShowEditActions, Converter={StaticResource BoolToVisibilityConverter}}"
-                        IsEnabled="{Binding SelectedRow, Converter={StaticResource NullToFalseConverter}}"/>
-                <Button Width="140" Margin="5"
-                        Content="Отменить/Удалить"
+                        IsEnabled="{Binding SelectedRow, Converter={StaticResource NullToFalseConverter}}" />
+                    <Button
+                        Width="140"
+                        Margin="5"
+                        Content="{DynamicResource Orders_Action_Delete}"
+                        Style="{DynamicResource PanelButtonStyle}"
                         Command="{Binding DeleteSelectedCommand}"
                         Visibility="{Binding ShowEditActions, Converter={StaticResource BoolToVisibilityConverter}}"
-                        IsEnabled="{Binding SelectedRow, Converter={StaticResource NullToFalseConverter}}"/>
-            </StackPanel>
-        </DockPanel>
+                        IsEnabled="{Binding SelectedRow, Converter={StaticResource NullToFalseConverter}}" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
 
         <!-- Список заказов -->
-        <ListView x:Name="OrdersListView"
-                  Grid.Row="1"
-                  ItemsSource="{Binding Orders}"
-                  SelectedItem="{Binding SelectedRow}"
-                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                  SelectionMode="Single">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                </Style>
-            </ListView.ItemContainerStyle>
-
-            <!-- Двойной клик = открыть редактирование (если не архив) -->
-            <ListView.InputBindings>
-                <MouseBinding Gesture="LeftDoubleClick"
-                              Command="{Binding OpenEditForCommand}"
-                              CommandParameter="{Binding SelectedRow, RelativeSource={RelativeSource AncestorType=ListView}}"/>
-            </ListView.InputBindings>
-
+        <ListView
+            x:Name="OrdersListView"
+            Grid.Row="1"
+            ItemsSource="{Binding Orders}"
+            SelectedItem="{Binding SelectedRow}"
+            SelectionMode="Single"
+            Style="{DynamicResource OrdersListViewStyle}">
             <ListView.ItemTemplate>
                 <DataTemplate DataType="{x:Type data:LocalOrderDisplay}">
-                    <Border Margin="5" Padding="10" BorderBrush="LightGray" BorderThickness="1" CornerRadius="5">
+                    <Border Style="{DynamicResource OrderCardStyle}">
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
                             <!-- Заголовок: проект + номер заказа -->
-                            <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,10,5"
-                                       FontSize="14" FontWeight="Bold" TextTrimming="CharacterEllipsis">
-                                <Run Text="Проект: "/>
-                                <Run Text="{Binding ProjectTitle, FallbackValue='[Загрузка...]', TargetNullValue='[Проект не найден]'}"/>
-                                <Run Text=" (Заказ №"/>
-                                <Run Text="{Binding OrderId}"/>
-                                <Run Text=")"/>
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="0,0,10,6"
+                                Style="{DynamicResource OrderTitleTextStyle}"
+                                TextTrimming="CharacterEllipsis">
+                                <Run Text="{DynamicResource Orders_Card_ProjectPrefix}" />
+                                <Run Text="{Binding ProjectTitle, FallbackValue='[Загрузка...]', TargetNullValue='[Проект не найден]'}" />
+                                <Run Text="{DynamicResource Orders_Card_OrderPrefix}" />
+                                <Run Text="{Binding OrderId}" />
+                                <Run Text=")" />
                             </TextBlock>
 
                             <!-- Статус и дедлайн -->
                             <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                                <TextBlock Margin="0,0,15,0" FontWeight="SemiBold" Text="{Binding OrderStatus}"/>
-                                <TextBlock>
-                                    <Run Text="Дедлайн: "/>
-                                    <Run Text="{Binding OrderDeadline, StringFormat='dd.MM.yyyy', FallbackValue='Не указан', TargetNullValue='Не указан'}"/>
-                                </TextBlock>
+                                <Border Style="{DynamicResource OrderStatusChipStyle}">
+                                    <TextBlock FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Text="{Binding OrderStatus}" />
+                                </Border>
+                                <Border Style="{DynamicResource OrderDeadlineChipStyle}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Foreground="{DynamicResource TextBrush}">
+                                            <Run Text="{DynamicResource Orders_Card_DeadlinePrefix}" />
+                                        </TextBlock>
+                                        <!-- Значение дедлайна -->
+                                        <TextBlock Foreground="{DynamicResource TextBrush}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding OrderDeadline}" Value="{x:Null}">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                            <Run Text="{Binding OrderDeadline, StringFormat='dd.MM.yyyy'}" />
+                                        </TextBlock>
+                                        <!-- Текст "не указан" -->
+                                        <TextBlock Foreground="{DynamicResource TextBrush}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding OrderDeadline}" Value="{x:Null}">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                            <Run Text="{DynamicResource Orders_Card_DeadlineNotSet}" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Border>
                             </StackPanel>
 
                             <!-- Заказчик / Исполнитель -->
-                            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,3,0,3">
-                                <TextBlock>
-                                    <Run Text="Заказчик: "/>
-                                    <Run Text="{Binding CustomerFullName, FallbackValue='', TargetNullValue='?'}"/>
+                            <StackPanel
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"
+                                Margin="0,3,0,3">
+                                <TextBlock Foreground="{DynamicResource TextBrush}">
+                                    <Run Text="{DynamicResource Orders_Card_CustomerPrefix}" />
+                                    <Run Text="{Binding CustomerFullName, FallbackValue='', TargetNullValue='?'}" />
                                 </TextBlock>
-                                <TextBlock>
-                                    <Run Text="Исполнитель: "/>
-                                    <Run Text="{Binding FreelancerFullName, FallbackValue='', TargetNullValue='?'}"/>
+                                <TextBlock Foreground="{DynamicResource TextBrush}">
+                                    <Run Text="{DynamicResource Orders_Card_FreelancerPrefix}" />
+                                    <Run Text="{Binding FreelancerFullName, FallbackValue='', TargetNullValue='?'}" />
                                 </TextBlock>
                             </StackPanel>
 
                             <!-- Дата создания -->
-                            <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
-                                       FontSize="11" Foreground="Gray">
-                                <Run Text="Создан: "/>
-                                <Run Text="{Binding OrderCreationDate, StringFormat='dd.MM.yyyy HH:mm'}"/>
-                            </TextBlock>
+                                <TextBlock
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    Margin="0,4,0,0"
+                                    Style="{DynamicResource OrderMetaTextStyle}">
+                                    <Run Text="{DynamicResource Orders_Card_CreatedPrefix}" />
+                                    <Run Text="{Binding OrderCreationDate, StringFormat='dd.MM.yyyy HH:mm'}" />
+                                </TextBlock>
                         </Grid>
                     </Border>
                 </DataTemplate>
@@ -132,42 +176,73 @@
         </ListView>
 
         <!-- Панель редактирования -->
-        <Border Grid.Row="2" Margin="0,10,0,0" Padding="15"
-                Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="1"
-                Visibility="{Binding IsEditOpen, Converter={StaticResource BoolToVisibilityConverter}}"
-                >
+        <Border
+            Grid.Row="2"
+            Style="{DynamicResource OrdersEditPanelStyle}"
+            Visibility="{Binding IsEditOpen, Converter={StaticResource BoolToVisibilityConverter}}">
             <StackPanel>
-                <TextBlock Margin="0,0,0,15" FontSize="16" FontWeight="Bold" Text="Изменение заказа"/>
+                <TextBlock
+                    Margin="0,0,0,15"
+                    FontSize="16"
+                    FontWeight="Bold"
+                    Foreground="{DynamicResource TextBrush}"
+                    Text="{DynamicResource Orders_Edit_Header}" />
 
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,10,5" VerticalAlignment="Center" Text="Статус:"/>
-                    <ComboBox Grid.Row="0" Grid.Column="1" Margin="0,0,0,5"
-                              SelectedValuePath="Tag"
-                              SelectedValue="{Binding EditStatus}">
-                        <ComboBoxItem Content="Ожидает"  Tag="pending"/>
-                        <ComboBoxItem Content="В работе" Tag="active"/>
-                        <ComboBoxItem Content="Завершен" Tag="completed"/>
-                        <ComboBoxItem Content="Отменён"  Tag="cancelled"/>
-                        <ComboBoxItem Content="Спор"     Tag="disputed"/>
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Style="{DynamicResource OrdersEditLabelStyle}"
+                        Text="{DynamicResource Orders_Edit_Label_Status}" />
+                    <ComboBox
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Margin="6,0,0,5"
+                        SelectedValuePath="Tag"
+                        SelectedValue="{Binding EditStatus}"
+                        Style="{DynamicResource OrderEditComboBoxStyle}">
+                        <ComboBoxItem Content="{DynamicResource Orders_Edit_Status_Pending}" Tag="pending" />
+                        <ComboBoxItem Content="{DynamicResource Orders_Edit_Status_Active}" Tag="active" />
+                        <ComboBoxItem Content="{DynamicResource Orders_Edit_Status_Completed}" Tag="completed" />
+                        <ComboBoxItem Content="{DynamicResource Orders_Edit_Status_Cancelled}" Tag="cancelled" />
+                        <ComboBoxItem Content="{DynamicResource Orders_Edit_Status_Disputed}" Tag="disputed" />
                     </ComboBox>
 
-                    <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,0,10,5" VerticalAlignment="Center" Text="Дедлайн:"/>
-                    <DatePicker Grid.Row="1" Grid.Column="1" Margin="0,0,0,5"
-                                SelectedDate="{Binding EditDeadline}"/>
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Style="{DynamicResource OrdersEditLabelStyle}"
+                        Text="{DynamicResource Orders_Edit_Label_Deadline}" />
+                    <DatePicker
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="0,0,0,10"
+                        SelectedDate="{Binding EditDeadline}"
+                        Style="{DynamicResource OrderEditDatePickerStyle}" />
                 </Grid>
 
                 <StackPanel Margin="0,15,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Width="100" Margin="5" Content="Сохранить" Command="{Binding SaveCommand}"/>
-                    <Button Width="100" Margin="5" Content="Отмена"    Command="{Binding CancelEditCommand}"/>
+                    <Button
+                        Width="120"
+                        Margin="5"
+                        Content="{DynamicResource Orders_Edit_Button_Save}"
+                        Style="{DynamicResource PanelButtonStyle}"
+                        Command="{Binding SaveCommand}" />
+                    <Button
+                        Width="120"
+                        Margin="5"
+                        Content="{DynamicResource Orders_Edit_Button_Cancel}"
+                        Style="{DynamicResource PanelButtonStyle}"
+                        Command="{Binding CancelEditCommand}" />
                 </StackPanel>
             </StackPanel>
         </Border>

@@ -6,12 +6,8 @@ namespace FreelanceApp.Windows.AdminControls
 {
     public partial class ComplaintsModerationControl : UserControl
     {
-        public ComplaintsModerationControl()
-        {
-            InitializeComponent();
+        public ComplaintsModerationControl() => InitializeComponent();
             
-        }
-
         public async Task InitializeAsync(User currentUser)
         {
             var vm = new ComplaintsModerationViewModel(currentUser);

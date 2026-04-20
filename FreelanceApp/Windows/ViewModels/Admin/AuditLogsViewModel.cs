@@ -6,8 +6,8 @@ using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DAL;
-using DAL.Models.Tables;   // User
-using System.Text.Json;    // AuditLog (класс вашей вьюхи)
+using DAL.Models.Tables;
+using System.Text.Json;
 using FreelanceApp.Services;
 using Microsoft.Win32;
 
@@ -17,7 +17,6 @@ namespace FreelanceApp.Windows.ViewModels
     {
         private readonly User _currentUser;
 
-        // ===== Состояние/данные
         [ObservableProperty] private DateTime? since;
         [ObservableProperty] private DateTime? until;
         [ObservableProperty] private ObservableCollection<AuditLog> logs = [];
@@ -29,15 +28,15 @@ namespace FreelanceApp.Windows.ViewModels
 
         public async Task InitializeAsync() => await LoadAsync();
 
-        // ===== Команды
         [RelayCommand]
         private async Task LoadAsync()
         {
-            // простая валидация диапазона
             if (Since is not null && Until is not null && Since > Until)
             {
-                MessageBox.Show("Дата 'С' больше даты 'По'.", "Внимание",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                var text = Application.Current.TryFindResource("Audit_Error_InvalidRange") as string
+                           ?? "Дата 'С' больше даты 'По'.";
+                var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -46,20 +45,22 @@ namespace FreelanceApp.Windows.ViewModels
                 IsBusy = true;
                 Logs.Clear();
 
-                // Нормализуем в UTC (DatePicker даёт Kind=Unspecified)
                 DateTime? sUtc = Since is null ? null : DateTime.SpecifyKind(Since.Value, DateTimeKind.Utc);
                 DateTime? uUtc = Until is null ? null : DateTime.SpecifyKind(Until.Value, DateTimeKind.Utc);
 
                 await using var uow = new UnitOfWork(DbContextFactory.CreateDbContext(_currentUser));
                 var list = await uow.AdminAudit.GetLogs(sUtc, uUtc, DefaultLimit);
 
-                foreach (var row in list)
+                foreach (var row in list.OrderBy(l => l.Id))
                     Logs.Add(row);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при загрузке логов: {ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Audit_Error_Load") as string
+                           ?? "Ошибка при загрузке логов:") + " " + ex.Message;
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
@@ -81,8 +82,10 @@ namespace FreelanceApp.Windows.ViewModels
 
                 if (ContainsCyrillic(dlg.FileName))
                 {
-                    MessageBox.Show("Путь содержит кириллицу. Выберите другой каталог.",
-                        "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    var text = Application.Current.TryFindResource("Audit_Warn_PathCyrillicDir") as string
+                               ?? "Путь содержит кириллицу. Выберите другой каталог.";
+                    var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                    MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
@@ -102,7 +105,6 @@ namespace FreelanceApp.Windows.ViewModels
                     table_name = l.TableName,
                     record_id = l.RecordId,
                     changed_at = DateTime.SpecifyKind(l.ChangedAt, DateTimeKind.Utc),
-                    // клонируем JsonElement, чтобы не зависеть от жизненного цикла JsonDocument
                     old_data = l.OldData?.RootElement.Clone(),
                     new_data = l.NewData?.RootElement.Clone()
                 });
@@ -114,14 +116,21 @@ namespace FreelanceApp.Windows.ViewModels
                 await using (var fs = File.Create(dlg.FileName))
                 await JsonSerializer.SerializeAsync(fs, exportRows, opts);
 
-                var open = MessageBox.Show("Экспорт завершён. Открыть папку?", "Успех", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                var confirmText = Application.Current.TryFindResource("Audit_Info_ExportDone") as string
+                                  ?? "Экспорт завершён. Открыть папку?";
+                var confirmCaption = Application.Current.TryFindResource("Common_Success") as string ?? "Успех";
+                var open = MessageBox.Show(confirmText, confirmCaption, MessageBoxButton.YesNo,
+                    MessageBoxImage.Information);
 
                 if (open == MessageBoxResult.Yes) Process.Start("explorer.exe", Path.GetDirectoryName(dlg.FileName)!);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка экспорта: {ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Audit_Error_Export") as string
+                           ?? "Ошибка экспорта:") + " " + ex.Message;
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
@@ -143,23 +152,30 @@ namespace FreelanceApp.Windows.ViewModels
 
                 if (ContainsCyrillic(dlg.FileName))
                 {
-                    MessageBox.Show("Путь содержит кириллицу. Выберите другой файл.", "Внимание",
-                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    var text = Application.Current.TryFindResource("Audit_Warn_PathCyrillicFile") as string
+                               ?? "Путь содержит кириллицу. Выберите другой файл.";
+                    var caption = Application.Current.TryFindResource("Common_Warning") as string ?? "Внимание";
+                    MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
                 await using var uow = new UnitOfWork(DbContextFactory.CreateDbContext(_currentUser));
-                uow.AdminAudit.ImportLogs(dlg.FileName);
+                await uow.AdminAudit.ImportLogs(dlg.FileName);
 
-                MessageBox.Show("Импорт завершён.", "Успех",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                var textOk = Application.Current.TryFindResource("Audit_Info_ImportDone") as string
+                             ?? "Импорт завершён.";
+                var captionOk = Application.Current.TryFindResource("Common_Success") as string ?? "Успех";
+                MessageBox.Show(textOk, captionOk, MessageBoxButton.OK, MessageBoxImage.Information);
 
-                await LoadAsync(); // перезагрузить после импорта
+                await LoadAsync();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка импорта: {ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Audit_Error_Import") as string
+                           ?? "Ошибка импорта:") + " " + ex.Message;
+                var caption = Application.Current.TryFindResource("Orders_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

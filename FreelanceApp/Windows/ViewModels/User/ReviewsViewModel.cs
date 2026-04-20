@@ -4,7 +4,15 @@ using CommunityToolkit.Mvvm.Input;
 using DAL;
 using DAL.Models.Tables;
 using FreelanceApp.Services;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using Microsoft.Win32;
+using FreelanceApp.Helpers;
 
 namespace FreelanceApp.Windows.ViewModels
 {
@@ -12,15 +20,10 @@ namespace FreelanceApp.Windows.ViewModels
     {
         private readonly User _currentUser;
 
-        // ===== коллекция в списке
         [ObservableProperty] private ObservableCollection<ReviewRow> rows = [];
         [ObservableProperty] private ReviewRow? selectedRow;
 
-        // ===== режим просмотра (я — заказчик/исполнитель)
         [ObservableProperty] private bool asCustomer = true;
-        [ObservableProperty] private bool asFreelancer;
-
-        // переключатели взаимно-исключающие + автоперезагрузка
         partial void OnAsCustomerChanged(bool value)
         {
             if (value)
@@ -29,6 +32,8 @@ namespace FreelanceApp.Windows.ViewModels
                 _ = LoadAsync();
             }
         }
+
+        [ObservableProperty] private bool asFreelancer;
         partial void OnAsFreelancerChanged(bool value)
         {
             if (value)
@@ -38,11 +43,19 @@ namespace FreelanceApp.Windows.ViewModels
             }
         }
 
-        // ===== панель редактирования
         [ObservableProperty] private bool isEditOpen;
         [ObservableProperty] private string panelTitle = "";
         [ObservableProperty] private int editRating = 5;       // 1..5
         [ObservableProperty] private string editComment = "";
+        [ObservableProperty] private string? editImageName;
+        [ObservableProperty] private string? editImageBase64;
+        [ObservableProperty] private ImageSource? editImagePreview;
+
+        public bool HasEditImage => EditImagePreview is not null;
+        partial void OnEditImagePreviewChanged(ImageSource? value)
+        {
+            OnPropertyChanged(nameof(HasEditImage));
+        }
 
         public ReviewsViewModel(User currentUser) => _currentUser = currentUser;
 
@@ -55,16 +68,15 @@ namespace FreelanceApp.Windows.ViewModels
                 Rows.Clear();
                 await using var uow = new UnitOfWork(DbContextFactory.CreateDbContext(_currentUser));
 
-                // получаем строки «заказы из архива + мои/их отзывы»
                 var items = await uow.Reviews.GetOrderReviewsAsync(_currentUser.Id, AsCustomer);
 
                 foreach (var r in items)
                 {
-                    // определяем, кем я был в заказе по факту:
                     bool iAmCustomer = _currentUser.Id == r.Id_Customer;
 
                     string otherName = iAmCustomer
-                        ? (r.Freelancer_Fullname ?? "[удалён]")
+                        ? (r.Freelancer_Fullname ??
+                           (Application.Current.TryFindResource("Reviews_Text_DeletedUser") as string ?? "[удалён]"))
                         : r.Customer_Fullname;
 
                     var myComment = iAmCustomer ? r.Customer_Comment : r.Freelancer_Comment;
@@ -74,6 +86,12 @@ namespace FreelanceApp.Windows.ViewModels
                     var oppComment = iAmCustomer ? r.Freelancer_Comment : r.Customer_Comment;
                     var oppRating = iAmCustomer ? r.Freelancer_Rating : r.Customer_Rating;
 
+                    var myMediaDoc = iAmCustomer ? r.Customer_Media : r.Freelancer_Media;
+                    var oppMediaDoc = iAmCustomer ? r.Freelancer_Media : r.Customer_Media;
+
+                    var (myImageName, myImageBase64) = MediaJsonHelper.ExtractFirstImage(myMediaDoc);
+                    var (oppImageName, _) = MediaJsonHelper.ExtractFirstImage(oppMediaDoc);
+
                     Rows.Add(new ReviewRow(
                         orderId: r.Order_Id,
                         projectTitle: r.Project_Title,
@@ -82,31 +100,42 @@ namespace FreelanceApp.Windows.ViewModels
                         myComment: myComment,
                         myRating: myRating,
                         oppComment: oppComment,
-                        oppRating: oppRating
+                        oppRating: oppRating,
+                        myImageName: myImageName,
+                        myImageBase64: myImageBase64,
+                        myMedia: myMediaDoc,
+                        oppImageName: oppImageName,
+                        oppMedia: oppMediaDoc
                     ));
                 }
 
-                // закрыть форму, сбросить выбор
                 IsEditOpen = false;
                 SelectedRow = null;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки отзывов: {ex.Message}", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Reviews_Error_Load") as string
+                           ?? "Ошибка загрузки отзывов:") + " " + ex.Message;
+                var caption = Application.Current.TryFindResource("Reviews_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        // открыть форму для добавления/редактирования
         [RelayCommand]
         private void OpenEditFor(ReviewRow? row)
         {
             if (row is null) return;
             SelectedRow = row;
 
-            PanelTitle = row.ReviewId is null ? "Новый отзыв" : "Изменить отзыв";
+            var titleKey = row.ReviewId is null ? "Reviews_Edit_Title_New" : "Reviews_Edit_Title_Edit";
+            var titleLocalized = Application.Current.TryFindResource(titleKey) as string;
+            PanelTitle = titleLocalized ?? (row.ReviewId is null ? "Новый отзыв" : "Изменить отзыв");
             EditComment = row.MyComment ?? "";
             EditRating = (row.MyRating is >= 1 and <= 5) ? row.MyRating.Value : 5;
+            EditImageName = row.MyImageName;
+            EditImageBase64 = row.MyImageBase64;
+            EditImagePreview = MediaJsonHelper.CreateImageSource(EditImageBase64);
 
             IsEditOpen = true;
         }
@@ -117,6 +146,9 @@ namespace FreelanceApp.Windows.ViewModels
             IsEditOpen = false;
             EditComment = "";
             EditRating = 5;
+            EditImageName = "";
+            EditImageBase64 = "";
+            EditImagePreview = null;
         }
 
         [RelayCommand]
@@ -127,44 +159,93 @@ namespace FreelanceApp.Windows.ViewModels
             var comment = (EditComment ?? "").Trim();
             if (string.IsNullOrWhiteSpace(comment))
             {
-                MessageBox.Show("Комментарий не может быть пустым.",
-                    "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
+                var text = Application.Current.TryFindResource("Reviews_Warn_EmptyComment") as string
+                           ?? "Комментарий не может быть пустым.";
+                var caption = Application.Current.TryFindResource("Reviews_Warn_Caption") as string
+                              ?? "Проверьте данные";
+                MessageBox.Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             var rating = Math.Clamp(EditRating, 1, 5);
+            var imageBase64 = (EditImageBase64 ?? "").Trim();
+            var hasImage = !string.IsNullOrWhiteSpace(imageBase64);
 
             try
             {
                 await using var uow = new UnitOfWork(DbContextFactory.CreateDbContext(_currentUser));
 
+                // создание
                 if (SelectedRow.ReviewId is null)
                 {
+                    string? mediaJsonCreate = null;
+                    if (hasImage)
+                    {
+                        var media = new[]
+                        {
+                            new
+                            {
+                                type = "image",
+                                name = EditImageName ?? "image",
+                                content = imageBase64
+                            }
+                        };
+                        mediaJsonCreate = JsonSerializer.Serialize(media);
+                    }
+
                     await uow.Reviews.CreateReviewAsync(
                         actorId: _currentUser.Id,
                         orderId: SelectedRow.OrderId,
                         reviewerId: _currentUser.Id,
                         comment: comment,
-                        rating: rating
+                        rating: rating,
+                        mediaJson: mediaJsonCreate
                     );
                 }
+                // обновление
                 else
                 {
+                    string mediaJsonUpdate;
+                    if (hasImage)
+                    {
+                        var media = new[]
+                        {
+                            new
+                            {
+                                type = "image",
+                                name = EditImageName ?? "image",
+                                content = imageBase64
+                            }
+                        };
+                        mediaJsonUpdate = JsonSerializer.Serialize(media);
+                    }
+                    else
+                    {
+                        mediaJsonUpdate = "[]";
+                    }
+
                     await uow.Reviews.UpdateReviewAsync(
                         actorId: _currentUser.Id,
                         reviewId: SelectedRow.ReviewId.Value,
                         reviewerId: _currentUser.Id,
                         comment: comment,
-                        rating: rating
+                        rating: rating,
+                        mediaJson: mediaJsonUpdate
                     );
                 }
 
                 IsEditOpen = false;
+                EditImageName = "";
+                EditImageBase64 = "";
+                EditImagePreview = null;
                 await LoadAsync();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка сохранения: {ex.Message}", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Reviews_Error_Save") as string
+                           ?? "Ошибка сохранения:") + " " + ex.Message;
+                var caption = Application.Current.TryFindResource("Reviews_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -175,9 +256,15 @@ namespace FreelanceApp.Windows.ViewModels
             if (target?.ReviewId is null)
                 return;
 
+            var confirmTemplate = Application.Current.TryFindResource("Reviews_Confirm_Delete") as string
+                                  ?? "Удалить отзыв для заказа №{0}?";
+            var confirmCaption = Application.Current.TryFindResource("Reviews_Confirm_Caption") as string
+                                 ?? "Подтверждение";
+            var confirmText = string.Format(confirmTemplate, target.OrderId);
+
             if (MessageBox.Show(
-                    $"Удалить отзыв для заказа №{target.OrderId}?",
-                    "Подтверждение",
+                    confirmText,
+                    confirmCaption,
                     MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 return;
 
@@ -194,30 +281,109 @@ namespace FreelanceApp.Windows.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка удаления: {ex.Message}", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                var msg = (Application.Current.TryFindResource("Reviews_Error_Delete") as string
+                           ?? "Ошибка удаления:") + " " + ex.Message;
+                var caption = Application.Current.TryFindResource("Reviews_Error_Load_Caption") as string
+                              ?? "Ошибка";
+                MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        [RelayCommand]
+        private void SelectImage()
+        {
+            var dialog = new OpenFileDialog
+            {
+                Filter = "Изображения|*.png;*.jpg;*.jpeg;*.bmp;*.gif",
+                Title = "Выберите изображение для отзыва"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                try
+                {
+                    var bytes = File.ReadAllBytes(dialog.FileName);
+                    EditImageBase64 = Convert.ToBase64String(bytes);
+                    EditImageName = Path.GetFileName(dialog.FileName);
+                    EditImagePreview = MediaJsonHelper.CreateImageSource(EditImageBase64);
+                }
+                catch (Exception ex)
+                {
+                    var msg = (Application.Current.TryFindResource("Reviews_Error_ReadFile") as string
+                               ?? "Не удалось прочитать файл:") + " " + ex.Message;
+                    var caption = Application.Current.TryFindResource("Reviews_Error_Load_Caption") as string
+                                  ?? "Ошибка";
+                    MessageBox.Show(msg, caption, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        [RelayCommand]
+        private void ClearImage()
+        {
+            EditImageBase64 = "";
+            EditImageName = "";
+            EditImagePreview = null;
         }
     }
 
-    // ===== Row-VM для DataTemplate
     public sealed class ReviewRow
     {
         public int OrderId { get; }
         public string ProjectTitle { get; }
         public string OtherSideName { get; }
 
-        public int? ReviewId { get; }            // мой review_id (null — отзыва ещё нет)
+        public int? ReviewId { get; } 
         public string? MyComment { get; }
         public int? MyRating { get; }
 
         public string? OppComment { get; }
         public int? OppRating { get; }
 
-        public string MyCommentPreview => string.IsNullOrWhiteSpace(MyComment) ? "[нет]" : MyComment!;
-        public string OppCommentPreview => string.IsNullOrWhiteSpace(OppComment) ? "[нет]" : OppComment!;
-        public string EditButtonText => ReviewId is null ? "Добавить" : "Изменить";
+        public string MyCommentPreview
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(MyComment))
+                    return MyComment!;
+
+                return Application.Current.TryFindResource("Reviews_Text_None") as string ?? "[нет]";
+            }
+        }
+
+        public string OppCommentPreview
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(OppComment))
+                    return OppComment!;
+
+                return Application.Current.TryFindResource("Reviews_Text_None") as string ?? "[нет]";
+            }
+        }
+
+        public string EditButtonText
+        {
+            get
+            {
+                var key = ReviewId is null ? "Reviews_Button_Add" : "Reviews_Button_Edit";
+                var localized = Application.Current.TryFindResource(key) as string;
+                if (localized is not null)
+                    return localized;
+
+                return ReviewId is null ? "Добавить" : "Изменить";
+            }
+        }
         public bool CanDelete => ReviewId is not null;
+
+        // медиа клиентского отзыва
+        public string? MyImageName { get; }
+        public string? MyImageBase64 { get; }
+        public JsonDocument? MyMedia { get; }
+
+        // медиа оппонента
+        public string? OppImageName { get; }
+        public JsonDocument? OppMedia { get; }
 
         public ReviewRow(
             int orderId,
@@ -227,7 +393,12 @@ namespace FreelanceApp.Windows.ViewModels
             string? myComment,
             int? myRating,
             string? oppComment,
-            int? oppRating)
+            int? oppRating,
+            string? myImageName,
+            string? myImageBase64,
+            JsonDocument? myMedia,
+            string? oppImageName,
+            JsonDocument? oppMedia)
         {
             OrderId = orderId;
             ProjectTitle = projectTitle;
@@ -237,6 +408,11 @@ namespace FreelanceApp.Windows.ViewModels
             MyRating = myRating;
             OppComment = oppComment;
             OppRating = oppRating;
+            MyImageName = myImageName;
+            MyImageBase64 = myImageBase64;
+            OppImageName = oppImageName;
+            MyMedia = myMedia;
+            OppMedia = oppMedia;
         }
     }
 }
