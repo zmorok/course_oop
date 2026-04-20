@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="FreelanceApp.Windows.ViewModels.ProfileViewModel">
+    <Position X="5.25" Y="9" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>UAAACAAAIABgggAkBUAAAABAEMAIAAQAAAAAqggAAAA=</HashCode>
+      <FileName>Windows\ViewModels\User\ProfileViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FreelanceApp.Windows.ViewModels.PortfolioViewModel">
+    <Position X="7.25" Y="9" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>UAIAAAAgQQAAAAAAQEoAIBAQAIKAAAAAAJAAIABCAAA=</HashCode>
+      <FileName>Windows\ViewModels\User\PortfolioViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FreelanceApp.Windows.ViewModels.ProjectsViewModel">
+    <Position X="9.25" Y="9" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>UAIAAQAgQQCAAAiAYEkAAAEQAIKAAAACAJABIAAAAoE=</HashCode>
+      <FileName>Windows\ViewModels\User\ProjectsViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FreelanceApp.Windows.ViewModels.OrdersViewModel">
+    <Position X="11.25" Y="9" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>UAIAAMAhAAAAAAAAEECAAAAAAIAAAABAABAAAQBgBQA=</HashCode>
+      <FileName>Windows\ViewModels\User\OrdersViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FreelanceApp.Windows.ViewModels.ReviewsViewModel">
+    <Position X="13.25" Y="9" Width="2" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAgQAEIAgAAAEDAAAAQAIAAAABBEJAAAAAQAYA=</HashCode>
+      <FileName>Windows\ViewModels\User\ReviewsViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FreelanceApp.Windows.ViewModels.ComplaintsViewModel">
+    <Position X="15.5" Y="9" Width="2" />
+    <TypeIdentifier>
+      <HashCode>kQIAAAAAQAEoAAIAAEBAACAQAKEAgAADEpIAAAACEAA=</HashCode>
+      <FileName>Windows\ViewModels\User\ComplaintsViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FreelanceApp.Windows.ViewModels.FreelancerSearchViewModel">
+    <Position X="17.75" Y="9" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>EAAAAABoAAAABAAAAEICAAgAAAAEAAAAAAAAAACAAAE=</HashCode>
+      <FileName>Windows\ViewModels\User\FreelancerSearchViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FreelanceApp.Windows.ViewModels.AuditLogsViewModel">
+    <Position X="11.5" Y="1.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAgAAAUEQAAAECAAAAAAAgAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>Windows\ViewModels\Admin\AuditLogsViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FreelanceApp.Windows.ViewModels.UserManagementViewModel">
+    <Position X="9" Y="1.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>cAIAAAEAQQBAAhAgAEACgAAAEcMAAAAiIAghCgiAAAA=</HashCode>
+      <FileName>Windows\ViewModels\Admin\UserManagmentViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FreelanceApp.Windows.ViewModels.ComplaintsModerationViewModel">
+    <Position X="13.75" Y="1.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAMAABEEAAAEAAAAQAABAAQAAAgEAAAQAgBBQ=</HashCode>
+      <FileName>Windows\ViewModels\Admin\ComplaintsModerationViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

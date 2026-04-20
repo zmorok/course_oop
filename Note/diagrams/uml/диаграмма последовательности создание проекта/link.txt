@@ -1,0 +1,44 @@
+@startuml
+title Создание проекта — упрощённая последовательность
+skinparam shadowing false
+
+actor "Пользователь" as U
+participant "UserDashboardWindow\n(панель клиента)" as Dash
+participant "ProjectsControl\n(вкладка Projects)" as View
+participant "ProjectsViewModel" as VM
+participant "DAL (UnitOfWork/Repos)" as DAL
+database "PostgreSQL (core)" as DB
+
+U -> Dash : выбирает вкладку "Projects"
+Dash -> View : инициализирует вкладку/контрол
+View -> VM : создаёт VM и запускает загрузку списка
+VM -> DAL : запросить проекты (с учётом фильтров)
+DAL -> DB : SELECT / user_get_*()
+DB --> DAL : список проектов
+DAL --> VM : данные
+VM --> View : коллекция проектов для отображения
+View --> U : показывает карточки проектов\n+ элементы управления (Add/Edit/Delete/Filter)
+
+U -> View : нажимает "Add"
+View -> VM : открыть форму создания
+VM --> View : форма становится видимой (поля ввода)
+
+U -> View : заполняет поля и нажимает "Save"
+View -> VM : сохранить проект
+VM -> DAL : создать проект
+DAL -> DB : CALL core.user_create_project(...)
+DB --> DAL : OK/ошибка
+DAL --> VM : результат
+VM -> DAL : обновить список проектов
+DAL -> DB : SELECT / user_get_*()
+DB --> DAL : обновлённый список
+DAL --> VM : данные
+VM --> View : обновление карточек
+View --> U : новая карточка появляется / показ ошибки
+
+@enduml
+
+Пользователь в панели клиента выбирает вкладку Projects — вкладка инициализируется, запускается загрузка проектов из БД, и на экране появляются карточки проектов с кнопками управления (добавить/редактировать/удалить/фильтрация). Затем пользователь нажимает Add — открывается форма создания проекта и отображаются поля ввода. После заполнения полей пользователь нажимает Save — система отправляет команду в БД на создание проекта, затем обновляет список и перерисовывает карточки так, чтобы новый проект появился в интерфейсе (или показывает сообщение об ошибке, если операция не удалась).
+
+
+https://www.plantuml.com/plantuml/uml/ZLNDKXD14BxlKqpb5BH8xXuiVi2BeTJ2w8KgQiYEi1fsgTr1ha9Kh08hnHFu2aiqPab8yWepR-JNFKHsI0vK3hFJqz_NttH_Krd9j4pryM4xo3v5yP5CvQ783cIOd4JnllWWsvaA0jdIIIegvfUPc96zD0EiFPFRCzEdVKN8J3G3W7NKYevah4MbcQbqGsO7UubCm_TH3CATk6gc9ZTZXn9cQ4Qcm6OCedo9MGZY4xrEau-gfRFr9DPfqYQI7Y51z0ThBcO9Zk1Tf4uM4z39LXAgjilRyhCsLXiSnng4KiizcIbWaqplfshxpTtXMX0qnV9pbYcU2TEp5-RQ5FOBrFJjcIXBivtxsfM0442oFa8MPWpSTwmvTs50BBQpWAMEpOHwX2feVy0CnBG57dkAs029kRq24Z5J20HoCxKT70vdmYZqcoiCY9I0KrEuZ00m4EBgO7HWgeN30bKlXTjYK4DiBqJLdWgGdrD5X6-5_MeAckYTnDvI02fcN0FXzcPZS_sjg8jZM69tN-dT9rLah8db_pLdOW0UUjM8pP7DBanNHUl6Q7oVTPTwIdqQuGSeTTPsvxW8FgBuXFVNFBY_P45AvzOoOvFefYG7vmFKwitwY02w2B0zntSnLs4dVYhiJnPnIxpSCTlXj1mqeranKLqDm_fc6EdwXcehhUelehPMwH8iLZRAc1KMO7CAAe1LV1FmROQGTS7ZmZWcg7PhEoLxkA9-nsQPe4OcE2WBT-2ndq8YVGACuWZVY2gtPCG7-4s8rvVhtCDPk7gN1T-3YWMtsPQVLMNUq_ORzskym85bjvOkE9VdcN1zjT4GhIHLDNPXArLIgzqZzpohjLhjWIDVlQn3n0yelQQH-nv4ZJvSqN6UHsbV4nchrCZBHzZxqM_5On_PgxkdSEFLUEoByRYSBqtVjpXa-g_2fIEZ-_0jv3nfsoKoDthsKBtqa4IffqKGhAWuf7-UVm00
